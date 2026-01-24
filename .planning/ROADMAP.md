@@ -33,10 +33,15 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. User can export current project to .mid format that opens in Logic Pro X, Ableton, and FL Studio
   4. Imported files preserve all tracks, tempo, time signatures, and note data
   5. System uses @tonejs/midi library for client-side MIDI manipulation
-**Plans**: TBD
+**Plans**: 6 plans in 5 waves
 
 Plans:
-- [ ] 01-01: [To be determined during planning]
+- [ ] 01-01-PLAN.md - Project setup, types, GM mapping, state store (Wave 1)
+- [ ] 01-02-PLAN.md - MIDI validation and parsing (Wave 2)
+- [ ] 01-03-PLAN.md - MusicXML parsing and conversion (Wave 2, parallel)
+- [ ] 01-04-PLAN.md - MIDI export and download (Wave 3)
+- [ ] 01-05-PLAN.md - UI components: upload, tracks, metadata, export button (Wave 4)
+- [ ] 01-06-PLAN.md - Page integration and human verification (Wave 5)
 
 ### Phase 2: Audio Playback Engine
 **Goal**: Users can play MIDI projects with accurate timing and basic synthesis
@@ -151,7 +156,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & MIDI Infrastructure | 0/TBD | Not started | - |
+| 1. Foundation & MIDI Infrastructure | 0/6 | Planning complete | - |
 | 2. Audio Playback Engine | 0/TBD | Not started | - |
 | 3. Piano Roll Editor | 0/TBD | Not started | - |
 | 4. Music Theory Validation Layer | 0/TBD | Not started | - |
