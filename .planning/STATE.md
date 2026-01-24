@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-01-23)
 ## Current Position
 
 Phase: 1 of 8 (Foundation & MIDI Infrastructure)
-Plan: 1 of TBD in current phase
+Plan: 3 of TBD in current phase
 Status: In progress
-Last activity: 2026-01-24 — Completed 01-01-PLAN.md (Foundation Setup)
+Last activity: 2026-01-24 — Completed 01-03-PLAN.md (MusicXML Parser & Converter)
 
-Progress: [█░░░░░░░░░] 17% (1/6 plans)
+Progress: [███░░░░░░░] 50% (3/6 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1
-- Average duration: 4.2 minutes
-- Total execution time: 0.07 hours
+- Total plans completed: 3
+- Average duration: 2.8 minutes
+- Total execution time: 0.14 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-foundation-a-midi-infrastructure | 1 | 4.2 min | 4.2 min |
+| 01-foundation-a-midi-infrastructure | 3 | 8.5 min | 2.8 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (4.2 min)
-- Trend: First plan completed
+- Last 5 plans: 01-01 (4.2 min), 01-02 (2.0 min), 01-03 (2.3 min)
+- Trend: Consistently fast execution (2-3 min range)
 
 *Updated after each plan completion*
 
@@ -50,6 +50,12 @@ Recent decisions affecting current work:
 - **Tick-based time representation** (01-01): Use MIDI ticks as primary time unit, convert to seconds only for display
 - **General MIDI standard mapping** (01-01): Use 128-instrument GM mapping for consistent naming
 - **Zustand for state management** (01-01): Lightweight state management with computed display info pattern
+- **MIDI header byte validation** (01-02): Validate 'MThd' magic bytes before parsing for clear error messages
+- **10MB MIDI file size limit** (01-02): Prevent browser memory issues with large files
+- **Auto-generated track names** (01-02): Generate "{instrumentName} Track" when source MIDI has no track names
+- **Uncompressed MusicXML only (v1)** (01-03): Support .musicxml/.xml files only, not compressed .mxl
+- **PPQ=480 for MusicXML conversion** (01-03): Use standard MIDI resolution for divisions-to-ticks conversion
+- **Default velocity 0.8 for MusicXML notes** (01-03): MusicXML dynamics conversion deferred to future versions
 
 ### Pending Todos
 
@@ -62,5 +68,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-24
-Stopped at: Completed 01-01-PLAN.md (Foundation Setup)
+Stopped at: Completed 01-03-PLAN.md (MusicXML Parser & Converter)
 Resume file: None
