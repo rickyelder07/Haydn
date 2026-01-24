@@ -1,5 +1,6 @@
 import { Midi } from '@tonejs/midi';
-import type { HaydnProject, HaydnTrack } from './types';
+import type { HaydnProject, HaydnTrack, ParseResult } from './types';
+import { parseMidiFromBuffer } from './parser';
 
 /**
  * Export HaydnProject to MIDI binary format
@@ -149,4 +150,24 @@ export function createEmptyMidi(name: string = 'New Project'): Uint8Array {
   track.name = 'Track 1';
 
   return midi.toArray();
+}
+
+/**
+ * Validate export by round-tripping: export then parse back
+ * Returns the re-parsed project or error
+ * Useful for testing export correctness
+ */
+export function validateExport(project: HaydnProject): ParseResult<HaydnProject> {
+  try {
+    // Export to MIDI
+    const midiData = exportProjectToMidi(project);
+
+    // Parse it back
+    return parseMidiFromBuffer(midiData.buffer as ArrayBuffer, project.originalFileName || 'roundtrip.mid');
+  } catch (err) {
+    return {
+      success: false,
+      error: `Export validation failed: ${err instanceof Error ? err.message : 'Unknown error'}`,
+    };
+  }
 }
