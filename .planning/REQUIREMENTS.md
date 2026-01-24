@@ -142,13 +142,56 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| (To be filled by roadmapper) | | |
+| IO-01 | Phase 1 | Pending |
+| IO-02 | Phase 1 | Pending |
+| IO-03 | Phase 1 | Pending |
+| IO-04 | Phase 1 | Pending |
+| IO-05 | Phase 1 | Pending |
+| NL-01 | Phase 6 | Pending |
+| NL-02 | Phase 6 | Pending |
+| NL-03 | Phase 6 | Pending |
+| NL-04 | Phase 6 | Pending |
+| NL-05 | Phase 8 | Pending |
+| NL-06 | Phase 8 | Pending |
+| NL-07 | Phase 8 | Pending |
+| NL-08 | Phase 8 | Pending |
+| NL-09 | Phase 8 | Pending |
+| NL-10 | Phase 8 | Pending |
+| NL-11 | Phase 5 | Pending |
+| NL-12 | Phase 5 | Pending |
+| THEORY-01 | Phase 4 | Pending |
+| THEORY-02 | Phase 4 | Pending |
+| THEORY-03 | Phase 4 | Pending |
+| THEORY-04 | Phase 4 | Pending |
+| TRACK-01 | Phase 7 | Pending |
+| TRACK-02 | Phase 7 | Pending |
+| TRACK-03 | Phase 7 | Pending |
+| TRACK-04 | Phase 7 | Pending |
+| TRACK-05 | Phase 7 | Pending |
+| TRACK-06 | Phase 7 | Pending |
+| TRACK-07 | Phase 7 | Pending |
+| PLAY-01 | Phase 2 | Pending |
+| PLAY-02 | Phase 2 | Pending |
+| PLAY-03 | Phase 2 | Pending |
+| PLAY-04 | Phase 2 | Pending |
+| PLAY-05 | Phase 2 | Pending |
+| EDIT-01 | Phase 3 | Pending |
+| EDIT-02 | Phase 3 | Pending |
+| EDIT-03 | Phase 3 | Pending |
+| EDIT-04 | Phase 3 | Pending |
+| EDIT-05 | Phase 3 | Pending |
+| EDIT-06 | Phase 3 | Pending |
+| EDIT-07 | Phase 3 | Pending |
+| TECH-01 | Phase 1 | Pending |
+| TECH-02 | Phase 5 | Pending |
+| TECH-03 | Phase 1 | Pending |
+| TECH-04 | Phase 5 | Pending |
 
 **Coverage:**
-- v1 requirements: 47 total
-- Mapped to phases: 0 (pending roadmap)
-- Unmapped: 47 ⚠️
+- v1 requirements: 44 total
+- Mapped to phases: 44 (100%)
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-01-23*
-*Last updated: 2026-01-23 after initial definition*
+*Last updated: 2026-01-23 after roadmap creation*
