@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-01-23)
 ## Current Position
 
 Phase: 2 of 8 (Audio Playback Engine)
-Plan: 3 of 6 in current phase
+Plan: 5 of 6 in current phase
 Status: In progress
-Last activity: 2026-01-26 — Completed 02-03-PLAN.md (Transport Controls UI)
+Last activity: 2026-01-26 — Completed 02-05-PLAN.md (Metronome and Count-in)
 
-Progress: [████████░░] 75% (9/12 plans)
+Progress: [█████████░] 92% (11/12 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9
-- Average duration: 2.5 minutes
-- Total execution time: 0.38 hours
+- Total plans completed: 11
+- Average duration: 2.4 minutes
+- Total execution time: 0.46 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-foundation-a-midi-infrastructure | 6 | 16.9 min | 2.8 min |
-| 02-audio-playback-engine | 3 | 6.8 min | 2.3 min |
+| 02-audio-playback-engine | 5 | 11.6 min | 2.3 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-05 (2.8 min), 01-06 (3.8 min), 02-01 (2.0 min), 02-02 (2.4 min), 02-03 (2.4 min)
+- Last 5 plans: 02-01 (2.0 min), 02-02 (2.4 min), 02-03 (2.4 min), 02-04 (2.4 min), 02-05 (2.4 min)
 - Trend: Consistently fast execution (2-4 min range)
 
 *Updated after each plan completion*
@@ -75,6 +75,15 @@ Recent decisions affecting current work:
 - **Inline SVG icons** (02-03): Simple SVG components instead of icon library for minimal bundle
 - **Click-to-seek progress bar** (02-03): Click-to-jump interaction (drag scrubbing deferred to Phase 3)
 - **Computed display values in store** (02-03): formatTime, ticksToBarsBeat computed on position updates, not in components
+- **Keyboard shortcuts only when project loaded** (02-04): Prevents confusion when no project to control
+- **Tone.Draw.schedule for UI updates** (02-04): Syncs UI updates with audio render loop via requestAnimationFrame
+- **Track-level note count display** (02-04): Shows per-track activity without individual note detail in v1
+- **Auto-load project into playback** (02-04): Immediate playback readiness after upload
+- **MembraneSynth for metronome clicks** (02-05): Better click quality than simple oscillators
+- **880Hz downbeat vs 440Hz regular beat** (02-05): Audible bar boundaries for timing reference
+- **Separate synth for count-in** (02-05): Avoids conflicts with metronome lifecycle
+- **Metronome lifecycle synced in store** (02-05): Starts with play if enabled, stops with pause/stop
+- **-6dB metronome, -3dB count-in volume** (02-05): Audible but doesn't overpower music
 
 ### Pending Todos
 
@@ -87,7 +96,7 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-26
-Stopped at: Completed 02-03-PLAN.md (Transport Controls UI)
+Stopped at: Completed 02-05-PLAN.md (Metronome and Count-in)
 Resume file: None
 
-**Phase 2 Status:** In progress - 3 of 6 plans complete. Transport UI ready for page integration.
+**Phase 2 Status:** In progress - 5 of 6 plans complete. Metronome and count-in features integrated with transport controls.
