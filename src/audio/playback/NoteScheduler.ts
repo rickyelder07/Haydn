@@ -47,11 +47,16 @@ export async function scheduleNotes(project: HaydnProject): Promise<void> {
     // Skip empty tracks
     if (track.notes.length === 0) continue;
 
+    // Normalize piano programs (0-7) to share the same instrument
+    // @tonejs/piano is the same sample set for all piano types
+    const isPiano = track.instrumentNumber >= 0 && track.instrumentNumber <= 7;
+    const instrumentKey = isPiano ? 0 : track.instrumentNumber;
+
     // Create or reuse instrument for this GM program
-    let instrument = loadedInstruments.get(track.instrumentNumber);
+    let instrument = loadedInstruments.get(instrumentKey);
     if (!instrument) {
       instrument = await createInstrument(track.instrumentNumber);
-      loadedInstruments.set(track.instrumentNumber, instrument);
+      loadedInstruments.set(instrumentKey, instrument);
     }
 
     // Convert notes to scheduled events
