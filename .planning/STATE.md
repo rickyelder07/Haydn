@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-01-23)
 ## Current Position
 
 Phase: 2 of 8 (Audio Playback Engine)
-Plan: 1 of 6 in current phase
+Plan: 2 of 6 in current phase
 Status: In progress
-Last activity: 2026-01-26 — Completed 02-01-PLAN.md (Audio Infrastructure Foundation)
+Last activity: 2026-01-26 — Completed 02-02-PLAN.md (Playback Logic Core)
 
-Progress: [███████░░░] 58% (7/12 plans)
+Progress: [████████░░] 67% (8/12 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7
-- Average duration: 2.7 minutes
-- Total execution time: 0.32 hours
+- Total plans completed: 8
+- Average duration: 2.6 minutes
+- Total execution time: 0.35 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-foundation-a-midi-infrastructure | 6 | 16.9 min | 2.8 min |
-| 02-audio-playback-engine | 1 | 2.0 min | 2.0 min |
+| 02-audio-playback-engine | 2 | 4.4 min | 2.2 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-03 (2.3 min), 01-04 (2.1 min), 01-05 (2.8 min), 01-06 (3.8 min), 02-01 (2.0 min)
+- Last 5 plans: 01-04 (2.1 min), 01-05 (2.8 min), 01-06 (3.8 min), 02-01 (2.0 min), 02-02 (2.4 min)
 - Trend: Consistently fast execution (2-4 min range)
 
 *Updated after each plan completion*
@@ -66,6 +66,11 @@ Recent decisions affecting current work:
 - **Tone.js version** (02-01): Use 15.1.22 despite @tonejs/piano peer dependency on ^14.6.1 - backward compatible API
 - **Piano velocity levels** (02-01): 5 levels for smaller download vs 16 max - sufficient quality for v1
 - **Waveform mapping** (02-01): Triangle for piano/guitar/bass/brass, sine for percussion, sawtooth for organ/strings, square for synth
+- **Tone.Part for scheduling** (02-02): Uses Tone.js Part API for efficient note scheduling with built-in lookahead
+- **20fps position tracking** (02-02): Updates position every 50ms for smooth UI without excessive overhead
+- **Tempo lookahead 0.1s** (02-02): Schedules tempo changes 100ms ahead for smooth transitions
+- **Instrument reuse** (02-02): Keeps instruments loaded in Map for faster play/pause cycles
+- **40-240 BPM range** (02-02): Wide tempo range for experimental use cases
 
 ### Pending Todos
 
@@ -78,7 +83,7 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-26
-Stopped at: Completed 02-01-PLAN.md (Audio Infrastructure Foundation)
+Stopped at: Completed 02-02-PLAN.md (Playback Logic Core)
 Resume file: None
 
-**Phase 2 Status:** In progress - 1 of 6 plans complete. Audio infrastructure ready for PlaybackController.
+**Phase 2 Status:** In progress - 2 of 6 plans complete. Playback logic ready for Transport UI integration.
