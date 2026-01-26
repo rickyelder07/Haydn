@@ -2,6 +2,8 @@ import { create } from 'zustand';
 import { getPlaybackController, type PlaybackState, type PlaybackPosition } from '@/audio/playback/PlaybackController';
 import { formatTime, ticksToBarsBeat } from '@/audio/utils/timeConversion';
 import type { HaydnProject } from '@/lib/midi/types';
+import { startWithCountIn } from '@/audio/playback/CountIn';
+import { getMetronome } from '@/audio/playback/Metronome';
 
 interface PlaybackStoreState {
   // State
@@ -10,6 +12,8 @@ interface PlaybackStoreState {
   duration: number;
   tempo: number;
   isLoading: boolean;
+  countInBars: number;
+  metronomeEnabled: boolean;
 
   // Computed display values
   formattedPosition: string;
@@ -26,6 +30,8 @@ interface PlaybackStoreState {
   seekTo: (seconds: number) => void;
   seekToProgress: (progress: number) => void;
   setTempo: (bpm: number) => void;
+  setCountInBars: (bars: number) => void;
+  setMetronomeEnabled: (enabled: boolean) => void;
 }
 
 // Singleton subscription management
@@ -77,6 +83,8 @@ export const usePlaybackStore = create<PlaybackStoreState>((set, get) => {
     duration: 0,
     tempo: 120,
     isLoading: false,
+    countInBars: 0,
+    metronomeEnabled: false,
 
     formattedPosition: '0:00',
     formattedDuration: '0:00',
@@ -114,20 +122,48 @@ export const usePlaybackStore = create<PlaybackStoreState>((set, get) => {
 
     play: async () => {
       ensureInitialized();
+      const state = get();
       const controller = getPlaybackController();
-      await controller.play();
+
+      if (state.playbackState === 'paused') {
+        // Resume without count-in
+        await controller.play();
+        // Start metronome if enabled
+        if (state.metronomeEnabled && !getMetronome().isEnabled()) {
+          getMetronome().start();
+        }
+      } else {
+        // Start with count-in if enabled
+        if (state.countInBars > 0) {
+          await startWithCountIn(state.countInBars);
+          // Start metronome after count-in if enabled
+          if (state.metronomeEnabled) {
+            getMetronome().start();
+          }
+        } else {
+          await controller.play();
+          // Start metronome if enabled
+          if (state.metronomeEnabled) {
+            getMetronome().start();
+          }
+        }
+      }
     },
 
     pause: () => {
       ensureInitialized();
       const controller = getPlaybackController();
       controller.pause();
+      // Stop metronome during pause
+      getMetronome().stop();
     },
 
     stop: () => {
       ensureInitialized();
       const controller = getPlaybackController();
       controller.stop();
+      // Stop metronome on stop
+      getMetronome().stop();
     },
 
     togglePlayPause: async () => {
@@ -156,6 +192,12 @@ export const usePlaybackStore = create<PlaybackStoreState>((set, get) => {
       const controller = getPlaybackController();
       controller.setTempo(bpm);
       set({ tempo: bpm });
+    },
+
+    setCountInBars: (bars) => set({ countInBars: bars }),
+
+    setMetronomeEnabled: (enabled) => {
+      set({ metronomeEnabled: enabled });
     },
   };
 });

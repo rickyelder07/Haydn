@@ -3,6 +3,8 @@
 import { usePlaybackStore } from '@/state/playbackStore';
 import { TimeDisplay } from './TimeDisplay';
 import { TempoSlider } from './TempoSlider';
+import { MetronomeToggle } from './MetronomeToggle';
+import { CountInSelect } from './CountInSelect';
 
 // SVG icons as inline components for simplicity
 const PlayIcon = () => (
@@ -123,6 +125,12 @@ export function TransportControls({ className = '', disabled = false }: Transpor
           className="h-full bg-blue-600 rounded-full transition-all duration-100"
           style={{ width: `${progress * 100}%` }}
         />
+      </div>
+
+      {/* Bottom row: Metronome and count-in options */}
+      <div className="flex items-center gap-4 mt-3">
+        <MetronomeToggle />
+        <CountInSelect />
       </div>
     </div>
   );
