@@ -1,9 +1,11 @@
 'use client';
 
 import { useProjectStore } from '@/state/projectStore';
+import { useNoteHighlighter } from '@/audio/playback/NoteHighlighter';
 
 export function TrackList() {
   const { project, trackDisplayInfo } = useProjectStore();
+  const { activeNoteCountByTrack } = useNoteHighlighter();
 
   if (!project || trackDisplayInfo.length === 0) {
     return null;
@@ -22,8 +24,16 @@ export function TrackList() {
           >
             <div className="flex items-center justify-between">
               <div className="flex-1 min-w-0">
-                <h3 className="font-medium text-gray-900 truncate">
+                <h3 className="font-medium text-gray-900 truncate flex items-center">
                   {track.name}
+                  {activeNoteCountByTrack.get(index) ? (
+                    <span className="inline-flex items-center ml-2">
+                      <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                      <span className="ml-1 text-xs text-green-600">
+                        {activeNoteCountByTrack.get(index)} notes
+                      </span>
+                    </span>
+                  ) : null}
                 </h3>
                 <p className="text-sm text-gray-500 truncate">
                   {track.instrumentName}

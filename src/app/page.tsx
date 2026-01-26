@@ -1,14 +1,29 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useProjectStore } from '@/state/projectStore';
+import { usePlaybackStore } from '@/state/playbackStore';
 import { FileUpload } from '@/components/FileUpload';
 import { TrackList } from '@/components/TrackList';
 import { MetadataDisplay } from '@/components/MetadataDisplay';
 import { ExportButton } from '@/components/ExportButton';
 import { ErrorDisplay } from '@/components/ErrorDisplay';
+import { TransportControls } from '@/components/TransportControls';
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 
 export default function Home() {
   const { project } = useProjectStore();
+  const { loadProject } = usePlaybackStore();
+
+  // Add keyboard shortcuts
+  useKeyboardShortcuts();
+
+  // Load project into playback engine when project changes
+  useEffect(() => {
+    if (project) {
+      loadProject(project);
+    }
+  }, [project, loadProject]);
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -33,6 +48,13 @@ export default function Home() {
         <div className="mb-8">
           <FileUpload />
         </div>
+
+        {/* Transport Controls - only when project loaded */}
+        {project && (
+          <div className="mb-6">
+            <TransportControls />
+          </div>
+        )}
 
         {/* Project Content - only when project loaded */}
         {project && (
