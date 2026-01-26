@@ -12,7 +12,7 @@ Haydn transforms natural language into musical MIDI edits through an 8-phase jou
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation & MIDI Infrastructure** - File I/O, MIDI parsing, data model
+- [x] **Phase 1: Foundation & MIDI Infrastructure** - File I/O, MIDI parsing, data model
 - [ ] **Phase 2: Audio Playback Engine** - Precise timing, transport controls, synthesis
 - [ ] **Phase 3: Piano Roll Editor** - Visual editing interface with manual note control
 - [ ] **Phase 4: Music Theory Validation Layer** - Theory engine for coherent edits
@@ -36,12 +36,12 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 6 plans in 5 waves
 
 Plans:
-- [ ] 01-01-PLAN.md - Project setup, types, GM mapping, state store (Wave 1)
-- [ ] 01-02-PLAN.md - MIDI validation and parsing (Wave 2)
-- [ ] 01-03-PLAN.md - MusicXML parsing and conversion (Wave 2, parallel)
-- [ ] 01-04-PLAN.md - MIDI export and download (Wave 3)
-- [ ] 01-05-PLAN.md - UI components: upload, tracks, metadata, export button (Wave 4)
-- [ ] 01-06-PLAN.md - Page integration and human verification (Wave 5)
+- [x] 01-01-PLAN.md - Project setup, types, GM mapping, state store (Wave 1)
+- [x] 01-02-PLAN.md - MIDI validation and parsing (Wave 2)
+- [x] 01-03-PLAN.md - MusicXML parsing and conversion (Wave 2, parallel)
+- [x] 01-04-PLAN.md - MIDI export and download (Wave 3)
+- [x] 01-05-PLAN.md - UI components: upload, tracks, metadata, export button (Wave 4)
+- [x] 01-06-PLAN.md - Page integration and human verification (Wave 5)
 
 ### Phase 2: Audio Playback Engine
 **Goal**: Users can play MIDI projects with accurate timing and basic synthesis
@@ -53,10 +53,15 @@ Plans:
   3. User can stop playback and return to the beginning
   4. User can adjust project tempo and hear immediate effect on playback
   5. Playback timing remains accurate for tracks longer than 3 minutes (no drift)
-**Plans**: TBD
+**Plans**: 6 plans in 6 waves
 
 Plans:
-- [ ] 02-01: [To be determined during planning]
+- [ ] 02-01-PLAN.md - Install Tone.js, AudioEngine singleton, InstrumentFactory (Wave 1)
+- [ ] 02-02-PLAN.md - Time conversion, NoteScheduler, PlaybackController (Wave 2)
+- [ ] 02-03-PLAN.md - Playback store, TransportControls UI (Wave 3)
+- [ ] 02-04-PLAN.md - Keyboard shortcuts, note highlighting, page integration (Wave 4)
+- [ ] 02-05-PLAN.md - Metronome, count-in (Wave 5)
+- [ ] 02-06-PLAN.md - Human verification checkpoint (Wave 6)
 
 ### Phase 3: Piano Roll Editor
 **Goal**: Users can visually edit MIDI notes with manual control and undo/redo
@@ -138,7 +143,7 @@ Plans:
 **Depends on**: Phase 7
 **Requirements**: NL-05, NL-06, NL-07, NL-08, NL-09, NL-10
 **Success Criteria** (what must be TRUE):
-  1. User can make multiple edits in sequence (e.g., "add drums" → "make them louder" → "add swing")
+  1. User can make multiple edits in sequence (e.g., "add drums" -> "make them louder" -> "add swing")
   2. System preserves edit history and references previous changes in context
   3. User can make structural changes via conversation (e.g., "add a bridge section", "make chorus 8 bars longer")
   4. User can make note-level changes (e.g., "raise the melody an octave", "change to minor key")
@@ -152,12 +157,12 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & MIDI Infrastructure | 0/6 | Planning complete | - |
-| 2. Audio Playback Engine | 0/TBD | Not started | - |
+| 1. Foundation & MIDI Infrastructure | 6/6 | Complete | 2026-01-24 |
+| 2. Audio Playback Engine | 0/6 | Ready for execution | - |
 | 3. Piano Roll Editor | 0/TBD | Not started | - |
 | 4. Music Theory Validation Layer | 0/TBD | Not started | - |
 | 5. Natural Language Editing - Single-Shot | 0/TBD | Not started | - |
