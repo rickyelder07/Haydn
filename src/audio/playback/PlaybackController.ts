@@ -3,6 +3,7 @@ import type { HaydnProject } from '@/lib/midi/types';
 import { getAudioEngine } from '@/audio/AudioEngine';
 import { scheduleNotes, clearScheduledNotes, disposeAllInstruments } from './NoteScheduler';
 import { ticksToSeconds } from '@/audio/utils/timeConversion';
+import { NoteHighlighter } from './NoteHighlighter';
 
 export type PlaybackState = 'stopped' | 'playing' | 'paused';
 
@@ -60,6 +61,9 @@ class PlaybackController {
 
     // Schedule all notes
     await scheduleNotes(project);
+
+    // Schedule note highlights for UI feedback
+    NoteHighlighter.scheduleHighlights(project);
   }
 
   /**
@@ -103,6 +107,9 @@ class PlaybackController {
     Transport.stop();
     Transport.position = 0;
     clearScheduledNotes();
+
+    // Clear note highlights
+    NoteHighlighter.clear();
 
     // Re-schedule notes for next play
     if (this.currentProject) {
