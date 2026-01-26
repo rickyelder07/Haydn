@@ -97,9 +97,15 @@ export function parseMidiFromBuffer(
  */
 function convertMidiToProject(midi: Midi, fileName: string): HaydnProject {
   const metadata = extractMetadata(midi);
-  const tracks = midi.tracks.map((track, index) =>
-    convertTrack(track, index)
+
+  // Convert all tracks
+  const allTracks = midi.tracks.map((track) =>
+    convertTrack(track)
   );
+
+  // Filter out empty tracks (no notes)
+  // Many MIDI files have conductor/metadata tracks or empty channel tracks
+  const tracks = allTracks.filter(track => track.notes.length > 0);
 
   // Calculate total duration in ticks
   const durationTicks = tracks.reduce((max, track) => {
@@ -165,7 +171,7 @@ function extractMetadata(midi: Midi): HaydnMetadata {
 /**
  * Convert a single track to HaydnTrack format
  */
-function convertTrack(track: ToneTrack, index: number): HaydnTrack {
+function convertTrack(track: ToneTrack): HaydnTrack {
   const channel = track.channel;
   const isPercussion = isPercussionChannel(channel);
 
