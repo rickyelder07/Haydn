@@ -74,10 +74,15 @@ Plans:
   4. User can drag a note to change its pitch or timing position
   5. User can undo any action and see previous state restored
   6. User can redo a previously undone action
-**Plans**: TBD
+**Plans**: 6 plans in 5 waves
 
 Plans:
-- [ ] 03-01: [To be determined during planning]
+- [ ] 03-01-PLAN.md - Undo/redo history manager and edit store (Wave 1)
+- [ ] 03-02-PLAN.md - Piano roll canvas rendering, grid, piano keys sidebar (Wave 1, parallel)
+- [ ] 03-03-PLAN.md - Note interactions: add, delete, move with assembled editor (Wave 2)
+- [ ] 03-04-PLAN.md - Zoom controls and note inspector panel (Wave 3)
+- [ ] 03-05-PLAN.md - Page integration, track selection, keyboard shortcuts (Wave 4)
+- [ ] 03-06-PLAN.md - Human verification checkpoint (Wave 5)
 
 ### Phase 4: Music Theory Validation Layer
 **Goal**: System validates all edits against music theory rules before applying
@@ -163,7 +168,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8
 |-------|----------------|--------|-----------|
 | 1. Foundation & MIDI Infrastructure | 6/6 | Complete | 2026-01-24 |
 | 2. Audio Playback Engine | 6/6 | Complete | 2026-01-26 |
-| 3. Piano Roll Editor | 0/TBD | Not started | - |
+| 3. Piano Roll Editor | 0/6 | Not started | - |
 | 4. Music Theory Validation Layer | 0/TBD | Not started | - |
 | 5. Natural Language Editing - Single-Shot | 0/TBD | Not started | - |
 | 6. Natural Language Generation | 0/TBD | Not started | - |
