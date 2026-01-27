@@ -61,11 +61,8 @@ export async function scheduleNotes(project: HaydnProject): Promise<void> {
     // Create or reuse instrument for this GM program
     let instrument = loadedInstruments.get(instrumentKey);
     if (!instrument) {
-      console.log(`[NoteScheduler] Creating instrument for track ${trackIndex} "${track.name}": GM program ${track.instrumentNumber}, channel ${track.channel} (key: ${instrumentKey})`);
       instrument = await createInstrument(track.instrumentNumber, track.channel);
       loadedInstruments.set(instrumentKey, instrument);
-    } else {
-      console.log(`[NoteScheduler] Reusing instrument for track ${trackIndex} "${track.name}": GM program ${track.instrumentNumber}, channel ${track.channel} (key: ${instrumentKey})`);
     }
 
     // Convert notes to scheduled events

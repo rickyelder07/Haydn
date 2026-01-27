@@ -18,8 +18,6 @@ export class SynthInstrument implements InstrumentInstance {
     const envelope = this.getEnvelopeForProgram(gmProgram);
     const detune = this.getDetuneForProgram(gmProgram);
 
-    console.log(`[SynthInstrument] Creating GM program ${gmProgram}: waveform=${waveform}, detune=${detune}, envelope=`, envelope);
-
     this.synth = new PolySynth(Synth, {
       oscillator: {
         type: waveform,
