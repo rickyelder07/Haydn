@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-23)
 ## Current Position
 
 Phase: 3 of 8 (Piano Roll Editor)
-Plan: 1 of 6 in current phase
+Plan: 2 of 6 in current phase
 Status: In progress
-Last activity: 2026-01-27 — Completed 03-01-PLAN.md
+Last activity: 2026-01-27 — Completed 03-02-PLAN.md
 
-Progress: [█████████████░░░░░] 72% (13/18 plans)
+Progress: [██████████████░░░░] 78% (14/18 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 13
+- Total plans completed: 14
 - Average duration: 2.3 minutes
-- Total execution time: 0.50 hours
+- Total execution time: 0.53 hours
 
 **By Phase:**
 
@@ -29,11 +29,11 @@ Progress: [█████████████░░░░░] 72% (13/18 pl
 |-------|-------|-------|----------|
 | 01-foundation-a-midi-infrastructure | 6 | 16.9 min | 2.8 min |
 | 02-audio-playback-engine | 6 | 14.5 min | 2.4 min |
-| 03-piano-roll-editor | 1 | 1.4 min | 1.4 min |
+| 03-piano-roll-editor | 2 | 3.6 min | 1.8 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-02 (2.4 min), 02-03 (2.4 min), 02-04 (2.4 min), 02-05 (2.4 min), 03-01 (1.4 min)
-- Trend: Extremely fast execution for state management (1.4 min)
+- Last 5 plans: 02-03 (2.4 min), 02-04 (2.4 min), 02-05 (2.4 min), 03-01 (1.4 min), 03-02 (2.2 min)
+- Trend: Fast execution with consistent sub-3min performance
 
 *Updated after each plan completion*
 
@@ -97,6 +97,11 @@ Recent decisions affecting current work:
 - **Per-track history initialization** (03-01): Each track gets independent HistoryManager on selectTrack
 - **Auto-sort notes by ticks** (03-01): All note mutations automatically re-sort by ticks for chronological order
 - **Cross-store sync via getState()** (03-01): Edit store reads/writes projectStore via getState() pattern
+- **Canvas-based rendering** (03-02): Use HTML5 Canvas API with requestAnimationFrame for performant piano roll
+- **Note height 12px** (03-02): 12 pixels per semitone row for readable piano roll density
+- **Adaptive grid zoom** (03-02): Grid shows bars/beats at low zoom, adds 16th/32nd subdivisions when zoomed in
+- **Velocity-based coloring** (03-02): HSL with lightness 40-60% based on velocity, hue 210 (blue) normal, hue 40 (gold) selected
+- **Minimum note width 3px** (03-02): Enforce minimum visual width so very short notes remain visible
 
 ### Pending Todos
 
@@ -109,7 +114,7 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-27
-Stopped at: Completed 03-01-PLAN.md
+Stopped at: Completed 03-02-PLAN.md
 Resume file: None
 
-**Phase 3 Status:** In progress - 1 of 6 plans complete. Edit state management layer complete (HistoryManager + editStore). Ready for piano roll rendering.
+**Phase 3 Status:** In progress - 2 of 6 plans complete. Edit state management (03-01) and piano roll rendering (03-02) complete. Ready for note editing interactions.
