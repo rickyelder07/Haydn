@@ -23,7 +23,7 @@ interface DragState {
 }
 
 interface UsePianoRollInteractionsParams {
-  canvasRef: React.RefObject<HTMLCanvasElement>;
+  canvasRef: React.RefObject<HTMLCanvasElement | null>;
   notes: HaydnNote[];
   ppq: number;
   zoomX: number;
