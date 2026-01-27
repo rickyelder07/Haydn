@@ -7,6 +7,8 @@ import { usePlaybackStore } from '@/state/playbackStore';
 import { PianoRollCanvas } from './PianoRollCanvas';
 import { PianoKeysSidebar } from './PianoKeysSidebar';
 import { usePianoRollInteractions } from './usePianoRollInteractions';
+import { ZoomControls } from './ZoomControls';
+import { NoteInspector } from './NoteInspector';
 import { NOTE_HEIGHT, PIANO_KEY_WIDTH } from './gridUtils';
 
 const EDITOR_HEIGHT = 400;
@@ -14,10 +16,13 @@ const EDITOR_HEIGHT = 400;
 export function PianoRollEditor() {
   const project = useProjectStore((state) => state.project);
   const selectedTrackIndex = useEditStore((state) => state.selectedTrackIndex);
+  const selectedNoteIds = useEditStore((state) => state.selectedNoteIds);
   const canUndo = useEditStore((state) => state.canUndo);
   const canRedo = useEditStore((state) => state.canRedo);
   const undo = useEditStore((state) => state.undo);
   const redo = useEditStore((state) => state.redo);
+  const updateNote = useEditStore((state) => state.updateNote);
+  const deleteNote = useEditStore((state) => state.deleteNote);
   const playheadTicks = usePlaybackStore((state) => state.position.ticks);
 
   const [scrollX, setScrollX] = useState(0);
@@ -38,6 +43,21 @@ export function PianoRollEditor() {
   const timeSignature = project?.metadata.timeSignatures[0] || { numerator: 4, denominator: 4, ticks: 0 };
   const durationTicks = project?.durationTicks || ppq * 16; // Default 16 beats
 
+  // Compute selected note for inspector
+  // Note ID format: "${trackIndex}-${noteIndex}"
+  const selectedNote =
+    selectedNoteIds.size === 1 && selectedTrackIndex !== null
+      ? (() => {
+          const noteId = Array.from(selectedNoteIds)[0];
+          const parts = noteId.split('-');
+          if (parts.length === 2 && parseInt(parts[0]) === selectedTrackIndex) {
+            const noteIndex = parseInt(parts[1]);
+            return { note: notes[noteIndex] || null, index: noteIndex };
+          }
+          return { note: null, index: null };
+        })()
+      : { note: null, index: null };
+
   // Canvas dimensions
   const canvasWidth = 800; // Fixed width for now
   const canvasHeight = EDITOR_HEIGHT - 80; // Account for toolbar and scrollbar
@@ -48,6 +68,25 @@ export function PianoRollEditor() {
     const centerY = c4Y - canvasHeight / 2;
     setScrollY(Math.max(0, centerY));
   }, [canvasHeight]);
+
+  // Keyboard shortcuts for undo/redo
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+      const modifier = isMac ? e.metaKey : e.ctrlKey;
+
+      if (modifier && e.shiftKey && e.key === 'z') {
+        e.preventDefault();
+        redo();
+      } else if (modifier && e.key === 'z') {
+        e.preventDefault();
+        undo();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [undo, redo]);
 
   // Mouse interactions
   const { handleMouseDown, handleContextMenu, dragState } = usePianoRollInteractions({
@@ -60,7 +99,7 @@ export function PianoRollEditor() {
     scrollY,
   });
 
-  // Wheel handler for scrolling
+  // Wheel handler for scrolling and zooming
   const handleWheel = (e: React.WheelEvent) => {
     e.preventDefault();
 
@@ -68,7 +107,17 @@ export function PianoRollEditor() {
     const totalHeight = 128 * NOTE_HEIGHT;
     const totalWidth = (durationTicks + ppq * 4) * pixelsPerTick; // Add 4 beats padding
 
-    if (e.shiftKey) {
+    if (e.ctrlKey || e.metaKey) {
+      // Ctrl+Wheel: horizontal zoom
+      const delta = e.deltaY > 0 ? 1 / 1.1 : 1.1;
+      const newZoomX = Math.max(0.25, Math.min(4.0, zoomX * delta));
+      setZoomX(newZoomX);
+    } else if (e.altKey) {
+      // Alt+Wheel: vertical zoom
+      const delta = e.deltaY > 0 ? 1 / 1.1 : 1.1;
+      const newZoomY = Math.max(0.5, Math.min(3.0, zoomY * delta));
+      setZoomY(newZoomY);
+    } else if (e.shiftKey) {
       // Horizontal scroll
       const newScrollX = scrollX + e.deltaY;
       setScrollX(Math.max(0, Math.min(newScrollX, totalWidth - canvasWidth)));
@@ -122,6 +171,16 @@ export function PianoRollEditor() {
             <path d="M12 5 L17 10 L12 15 M17 10 L3 10 C3 10 3 8 6 8" stroke="currentColor" strokeWidth="1.5" fill="none" />
           </svg>
         </button>
+
+        <div className="h-6 w-px bg-gray-700 mx-2"></div>
+
+        {/* Zoom controls */}
+        <ZoomControls
+          zoomX={zoomX}
+          zoomY={zoomY}
+          onZoomXChange={setZoomX}
+          onZoomYChange={setZoomY}
+        />
 
         <div className="h-6 w-px bg-gray-700 mx-2"></div>
 
@@ -202,6 +261,15 @@ export function PianoRollEditor() {
             />
           </div>
         </div>
+
+        {/* Note Inspector sidebar */}
+        <NoteInspector
+          note={selectedNote.note}
+          noteIndex={selectedNote.index}
+          ppq={ppq}
+          onUpdate={updateNote}
+          onDelete={deleteNote}
+        />
       </div>
     </div>
   );
