@@ -10,25 +10,25 @@ See: .planning/PROJECT.md (updated 2026-01-23)
 ## Current Position
 
 Phase: 2 of 8 (Audio Playback Engine)
-Plan: 5 of 6 in current phase
-Status: In progress
-Last activity: 2026-01-26 — Completed 02-05-PLAN.md (Metronome and Count-in)
+Plan: 6 of 6 in current phase
+Status: Phase complete
+Last activity: 2026-01-26 — Completed 02-06-PLAN.md (Human Verification) - Phase 2 complete
 
-Progress: [█████████░] 92% (11/12 plans)
+Progress: [██████████] 100% (12/12 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 11
+- Total plans completed: 12
 - Average duration: 2.4 minutes
-- Total execution time: 0.46 hours
+- Total execution time: 0.48 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-foundation-a-midi-infrastructure | 6 | 16.9 min | 2.8 min |
-| 02-audio-playback-engine | 5 | 11.6 min | 2.3 min |
+| 02-audio-playback-engine | 6 | 14.5 min | 2.4 min |
 
 **Recent Trend:**
 - Last 5 plans: 02-01 (2.0 min), 02-02 (2.4 min), 02-03 (2.4 min), 02-04 (2.4 min), 02-05 (2.4 min)
@@ -84,6 +84,13 @@ Recent decisions affecting current work:
 - **Separate synth for count-in** (02-05): Avoids conflicts with metronome lifecycle
 - **Metronome lifecycle synced in store** (02-05): Starts with play if enabled, stops with pause/stop
 - **-6dB metronome, -3dB count-in volume** (02-05): Audible but doesn't overpower music
+- **Filter empty MIDI tracks** (02-06): Only show tracks with notes.length > 0 to avoid metadata/conductor tracks
+- **Replace @tonejs/piano with PolySynth** (02-06): CDN reliability issues led to pure synthesis approach
+- **Piano instrument sharing** (02-06): Programs 0-7 share one instance for fast loading
+- **Percussion channel detection** (02-06): Channel 9 identifies drums, not program number
+- **Minimum duration guard 0.05s** (02-06): Prevents zero-duration note errors in some MIDI files
+- **Instrument detuning** (02-06): Strings vary -5 to -15 cents for distinctiveness within same family
+- **Per-category envelopes** (02-06): Each GM family has characteristic ADSR (piano, drums, strings, brass, etc.)
 
 ### Pending Todos
 
@@ -96,7 +103,7 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-26
-Stopped at: Completed 02-05-PLAN.md (Metronome and Count-in)
+Stopped at: Completed 02-06-PLAN.md (Human Verification) - Phase 2 complete
 Resume file: None
 
-**Phase 2 Status:** In progress - 5 of 6 plans complete. Metronome and count-in features integrated with transport controls.
+**Phase 2 Status:** Complete - All 6 plans executed and verified. Audio Playback Engine fully functional. Ready for Phase 3 planning.
