@@ -2,10 +2,12 @@
 
 import { useProjectStore } from '@/state/projectStore';
 import { useNoteHighlighter } from '@/audio/playback/NoteHighlighter';
+import { useEditStore } from '@/state/editStore';
 
 export function TrackList() {
   const { project, trackDisplayInfo } = useProjectStore();
   const { activeNoteCountByTrack } = useNoteHighlighter();
+  const { selectedTrackIndex, selectTrack } = useEditStore();
 
   if (!project || trackDisplayInfo.length === 0) {
     return null;
@@ -17,15 +19,27 @@ export function TrackList() {
         Tracks ({trackDisplayInfo.length})
       </h2>
       <div className="space-y-2">
-        {trackDisplayInfo.map((track, index) => (
-          <div
-            key={index}
-            className="bg-white border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors"
-          >
+        {trackDisplayInfo.map((track, index) => {
+          const isSelected = selectedTrackIndex === index;
+          return (
+            <div
+              key={index}
+              onClick={() => selectTrack(index)}
+              className={`bg-white border rounded-lg p-4 transition-colors cursor-pointer ${
+                isSelected
+                  ? 'ring-2 ring-blue-500 bg-blue-50 border-blue-500'
+                  : 'border-gray-200 hover:border-gray-300'
+              }`}
+            >
             <div className="flex items-center justify-between">
               <div className="flex-1 min-w-0">
                 <h3 className="font-medium text-gray-900 truncate flex items-center">
                   {track.name}
+                  {isSelected && (
+                    <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                      Editing
+                    </span>
+                  )}
                   {activeNoteCountByTrack.get(index) ? (
                     <span className="inline-flex items-center ml-2">
                       <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
@@ -48,8 +62,9 @@ export function TrackList() {
                 </span>
               </div>
             </div>
-          </div>
-        ))}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
