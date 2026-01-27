@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-23)
 
 **Core value:** Natural language edits must produce musically coherent results that follow music theory, respect genre conventions, and maintain context with the existing track.
-**Current focus:** Phase 2 - Audio Playback Engine
+**Current focus:** Phase 3 - Piano Roll Editor
 
 ## Current Position
 
-Phase: 2 of 8 (Audio Playback Engine)
-Plan: 6 of 6 in current phase
-Status: Phase complete
-Last activity: 2026-01-26 — Completed 02-06-PLAN.md (Human Verification) - Phase 2 complete
+Phase: 3 of 8 (Piano Roll Editor)
+Plan: 1 of 6 in current phase
+Status: In progress
+Last activity: 2026-01-27 — Completed 03-01-PLAN.md
 
-Progress: [██████████] 100% (12/12 plans)
+Progress: [█████████████░░░░░] 72% (13/18 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 12
-- Average duration: 2.4 minutes
-- Total execution time: 0.48 hours
+- Total plans completed: 13
+- Average duration: 2.3 minutes
+- Total execution time: 0.50 hours
 
 **By Phase:**
 
@@ -29,10 +29,11 @@ Progress: [██████████] 100% (12/12 plans)
 |-------|-------|-------|----------|
 | 01-foundation-a-midi-infrastructure | 6 | 16.9 min | 2.8 min |
 | 02-audio-playback-engine | 6 | 14.5 min | 2.4 min |
+| 03-piano-roll-editor | 1 | 1.4 min | 1.4 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-01 (2.0 min), 02-02 (2.4 min), 02-03 (2.4 min), 02-04 (2.4 min), 02-05 (2.4 min)
-- Trend: Consistently fast execution (2-4 min range)
+- Last 5 plans: 02-02 (2.4 min), 02-03 (2.4 min), 02-04 (2.4 min), 02-05 (2.4 min), 03-01 (1.4 min)
+- Trend: Extremely fast execution for state management (1.4 min)
 
 *Updated after each plan completion*
 
@@ -91,6 +92,11 @@ Recent decisions affecting current work:
 - **Minimum duration guard 0.05s** (02-06): Prevents zero-duration note errors in some MIDI files
 - **Instrument detuning** (02-06): Strings vary -5 to -15 cents for distinctiveness within same family
 - **Per-category envelopes** (02-06): Each GM family has characteristic ADSR (piano, drums, strings, brass, etc.)
+- **structuredClone for immutability** (03-01): Use native structuredClone() instead of JSON.parse/stringify for history snapshots
+- **100-entry history cap** (03-01): Cap undo/redo history at 100 entries to prevent memory bloat
+- **Per-track history initialization** (03-01): Each track gets independent HistoryManager on selectTrack
+- **Auto-sort notes by ticks** (03-01): All note mutations automatically re-sort by ticks for chronological order
+- **Cross-store sync via getState()** (03-01): Edit store reads/writes projectStore via getState() pattern
 
 ### Pending Todos
 
@@ -102,8 +108,8 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-26
-Stopped at: Completed 02-06-PLAN.md (Human Verification) - Phase 2 complete
+Last session: 2026-01-27
+Stopped at: Completed 03-01-PLAN.md
 Resume file: None
 
-**Phase 2 Status:** Complete - All 6 plans executed and verified. Audio Playback Engine fully functional. Ready for Phase 3 planning.
+**Phase 3 Status:** In progress - 1 of 6 plans complete. Edit state management layer complete (HistoryManager + editStore). Ready for piano roll rendering.
