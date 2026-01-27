@@ -2,10 +2,11 @@ import { Transport, Part } from 'tone';
 import type { HaydnProject, HaydnTrack, HaydnNote } from '@/lib/midi/types';
 import { createInstrument, type InstrumentInstance } from '@/audio/instruments/InstrumentFactory';
 import { ticksToSeconds, midiToNoteName } from '@/audio/utils/timeConversion';
+import { isPercussionChannel } from '@/lib/instruments/gm-mapping';
 
 // Store references to scheduled parts and instruments for cleanup
 let scheduledParts: Part[] = [];
-let loadedInstruments: Map<number, InstrumentInstance> = new Map();
+let loadedInstruments: Map<number | string, InstrumentInstance> = new Map();
 
 interface ScheduledNote {
   time: number;      // Start time in seconds
@@ -47,16 +48,24 @@ export async function scheduleNotes(project: HaydnProject): Promise<void> {
     // Skip empty tracks
     if (track.notes.length === 0) continue;
 
-    // Normalize piano programs (0-7) to share the same instrument
-    // @tonejs/piano is the same sample set for all piano types
-    const isPiano = track.instrumentNumber >= 0 && track.instrumentNumber <= 7;
-    const instrumentKey = isPiano ? 0 : track.instrumentNumber;
+    // Determine instrument key for reuse/sharing
+    const isPercussion = isPercussionChannel(track.channel);
+    const isPiano = !isPercussion && (track.instrumentNumber >= 0 && track.instrumentNumber <= 7);
+
+    // Use unique keys:
+    // - Percussion: 'percussion' (channel 9, any program)
+    // - Piano: 0 (programs 0-7 share)
+    // - Others: their program number
+    const instrumentKey = isPercussion ? 'percussion' : (isPiano ? 0 : track.instrumentNumber);
 
     // Create or reuse instrument for this GM program
     let instrument = loadedInstruments.get(instrumentKey);
     if (!instrument) {
-      instrument = await createInstrument(track.instrumentNumber);
+      console.log(`[NoteScheduler] Creating instrument for track ${trackIndex} "${track.name}": GM program ${track.instrumentNumber}, channel ${track.channel} (key: ${instrumentKey})`);
+      instrument = await createInstrument(track.instrumentNumber, track.channel);
       loadedInstruments.set(instrumentKey, instrument);
+    } else {
+      console.log(`[NoteScheduler] Reusing instrument for track ${trackIndex} "${track.name}": GM program ${track.instrumentNumber}, channel ${track.channel} (key: ${instrumentKey})`);
     }
 
     // Convert notes to scheduled events

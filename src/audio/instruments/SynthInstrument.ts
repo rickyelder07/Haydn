@@ -17,6 +17,8 @@ export class SynthInstrument implements InstrumentInstance {
     const waveform = this.getWaveformForProgram(gmProgram);
     const envelope = this.getEnvelopeForProgram(gmProgram);
 
+    console.log(`[SynthInstrument] Creating GM program ${gmProgram}: waveform=${waveform}, envelope=`, envelope);
+
     this.synth = new PolySynth(Synth, {
       oscillator: { type: waveform },
       envelope
@@ -27,6 +29,9 @@ export class SynthInstrument implements InstrumentInstance {
   }
 
   private getWaveformForProgram(program: number): OscillatorType {
+    // Special percussion handling (program 999 from InstrumentFactory)
+    if (program === 999) return 'triangle'; // Drums - triangle for punch
+
     // GM program mapping - distinct waveforms per category
     if (program >= 0 && program <= 7) return 'triangle';    // Piano/Chromatic
     if (program >= 8 && program <= 15) return 'sine';       // Percussion
@@ -40,6 +45,12 @@ export class SynthInstrument implements InstrumentInstance {
   }
 
   private getEnvelopeForProgram(program: number): EnvelopeSettings {
+    // Special percussion handling (program 999 from InstrumentFactory)
+    if (program === 999) {
+      // Percussion/Drums: instant attack, very quick decay, no sustain
+      return { attack: 0.001, decay: 0.08, sustain: 0, release: 0.1 };
+    }
+
     // Distinct envelopes for different instrument families
     if (program >= 0 && program <= 7) {
       // Piano: fast attack, moderate decay/sustain, long release
@@ -78,6 +89,9 @@ export class SynthInstrument implements InstrumentInstance {
   }
 
   private getVolumeForProgram(program: number): number {
+    // Special percussion handling
+    if (program === 999) return 0; // Drums at full volume
+
     // Adjust volume for different instrument types
     if (program >= 8 && program <= 15) return -6;  // Percussion quieter
     if (program >= 32 && program <= 39) return 0;  // Bass at normal
