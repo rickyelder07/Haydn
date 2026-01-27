@@ -1,4 +1,4 @@
-import { Piano } from '@tonejs/piano';
+import { PolySynth, Synth } from 'tone';
 
 export interface InstrumentInstance {
   load(): Promise<void>;
@@ -8,30 +8,39 @@ export interface InstrumentInstance {
 }
 
 export class PianoSampler implements InstrumentInstance {
-  private piano: Piano;
-  private loaded = false;
+  private synth: PolySynth;
 
   constructor() {
-    // Use 5 velocity levels (smaller download) per RESEARCH.md
-    this.piano = new Piano({ velocities: 5 }).toDestination();
+    // Use PolySynth with piano-like settings
+    // @tonejs/piano was causing CDN loading issues, using synth instead
+    this.synth = new PolySynth(Synth, {
+      oscillator: { type: 'triangle' },
+      envelope: {
+        attack: 0.005,
+        decay: 0.3,
+        sustain: 0.4,
+        release: 1.5,
+      },
+    }).toDestination();
+
+    // Slightly reduce volume
+    this.synth.volume.value = -3;
   }
 
   async load(): Promise<void> {
-    if (this.loaded) return;
-    await this.piano.load();
-    this.loaded = true;
+    // Synths don't need loading
+    return Promise.resolve();
   }
 
   triggerAttackRelease(note: string, duration: number, time: number, velocity: number): void {
-    this.piano.keyDown({ note, time, velocity });
-    this.piano.keyUp({ note, time: time + duration });
+    this.synth.triggerAttackRelease(note, duration, time, velocity);
   }
 
   releaseAll(): void {
-    this.piano.stopAll();
+    this.synth.releaseAll();
   }
 
   dispose(): void {
-    this.piano.dispose();
+    this.synth.dispose();
   }
 }
