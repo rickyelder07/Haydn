@@ -16,11 +16,15 @@ export class SynthInstrument implements InstrumentInstance {
   constructor(gmProgram: number) {
     const waveform = this.getWaveformForProgram(gmProgram);
     const envelope = this.getEnvelopeForProgram(gmProgram);
+    const detune = this.getDetuneForProgram(gmProgram);
 
-    console.log(`[SynthInstrument] Creating GM program ${gmProgram}: waveform=${waveform}, envelope=`, envelope);
+    console.log(`[SynthInstrument] Creating GM program ${gmProgram}: waveform=${waveform}, detune=${detune}, envelope=`, envelope);
 
     this.synth = new PolySynth(Synth, {
-      oscillator: { type: waveform },
+      oscillator: {
+        type: waveform,
+        ...(detune !== 0 && { detune }) // Add detune if non-zero
+      },
       envelope
     }).toDestination();
 
@@ -97,6 +101,20 @@ export class SynthInstrument implements InstrumentInstance {
     if (program >= 32 && program <= 39) return 0;  // Bass at normal
     if (program >= 40 && program <= 55) return -3; // Strings slightly quieter
     return -3; // Default slightly quieter
+  }
+
+  private getDetuneForProgram(program: number): number {
+    // Add slight detuning to specific instruments for richness/distinction
+    if (program === 40) return 0;    // Violin - no detune (reference pitch)
+    if (program === 41) return -5;   // Viola - slightly flat
+    if (program === 42) return -10;  // Cello - more flat
+    if (program === 43) return -15;  // Contrabass - most flat
+
+    // Chorus effect for organs/pads
+    if (program >= 16 && program <= 23) return 3; // Organs slightly sharp
+    if (program >= 80 && program <= 95) return 5; // Synth pads detuned
+
+    return 0; // No detune for most instruments
   }
 
   async load(): Promise<void> {
