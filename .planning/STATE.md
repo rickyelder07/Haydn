@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-23)
 ## Current Position
 
 Phase: 3 of 8 (Piano Roll Editor)
-Plan: 3 of 6 in current phase
+Plan: 4 of 6 in current phase
 Status: In progress
-Last activity: 2026-01-27 — Completed 03-03-PLAN.md
+Last activity: 2026-01-27 — Completed 03-04-PLAN.md
 
-Progress: [███████████████░░░] 83% (15/18 plans)
+Progress: [████████████████░░] 89% (16/18 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 15
+- Total plans completed: 16
 - Average duration: 2.3 minutes
-- Total execution time: 0.58 hours
+- Total execution time: 0.61 hours
 
 **By Phase:**
 
@@ -29,11 +29,11 @@ Progress: [███████████████░░░] 83% (15/18 pl
 |-------|-------|-------|----------|
 | 01-foundation-a-midi-infrastructure | 6 | 16.9 min | 2.8 min |
 | 02-audio-playback-engine | 6 | 14.5 min | 2.4 min |
-| 03-piano-roll-editor | 3 | 6.4 min | 2.1 min |
+| 03-piano-roll-editor | 4 | 8.4 min | 2.1 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-04 (2.4 min), 02-05 (2.4 min), 03-01 (1.4 min), 03-02 (2.2 min), 03-03 (2.8 min)
-- Trend: Consistent fast execution, sub-3min average maintained
+- Last 5 plans: 02-05 (2.4 min), 03-01 (1.4 min), 03-02 (2.2 min), 03-03 (2.8 min), 03-04 (2.0 min)
+- Trend: Excellent velocity maintained, sub-3min average continues
 
 *Updated after each plan completion*
 
@@ -106,6 +106,10 @@ Recent decisions affecting current work:
 - **Global drag listeners** (03-03): Window mousemove/mouseup during drag prevents loss of tracking outside canvas
 - **Grid snap on mouseup** (03-03): Calculate snap position only when drag completes for responsive feedback
 - **Dual delete methods** (03-03): Right-click OR Shift+Left-click for note deletion (flexibility for trackpad users)
+- **ZoomControls step size 1.25x** (03-04): Smooth incremental zoom without jumpy visual changes
+- **Note inspector right sidebar** (03-04): 192px fixed width keeps inspector always visible when note selected
+- **Platform-aware keyboard shortcuts** (03-04): metaKey on Mac (Cmd), ctrlKey elsewhere for native feel
+- **Modifier-based wheel zoom** (03-04): Ctrl for horizontal, Alt for vertical avoids conflicts with scroll
 
 ### Pending Todos
 
@@ -118,7 +122,7 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-27
-Stopped at: Completed 03-03-PLAN.md
+Stopped at: Completed 03-04-PLAN.md
 Resume file: None
 
-**Phase 3 Status:** In progress - 3 of 6 plans complete. Piano roll editor fully interactive with mouse-based editing (add/delete/move notes), undo/redo toolbar, and scroll controls. Ready for advanced editing features (duration/velocity editing).
+**Phase 3 Status:** In progress - 4 of 6 plans complete. Piano roll editor has complete editing toolset: mouse-based manipulation, zoom controls (H/V independent), note inspector for precise property editing, and keyboard shortcuts (Ctrl/Cmd+Z undo, Ctrl/Cmd+Shift+Z redo). Ready for duration drag editing and page integration.
