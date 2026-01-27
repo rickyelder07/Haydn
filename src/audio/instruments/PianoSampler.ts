@@ -33,7 +33,9 @@ export class PianoSampler implements InstrumentInstance {
   }
 
   triggerAttackRelease(note: string, duration: number, time: number, velocity: number): void {
-    this.synth.triggerAttackRelease(note, duration, time, velocity);
+    // Ensure minimum duration (some MIDI files have zero-duration notes)
+    const safeDuration = Math.max(duration, 0.05);
+    this.synth.triggerAttackRelease(note, safeDuration, time, velocity);
   }
 
   releaseAll(): void {
