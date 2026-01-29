@@ -238,7 +238,6 @@ export function PianoRollEditor() {
           <div
             className="absolute inset-0"
             style={{
-              left: `${PIANO_KEY_WIDTH}px`,
               pointerEvents: 'all',
             }}
           >
