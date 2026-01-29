@@ -235,13 +235,9 @@ export const useEditStore = create<EditState>((set, get) => ({
     });
   },
 
-  // Select a note by ID
+  // Select a note by ID (replaces previous selection for single-select behavior)
   selectNote: (noteId) => {
-    set((state) => {
-      const newSelection = new Set(state.selectedNoteIds);
-      newSelection.add(noteId);
-      return { selectedNoteIds: newSelection };
-    });
+    set({ selectedNoteIds: new Set([noteId]) });
   },
 
   // Clear all note selections
