@@ -99,46 +99,58 @@ export function PianoRollEditor() {
     scrollY,
   });
 
-  // Wheel handler for scrolling and zooming
-  const handleWheel = (e: React.WheelEvent) => {
-    e.preventDefault();
-    e.stopPropagation(); // Prevent event from bubbling to page scroll
+  // Native wheel event listener with passive:false to prevent page scroll
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
 
-    const pixelsPerTick = 0.1 * zoomX;
-    const totalHeight = 128 * NOTE_HEIGHT;
-    const totalWidth = (durationTicks + ppq * 4) * pixelsPerTick; // Add 4 beats padding
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
 
-    if (e.ctrlKey || e.metaKey) {
-      // Ctrl+Wheel: horizontal zoom
-      const delta = e.deltaY > 0 ? 1 / 1.1 : 1.1;
-      const newZoomX = Math.max(0.25, Math.min(4.0, zoomX * delta));
-      setZoomX(newZoomX);
-    } else if (e.altKey) {
-      // Alt+Wheel: vertical zoom
-      const delta = e.deltaY > 0 ? 1 / 1.1 : 1.1;
-      const newZoomY = Math.max(0.5, Math.min(3.0, zoomY * delta));
-      setZoomY(newZoomY);
-    } else if (e.shiftKey) {
-      // Shift+Wheel: horizontal scroll (for mouse users)
-      const newScrollX = scrollX + e.deltaY;
-      setScrollX(Math.max(0, Math.min(newScrollX, totalWidth - canvasWidth)));
-    } else {
-      // Handle both vertical (deltaY) and horizontal (deltaX) scroll
-      // This supports trackpad two-finger gestures in both directions
+      const pixelsPerTick = 0.1 * zoomX;
+      const totalHeight = 128 * NOTE_HEIGHT;
+      const totalWidth = (durationTicks + ppq * 4) * pixelsPerTick;
 
-      // Vertical scroll
-      if (e.deltaY !== 0) {
-        const newScrollY = scrollY + e.deltaY;
-        setScrollY(Math.max(0, Math.min(newScrollY, totalHeight - canvasHeight)));
-      }
-
-      // Horizontal scroll (trackpad horizontal swipe or shift+wheel)
-      if (e.deltaX !== 0) {
-        const newScrollX = scrollX + e.deltaX;
+      if (e.ctrlKey || e.metaKey) {
+        // Ctrl+Wheel: horizontal zoom
+        const delta = e.deltaY > 0 ? 1 / 1.1 : 1.1;
+        const newZoomX = Math.max(0.25, Math.min(4.0, zoomX * delta));
+        setZoomX(newZoomX);
+      } else if (e.altKey) {
+        // Alt+Wheel: vertical zoom
+        const delta = e.deltaY > 0 ? 1 / 1.1 : 1.1;
+        const newZoomY = Math.max(0.5, Math.min(3.0, zoomY * delta));
+        setZoomY(newZoomY);
+      } else if (e.shiftKey) {
+        // Shift+Wheel: horizontal scroll (for mouse users)
+        const newScrollX = scrollX + e.deltaY;
         setScrollX(Math.max(0, Math.min(newScrollX, totalWidth - canvasWidth)));
+      } else {
+        // Handle both vertical (deltaY) and horizontal (deltaX) scroll
+        // This supports trackpad two-finger gestures in both directions
+
+        // Vertical scroll
+        if (e.deltaY !== 0) {
+          const newScrollY = scrollY + e.deltaY;
+          setScrollY(Math.max(0, Math.min(newScrollY, totalHeight - canvasHeight)));
+        }
+
+        // Horizontal scroll (trackpad horizontal swipe)
+        if (e.deltaX !== 0) {
+          const newScrollX = scrollX + e.deltaX;
+          setScrollX(Math.max(0, Math.min(newScrollX, totalWidth - canvasWidth)));
+        }
       }
-    }
-  };
+    };
+
+    // Use { passive: false } to allow preventDefault() to work
+    container.addEventListener('wheel', handleWheel, { passive: false });
+
+    return () => {
+      container.removeEventListener('wheel', handleWheel);
+    };
+  }, [zoomX, zoomY, scrollX, scrollY, durationTicks, ppq, canvasWidth, canvasHeight]);
 
   if (!project || selectedTrackIndex === null) {
     return (
@@ -218,7 +230,6 @@ export function PianoRollEditor() {
           overflow: 'hidden', // Prevent scrolling from bubbling to page
           touchAction: 'none', // Prevent touch gestures from affecting page scroll
         }}
-        onWheel={handleWheel}
       >
         {/* Piano keys sidebar */}
         <div className="flex-shrink-0">
