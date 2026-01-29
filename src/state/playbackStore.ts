@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { getPlaybackController, type PlaybackState, type PlaybackPosition } from '@/audio/playback/PlaybackController';
 import { formatTime, ticksToBarsBeat } from '@/audio/utils/timeConversion';
 import type { HaydnProject } from '@/lib/midi/types';
-import { startWithCountIn } from '@/audio/playback/CountIn';
+import { startWithCountIn, cancelCountIn } from '@/audio/playback/CountIn';
 import { getMetronome } from '@/audio/playback/Metronome';
 
 interface PlaybackStoreState {
@@ -14,6 +14,7 @@ interface PlaybackStoreState {
   isLoading: boolean;
   countInBars: number;
   metronomeEnabled: boolean;
+  isCountingIn: boolean;
 
   // Computed display values
   formattedPosition: string;
@@ -85,6 +86,7 @@ export const usePlaybackStore = create<PlaybackStoreState>((set, get) => {
     isLoading: false,
     countInBars: 0,
     metronomeEnabled: false,
+    isCountingIn: false,
 
     formattedPosition: '0:00',
     formattedDuration: '0:00',
@@ -135,10 +137,22 @@ export const usePlaybackStore = create<PlaybackStoreState>((set, get) => {
       } else {
         // Start with count-in if enabled
         if (state.countInBars > 0) {
-          await startWithCountIn(state.countInBars);
-          // Start metronome after count-in if enabled
-          if (state.metronomeEnabled) {
-            getMetronome().start();
+          // Set state to playing so pause works during count-in
+          set({ playbackState: 'playing', isCountingIn: true });
+
+          try {
+            await startWithCountIn(state.countInBars);
+            // Count-in completed, now start actual playback
+            set({ isCountingIn: false });
+            await controller.play();
+            // Start metronome after count-in if enabled
+            if (state.metronomeEnabled) {
+              getMetronome().start();
+            }
+          } catch (error) {
+            // Count-in was cancelled or failed
+            set({ playbackState: 'stopped', isCountingIn: false });
+            throw error;
           }
         } else {
           await controller.play();
@@ -152,6 +166,17 @@ export const usePlaybackStore = create<PlaybackStoreState>((set, get) => {
 
     pause: () => {
       ensureInitialized();
+      const state = get();
+
+      // If counting in, cancel it and stop
+      if (state.isCountingIn) {
+        cancelCountIn();
+        set({ playbackState: 'stopped', isCountingIn: false });
+        getMetronome().stop();
+        return;
+      }
+
+      // Normal pause
       const controller = getPlaybackController();
       controller.pause();
       // Stop metronome during pause

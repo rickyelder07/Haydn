@@ -217,10 +217,9 @@ export function PianoRollCanvas({
 
         // Color based on velocity and selection
         const hue = isSelected ? 40 : 210; // Gold for selected, blue for normal
-        const lightness = 40 + note.velocity * 20; // Brighter = louder (40-60%)
-        const saturation = 70;
-
-        ctx.fillStyle = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+        const baseLightness = 40 + note.velocity * 20; // Brighter = louder (40-60%)
+        const lightness = isSelected ? Math.min(baseLightness + 15, 75) : baseLightness; // Selected notes are brighter
+        const saturation = isSelected ? 85 : 70; // Selected notes more saturated
 
         // Draw rounded rectangle
         const radius = 3;
@@ -235,13 +234,26 @@ export function PianoRollCanvas({
         ctx.lineTo(x, y + radius);
         ctx.quadraticCurveTo(x, y, x + radius, y);
         ctx.closePath();
+
+        // Add glow effect for selected notes
+        if (isSelected) {
+          ctx.shadowColor = `hsl(${hue}, 100%, 60%)`;
+          ctx.shadowBlur = 8;
+          ctx.shadowOffsetX = 0;
+          ctx.shadowOffsetY = 0;
+        }
+
+        ctx.fillStyle = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
         ctx.fill();
 
         // Draw border for selected notes
         if (isSelected) {
-          ctx.strokeStyle = `hsl(${hue}, ${saturation}%, ${lightness + 10}%)`;
-          ctx.lineWidth = 2;
+          ctx.strokeStyle = `hsl(${hue}, 100%, ${lightness + 20}%)`;
+          ctx.lineWidth = 3;
           ctx.stroke();
+
+          // Reset shadow for other drawing
+          ctx.shadowBlur = 0;
         }
       });
 

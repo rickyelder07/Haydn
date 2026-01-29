@@ -97,6 +97,7 @@ export function PianoRollEditor() {
     zoomY,
     scrollX,
     scrollY,
+    trackIndex: selectedTrackIndex!,
   });
 
   // Native wheel event listener with passive:false to prevent page scroll

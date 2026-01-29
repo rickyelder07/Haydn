@@ -5,12 +5,34 @@ interface CountInOptions {
   onComplete?: () => void;
 }
 
+// Track active count-in to allow cancellation
+let activeCountIn: {
+  timeoutId: number;
+  synth: MembraneSynth;
+  reject: (reason: Error) => void;
+} | null = null;
+
+/**
+ * Cancel any active count-in.
+ */
+export function cancelCountIn(): void {
+  if (activeCountIn) {
+    clearTimeout(activeCountIn.timeoutId);
+    activeCountIn.synth.dispose();
+    activeCountIn.reject(new Error('Count-in cancelled'));
+    activeCountIn = null;
+  }
+}
+
 /**
  * Play count-in clicks before starting playback.
  * Per CONTEXT.md: Configurable 1-4 bars before playback starts.
  */
 export async function playCountIn(options: CountInOptions): Promise<void> {
   const { bars, onComplete } = options;
+
+  // Cancel any existing count-in
+  cancelCountIn();
 
   if (bars <= 0) {
     onComplete?.();
@@ -40,7 +62,7 @@ export async function playCountIn(options: CountInOptions): Promise<void> {
   const bpm = Transport.bpm.value;
   const secondsPerBeat = 60 / bpm;
 
-  return new Promise<void>((resolve) => {
+  return new Promise<void>((resolve, reject) => {
     const startTime = now();
 
     // Schedule count-in beats
@@ -58,11 +80,15 @@ export async function playCountIn(options: CountInOptions): Promise<void> {
     // Wait for count-in to complete, then resolve
     const countInDuration = totalBeats * secondsPerBeat;
 
-    setTimeout(() => {
+    const timeoutId = window.setTimeout(() => {
       synth.dispose();
+      activeCountIn = null;
       onComplete?.();
       resolve();
     }, countInDuration * 1000);
+
+    // Track active count-in for cancellation
+    activeCountIn = { timeoutId, synth, reject };
   });
 }
 

@@ -30,6 +30,7 @@ interface UsePianoRollInteractionsParams {
   zoomY: number;
   scrollX: number;
   scrollY: number;
+  trackIndex: number;
 }
 
 export function usePianoRollInteractions({
@@ -40,6 +41,7 @@ export function usePianoRollInteractions({
   zoomY,
   scrollX,
   scrollY,
+  trackIndex,
 }: UsePianoRollInteractionsParams) {
   const editStore = useEditStore();
   const [dragState, setDragState] = useState<DragState | null>(null);
@@ -122,7 +124,7 @@ export function usePianoRollInteractions({
         // Left-click -> Select and start drag
         if (e.button === 0) {
           // Select note (future: multi-select with shift)
-          const noteId = `${hitNoteIndex}`;
+          const noteId = `${trackIndex}-${hitNoteIndex}`;
           editStore.selectNote(noteId);
 
           // Start drag state
