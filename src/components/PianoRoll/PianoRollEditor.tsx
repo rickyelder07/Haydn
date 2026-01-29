@@ -102,6 +102,7 @@ export function PianoRollEditor() {
   // Wheel handler for scrolling and zooming
   const handleWheel = (e: React.WheelEvent) => {
     e.preventDefault();
+    e.stopPropagation(); // Prevent event from bubbling to page scroll
 
     const pixelsPerTick = 0.1 * zoomX;
     const totalHeight = 128 * NOTE_HEIGHT;
@@ -118,13 +119,24 @@ export function PianoRollEditor() {
       const newZoomY = Math.max(0.5, Math.min(3.0, zoomY * delta));
       setZoomY(newZoomY);
     } else if (e.shiftKey) {
-      // Horizontal scroll
+      // Shift+Wheel: horizontal scroll (for mouse users)
       const newScrollX = scrollX + e.deltaY;
       setScrollX(Math.max(0, Math.min(newScrollX, totalWidth - canvasWidth)));
     } else {
+      // Handle both vertical (deltaY) and horizontal (deltaX) scroll
+      // This supports trackpad two-finger gestures in both directions
+
       // Vertical scroll
-      const newScrollY = scrollY + e.deltaY;
-      setScrollY(Math.max(0, Math.min(newScrollY, totalHeight - canvasHeight)));
+      if (e.deltaY !== 0) {
+        const newScrollY = scrollY + e.deltaY;
+        setScrollY(Math.max(0, Math.min(newScrollY, totalHeight - canvasHeight)));
+      }
+
+      // Horizontal scroll (trackpad horizontal swipe or shift+wheel)
+      if (e.deltaX !== 0) {
+        const newScrollX = scrollX + e.deltaX;
+        setScrollX(Math.max(0, Math.min(newScrollX, totalWidth - canvasWidth)));
+      }
     }
   };
 
@@ -137,7 +149,7 @@ export function PianoRollEditor() {
   }
 
   return (
-    <div className="w-full border rounded-lg overflow-hidden bg-gray-900">
+    <div className="w-full border rounded-lg overflow-hidden bg-gray-900" style={{ isolation: 'isolate' }}>
       {/* Toolbar */}
       <div className="flex items-center gap-2 px-4 py-2 bg-gray-800 border-b border-gray-700">
         {/* Undo button */}
@@ -201,7 +213,11 @@ export function PianoRollEditor() {
       <div
         ref={containerRef}
         className="relative flex"
-        style={{ height: `${EDITOR_HEIGHT - 40}px` }}
+        style={{
+          height: `${EDITOR_HEIGHT - 40}px`,
+          overflow: 'hidden', // Prevent scrolling from bubbling to page
+          touchAction: 'none', // Prevent touch gestures from affecting page scroll
+        }}
         onWheel={handleWheel}
       >
         {/* Piano keys sidebar */}
