@@ -26,9 +26,10 @@ export function NoteInspector({ note, noteIndex, ppq, onUpdate, onDelete }: Note
   const velocityPercent = Math.round(note.velocity * 100);
 
   const handleDurationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newDuration = parseInt(e.target.value, 10);
-    if (!isNaN(newDuration) && newDuration > 0) {
-      onUpdate(noteIndex, { durationTicks: newDuration });
+    const newDurationBeats = parseFloat(e.target.value);
+    if (!isNaN(newDurationBeats) && newDurationBeats > 0) {
+      const newDurationTicks = Math.round(newDurationBeats * ppq);
+      onUpdate(noteIndex, { durationTicks: newDurationTicks });
     }
   };
 
@@ -70,17 +71,17 @@ export function NoteInspector({ note, noteIndex, ppq, onUpdate, onDelete }: Note
 
       {/* Duration */}
       <div>
-        <label className="block text-gray-400 mb-1">Duration</label>
+        <label className="block text-gray-400 mb-1">Duration (beats)</label>
         <input
           type="number"
-          value={note.durationTicks}
+          value={durationBeats}
           onChange={handleDurationChange}
-          min="1"
-          step="1"
+          min="0.01"
+          step="0.25"
           className="w-full px-2 py-1 bg-gray-700 text-gray-200 rounded border border-gray-600 focus:border-blue-500 focus:outline-none"
         />
         <div className="text-gray-500 text-xs mt-1">
-          {durationBeats} beats
+          {note.durationTicks} ticks
         </div>
       </div>
 

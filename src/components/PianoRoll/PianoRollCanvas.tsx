@@ -221,32 +221,39 @@ export function PianoRollCanvas({
         const lightness = isSelected ? Math.min(baseLightness + 15, 75) : baseLightness; // Selected notes are brighter
         const saturation = isSelected ? 85 : 70; // Selected notes more saturated
 
-        // Set glow effect BEFORE drawing if selected
+        const radius = 3;
+
+        // Helper function to draw rounded rectangle path
+        const drawRoundedRectPath = (px: number, py: number, width: number, height: number) => {
+          ctx.beginPath();
+          ctx.moveTo(px + radius, py);
+          ctx.lineTo(px + width - radius, py);
+          ctx.quadraticCurveTo(px + width, py, px + width, py + radius);
+          ctx.lineTo(px + width, py + height - radius);
+          ctx.quadraticCurveTo(px + width, py + height, px + width - radius, py + height);
+          ctx.lineTo(px + radius, py + height);
+          ctx.quadraticCurveTo(px, py + height, px, py + height - radius);
+          ctx.lineTo(px, py + radius);
+          ctx.quadraticCurveTo(px, py, px + radius, py);
+          ctx.closePath();
+        };
+
+        // Draw glow background for selected notes
         if (isSelected) {
-          ctx.shadowColor = `hsl(${hue}, 100%, 60%)`;
-          ctx.shadowBlur = 12;
-          ctx.shadowOffsetX = 0;
-          ctx.shadowOffsetY = 0;
-        } else {
-          // Ensure no shadow for unselected notes
-          ctx.shadowBlur = 0;
+          // Draw glow layer with shadow
+          ctx.save();
+          ctx.shadowColor = 'rgba(255, 200, 0, 0.8)'; // Bright yellow-gold glow
+          ctx.shadowBlur = 20;
+          ctx.fillStyle = `hsl(${hue}, 100%, 65%)`;
+          drawRoundedRectPath(x, y, noteWidth, NOTE_HEIGHT);
+          ctx.fill();
+          ctx.restore();
         }
 
-        // Draw rounded rectangle
-        const radius = 3;
-        ctx.beginPath();
-        ctx.moveTo(x + radius, y);
-        ctx.lineTo(x + noteWidth - radius, y);
-        ctx.quadraticCurveTo(x + noteWidth, y, x + noteWidth, y + radius);
-        ctx.lineTo(x + noteWidth, y + NOTE_HEIGHT - radius);
-        ctx.quadraticCurveTo(x + noteWidth, y + NOTE_HEIGHT, x + noteWidth - radius, y + NOTE_HEIGHT);
-        ctx.lineTo(x + radius, y + NOTE_HEIGHT);
-        ctx.quadraticCurveTo(x, y + NOTE_HEIGHT, x, y + NOTE_HEIGHT - radius);
-        ctx.lineTo(x, y + radius);
-        ctx.quadraticCurveTo(x, y, x + radius, y);
-        ctx.closePath();
-
+        // Draw main note (no shadow)
+        ctx.shadowBlur = 0;
         ctx.fillStyle = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+        drawRoundedRectPath(x, y, noteWidth, NOTE_HEIGHT);
         ctx.fill();
 
         // Draw border for selected notes
@@ -254,11 +261,6 @@ export function PianoRollCanvas({
           ctx.strokeStyle = `hsl(${hue}, 100%, ${lightness + 20}%)`;
           ctx.lineWidth = 3;
           ctx.stroke();
-        }
-
-        // Reset shadow after drawing selected note
-        if (isSelected) {
-          ctx.shadowBlur = 0;
         }
       });
 
