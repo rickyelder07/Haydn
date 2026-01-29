@@ -66,21 +66,21 @@ export function PianoRollCanvas({
 
     // Calculate MIDI coordinates
     const clickTicks = xToTicks(x, pixelsPerTick, scrollX);
-    const clickMidi = yToMidi(y, scrollY);
+    const clickMidi = yToMidi(y, scrollY, zoomY);
 
     // Hit-test notes (check in reverse order so top notes are hit first)
     for (let i = notes.length - 1; i >= 0; i--) {
       const note = notes[i];
       const noteX = ticksToX(note.ticks, pixelsPerTick, scrollX);
       const noteEndX = ticksToX(note.ticks + note.durationTicks, pixelsPerTick, scrollX);
-      const noteY = midiToY(note.midi, scrollY);
+      const noteY = midiToY(note.midi, scrollY, zoomY);
 
       // Check if click is within note bounds
       if (
         x >= noteX &&
         x <= noteEndX &&
         y >= noteY &&
-        y <= noteY + NOTE_HEIGHT
+        y <= noteY + NOTE_HEIGHT * zoomY
       ) {
         // Hit a note
         if (onNoteClick) {
@@ -135,7 +135,8 @@ export function PianoRollCanvas({
         scrollX,
         scrollY,
         ppq,
-        timeSignature
+        timeSignature,
+        zoomY
       );
 
       // Draw horizontal grid lines (one per semitone)
@@ -203,7 +204,7 @@ export function PianoRollCanvas({
 
         const x = ticksToX(note.ticks, pixelsPerTick, scrollX);
         const endX = ticksToX(note.ticks + note.durationTicks, pixelsPerTick, scrollX);
-        const y = midiToY(note.midi, scrollY);
+        const y = midiToY(note.midi, scrollY, zoomY);
 
         // Calculate width with minimum visual size
         let noteWidth = endX - x;
@@ -216,9 +217,9 @@ export function PianoRollCanvas({
         if (y + NOTE_HEIGHT < 0 || y > height) return;
 
         // Color based on velocity and selection
-        const hue = isSelected ? 0 : 210; // RED for selected, blue for normal
+        const hue = isSelected ? 120 : 210; // GREEN for selected, blue for normal
         const baseLightness = 40 + note.velocity * 20; // Brighter = louder (40-60%)
-        const lightness = isSelected ? 60 : baseLightness; // Selected notes bright red
+        const lightness = isSelected ? 60 : baseLightness; // Selected notes bright green
         const saturation = isSelected ? 95 : 70; // Selected notes very saturated
 
         const radius = 3;
@@ -238,14 +239,16 @@ export function PianoRollCanvas({
           ctx.closePath();
         };
 
+        const noteHeightScaled = NOTE_HEIGHT * zoomY;
+
         // Draw glow background for selected notes
         if (isSelected) {
           // Draw glow layer with shadow
           ctx.save();
-          ctx.shadowColor = 'rgba(255, 0, 0, 0.9)'; // Bright red glow
+          ctx.shadowColor = 'rgba(0, 255, 0, 0.9)'; // Bright green glow
           ctx.shadowBlur = 25;
           ctx.fillStyle = `hsl(${hue}, 100%, 70%)`;
-          drawRoundedRectPath(x, y, noteWidth, NOTE_HEIGHT);
+          drawRoundedRectPath(x, y, noteWidth, noteHeightScaled);
           ctx.fill();
           ctx.restore();
         }
@@ -253,16 +256,8 @@ export function PianoRollCanvas({
         // Draw main note (no shadow)
         ctx.shadowBlur = 0;
         ctx.fillStyle = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-        drawRoundedRectPath(x, y, noteWidth, NOTE_HEIGHT);
+        drawRoundedRectPath(x, y, noteWidth, noteHeightScaled);
         ctx.fill();
-
-        // Draw border for selected notes (need to redraw path after fill)
-        if (isSelected) {
-          drawRoundedRectPath(x, y, noteWidth, NOTE_HEIGHT);
-          ctx.strokeStyle = 'rgba(255, 50, 50, 1)'; // Bright red border
-          ctx.lineWidth = 4;
-          ctx.stroke();
-        }
       });
 
       // Draw playhead

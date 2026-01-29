@@ -27,13 +27,13 @@ export function PianoKeysSidebar({ scrollY, height, zoomY = 1.0 }: PianoKeysSide
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // Calculate visible MIDI range
-    const startMidi = MIDI_MAX - Math.floor((height + scrollY) / NOTE_HEIGHT);
-    const endMidi = MIDI_MAX - Math.floor(scrollY / NOTE_HEIGHT) + 1;
+    const startMidi = MIDI_MAX - Math.floor((height + scrollY) / (NOTE_HEIGHT * zoomY));
+    const endMidi = MIDI_MAX - Math.floor(scrollY / (NOTE_HEIGHT * zoomY)) + 1;
 
     // Draw piano keys
     for (let midi = startMidi; midi <= endMidi; midi++) {
-      const y = midiToY(midi, scrollY);
-      const keyHeight = NOTE_HEIGHT;
+      const y = midiToY(midi, scrollY, zoomY);
+      const keyHeight = NOTE_HEIGHT * zoomY;
 
       // Determine if this is a black key
       const note = midi % 12;
@@ -63,8 +63,8 @@ export function PianoKeysSidebar({ scrollY, height, zoomY = 1.0 }: PianoKeysSide
 
     // Draw black keys on top
     for (let midi = startMidi; midi <= endMidi; midi++) {
-      const y = midiToY(midi, scrollY);
-      const keyHeight = NOTE_HEIGHT;
+      const y = midiToY(midi, scrollY, zoomY);
+      const keyHeight = NOTE_HEIGHT * zoomY;
 
       const note = midi % 12;
       const isBlackKey = [1, 3, 6, 8, 10].includes(note);

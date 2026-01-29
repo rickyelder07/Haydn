@@ -32,16 +32,16 @@ export function xToTicks(x: number, pixelsPerTick: number, scrollX: number): num
  * Convert MIDI note number to canvas Y
  * Higher MIDI = higher on screen (invert Y axis)
  */
-export function midiToY(midi: number, scrollY: number): number {
-  return (MIDI_MAX - midi) * NOTE_HEIGHT - scrollY;
+export function midiToY(midi: number, scrollY: number, zoomY: number = 1.0): number {
+  return (MIDI_MAX - midi) * NOTE_HEIGHT * zoomY - scrollY;
 }
 
 /**
  * Convert canvas Y to MIDI note number
  * Clamps to 0-127 range
  */
-export function yToMidi(y: number, scrollY: number): number {
-  const midi = MIDI_MAX - Math.floor((y + scrollY) / NOTE_HEIGHT);
+export function yToMidi(y: number, scrollY: number, zoomY: number = 1.0): number {
+  const midi = MIDI_MAX - Math.floor((y + scrollY) / (NOTE_HEIGHT * zoomY));
   return Math.max(MIDI_MIN, Math.min(MIDI_MAX, midi));
 }
 
@@ -87,7 +87,8 @@ export function getGridLines(
   scrollX: number,
   scrollY: number,
   ppq: number,
-  timeSignature: { numerator: number; denominator: number }
+  timeSignature: { numerator: number; denominator: number },
+  zoomY: number = 1.0
 ): { vertical: GridLine[]; horizontal: GridLine[] } {
   const vertical: GridLine[] = [];
   const horizontal: GridLine[] = [];
@@ -154,11 +155,11 @@ export function getGridLines(
   }
 
   // Generate horizontal grid lines (one per semitone)
-  const startMidi = yToMidi(viewportHeight, scrollY);
-  const endMidi = yToMidi(0, scrollY);
+  const startMidi = yToMidi(viewportHeight, scrollY, zoomY);
+  const endMidi = yToMidi(0, scrollY, zoomY);
 
   for (let midi = startMidi; midi <= endMidi; midi++) {
-    const y = midiToY(midi, scrollY);
+    const y = midiToY(midi, scrollY, zoomY);
 
     if (y < -10 || y > viewportHeight + 10) continue;
 

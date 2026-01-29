@@ -11,7 +11,7 @@ import { ZoomControls } from './ZoomControls';
 import { NoteInspector } from './NoteInspector';
 import { NOTE_HEIGHT, PIANO_KEY_WIDTH } from './gridUtils';
 
-const EDITOR_HEIGHT = 400;
+const EDITOR_HEIGHT = 700;
 
 export function PianoRollEditor() {
   const project = useProjectStore((state) => state.project);
@@ -64,10 +64,10 @@ export function PianoRollEditor() {
 
   // Initialize scroll position to center on C4 (MIDI 60)
   useEffect(() => {
-    const c4Y = (127 - 60) * NOTE_HEIGHT; // Y position of C4
+    const c4Y = (127 - 60) * NOTE_HEIGHT * zoomY; // Y position of C4
     const centerY = c4Y - canvasHeight / 2;
     setScrollY(Math.max(0, centerY));
-  }, [canvasHeight]);
+  }, [canvasHeight, zoomY]);
 
   // Keyboard shortcuts for undo/redo
   useEffect(() => {
@@ -110,7 +110,7 @@ export function PianoRollEditor() {
       e.stopPropagation();
 
       const pixelsPerTick = 0.1 * zoomX;
-      const totalHeight = 128 * NOTE_HEIGHT;
+      const totalHeight = 128 * NOTE_HEIGHT * zoomY;
       const totalWidth = (durationTicks + ppq * 4) * pixelsPerTick;
 
       if (e.ctrlKey || e.metaKey) {
@@ -248,6 +248,7 @@ export function PianoRollEditor() {
             scrollY={scrollY}
             zoomX={zoomX}
             zoomY={zoomY}
+            selectedNoteIds={selectedNoteIds}
             playheadTicks={playheadTicks}
             trackIndex={selectedTrackIndex}
             width={canvasWidth}

@@ -68,7 +68,7 @@ export function usePianoRollInteractions({
         const note = notes[i];
         const noteX = ticksToX(note.ticks, pixelsPerTick, scrollX);
         const noteEndX = ticksToX(note.ticks + note.durationTicks, pixelsPerTick, scrollX);
-        const noteY = midiToY(note.midi, scrollY);
+        const noteY = midiToY(note.midi, scrollY, zoomY);
 
         // Apply minimum width for hit-testing
         let noteWidth = noteEndX - noteX;
@@ -81,7 +81,7 @@ export function usePianoRollInteractions({
           x >= noteX &&
           x <= noteX + noteWidth &&
           y >= noteY &&
-          y <= noteY + NOTE_HEIGHT
+          y <= noteY + NOTE_HEIGHT * zoomY
         ) {
           return i;
         }
@@ -89,7 +89,7 @@ export function usePianoRollInteractions({
 
       return null;
     },
-    [canvasRef, notes, pixelsPerTick, scrollX, scrollY]
+    [canvasRef, notes, pixelsPerTick, scrollX, scrollY, zoomY]
   );
 
   /**
@@ -106,7 +106,7 @@ export function usePianoRollInteractions({
 
       // Convert to MIDI coordinates
       const clickTicks = xToTicks(x, pixelsPerTick, scrollX);
-      const clickMidi = yToMidi(y, scrollY);
+      const clickMidi = yToMidi(y, scrollY, zoomY);
 
       // Hit-test for existing notes
       const hitNoteIndex = hitTestNote(e.clientX, e.clientY);
@@ -159,7 +159,7 @@ export function usePianoRollInteractions({
         }
       }
     },
-    [canvasRef, pixelsPerTick, scrollX, scrollY, ppq, notes, hitTestNote, editStore]
+    [canvasRef, pixelsPerTick, scrollX, scrollY, ppq, notes, hitTestNote, editStore, trackIndex, zoomY]
   );
 
   /**
@@ -189,7 +189,7 @@ export function usePianoRollInteractions({
 
       // Convert delta to ticks and MIDI
       const deltaTicks = deltaX / pixelsPerTick;
-      const deltaMidi = -Math.round(deltaY / NOTE_HEIGHT); // Negative because Y increases downward
+      const deltaMidi = -Math.round(deltaY / (NOTE_HEIGHT * zoomY)); // Negative because Y increases downward
 
       // Calculate new position (not yet snapped)
       const newTicks = dragState.startTicks + deltaTicks;
@@ -219,7 +219,7 @@ export function usePianoRollInteractions({
       const deltaY = e.clientY - dragState.startMouseY;
 
       const deltaTicks = deltaX / pixelsPerTick;
-      const deltaMidi = -Math.round(deltaY / NOTE_HEIGHT);
+      const deltaMidi = -Math.round(deltaY / (NOTE_HEIGHT * zoomY));
 
       // Calculate final position
       const newTicks = dragState.startTicks + deltaTicks;
