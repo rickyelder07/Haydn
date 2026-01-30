@@ -63,13 +63,13 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Editing Interface
 
-- [ ] **EDIT-01**: User can view MIDI notes in piano roll editor
-- [ ] **EDIT-02**: User can manually add notes via piano roll
-- [ ] **EDIT-03**: User can manually delete notes via piano roll
-- [ ] **EDIT-04**: User can manually move notes via piano roll
-- [ ] **EDIT-05**: User can undo previous action
-- [ ] **EDIT-06**: User can redo previously undone action
-- [ ] **EDIT-07**: Piano roll displays all tracks with visual distinction
+- [x] **EDIT-01**: User can view MIDI notes in piano roll editor
+- [x] **EDIT-02**: User can manually add notes via piano roll
+- [x] **EDIT-03**: User can manually delete notes via piano roll
+- [x] **EDIT-04**: User can manually move notes via piano roll
+- [x] **EDIT-05**: User can undo previous action
+- [x] **EDIT-06**: User can redo previously undone action
+- [x] **EDIT-07**: Piano roll displays all tracks with visual distinction
 
 ### Technical Efficiency
 
@@ -175,13 +175,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PLAY-03 | Phase 2 | Pending |
 | PLAY-04 | Phase 2 | Pending |
 | PLAY-05 | Phase 2 | Pending |
-| EDIT-01 | Phase 3 | Pending |
-| EDIT-02 | Phase 3 | Pending |
-| EDIT-03 | Phase 3 | Pending |
-| EDIT-04 | Phase 3 | Pending |
-| EDIT-05 | Phase 3 | Pending |
-| EDIT-06 | Phase 3 | Pending |
-| EDIT-07 | Phase 3 | Pending |
+| EDIT-01 | Phase 3 | Complete |
+| EDIT-02 | Phase 3 | Complete |
+| EDIT-03 | Phase 3 | Complete |
+| EDIT-04 | Phase 3 | Complete |
+| EDIT-05 | Phase 3 | Complete |
+| EDIT-06 | Phase 3 | Complete |
+| EDIT-07 | Phase 3 | Complete |
 | TECH-01 | Phase 1 | Pending |
 | TECH-02 | Phase 5 | Pending |
 | TECH-03 | Phase 1 | Pending |
