@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { TransitionValidator } from '../TransitionValidator';
-import type { ValidationContext, HaydnNote, HaydnTrack, HaydnProject } from '@/lib/music-theory/types';
+import type { ValidationContext } from '@/lib/music-theory/types';
+import type { HaydnNote, HaydnTrack, HaydnProject } from '@/lib/midi/types';
 
 // Helper to create mock validation context with surrounding notes
 function createContext(
@@ -26,14 +27,18 @@ function createContext(
   ];
 
   const track: HaydnTrack = {
-    id: 'test-track',
     name: 'Test Track',
     channel: 0,
-    program: 0,
+    instrumentNumber: 0,
+    instrumentName: 'Acoustic Grand Piano',
     notes: allNotes,
+    controlChanges: [],
   };
 
   const project: HaydnProject = {
+    originalFileName: 'test.mid',
+    sourceFormat: 'midi',
+    durationTicks: 1920,
     metadata: {
       name: 'Test Project',
       ppq: 480, // Important: ppq * 2 = 960 ticks is the neighborhood window

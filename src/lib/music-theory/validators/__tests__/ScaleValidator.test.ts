@@ -1,12 +1,13 @@
 import { describe, it, expect } from 'vitest';
 import { ScaleValidator } from '../ScaleValidator';
-import type { ValidationContext, HaydnNote, HaydnTrack, HaydnProject } from '@/lib/music-theory/types';
+import type { ValidationContext } from '@/lib/music-theory/types';
+import type { HaydnNote, HaydnTrack, HaydnProject } from '@/lib/midi/types';
 
 // Helper to create mock validation context
 function createContext(
   midi: number,
   ticks: number = 0,
-  keySignatures: Array<{ ticks: number; key: string; scale: string }> = []
+  keySignatures: Array<{ ticks: number; key: string; scale: 'major' | 'minor' }> = []
 ): ValidationContext {
   const note: HaydnNote = {
     midi,
@@ -16,14 +17,18 @@ function createContext(
   };
 
   const track: HaydnTrack = {
-    id: 'test-track',
     name: 'Test Track',
     channel: 0,
-    program: 0,
+    instrumentNumber: 0,
+    instrumentName: 'Acoustic Grand Piano',
     notes: [note],
+    controlChanges: [],
   };
 
   const project: HaydnProject = {
+    originalFileName: 'test.mid',
+    sourceFormat: 'midi',
+    durationTicks: 1920,
     metadata: {
       name: 'Test Project',
       ppq: 480,
@@ -63,7 +68,8 @@ describe('ScaleValidator', () => {
       expect(result.errors).toHaveLength(1);
       expect(result.errors[0].type).toBe('scale');
       expect(result.errors[0].severity).toBe('error');
-      expect(result.errors[0].message).toContain('F#');
+      // Accept either F# or Gb (enharmonic equivalents)
+      expect(result.errors[0].message).toMatch(/F#|Gb|F♯/);
       expect(result.errors[0].message).toContain('C major');
     }
   });
@@ -112,7 +118,7 @@ describe('ScaleValidator', () => {
 
   it('is permissive for invalid/unknown scale (returns ok: true)', () => {
     const context = createContext(60, 0, [
-      { ticks: 0, key: 'X', scale: 'unknown' }, // Invalid scale
+      { ticks: 0, key: 'X', scale: 'unknown' as 'major' }, // Invalid scale for testing
     ]);
     const result = validator.validate(context);
     expect(result.ok).toBe(true);
@@ -149,7 +155,8 @@ describe('ScaleValidator', () => {
     if (!result.ok) {
       // Message should contain note name and scale
       const message = result.errors[0].message;
-      expect(message).toMatch(/F#|F♯/i); // Allow either sharp notation
+      // Accept either F# or Gb (enharmonic equivalents)
+      expect(message).toMatch(/F#|Gb|F♯/i);
       expect(message).toContain('C major');
       expect(message.toLowerCase()).toContain('scale');
     }
