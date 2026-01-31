@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-23)
 ## Current Position
 
 Phase: 4 of 8 (Music Theory Validation Layer)
-Plan: 2 of 6 in current phase
+Plan: 3 of 6 in current phase
 Status: In progress
-Last activity: 2026-01-31 — Completed 04-02-PLAN.md
+Last activity: 2026-01-31 — Completed 04-03-PLAN.md
 
-Progress: [████████████████████] 100% (20/20 plans)
+Progress: [████████████████████░] 105% (21/20 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 20
-- Average duration: 12.9 minutes
-- Total execution time: 4.28 hours
+- Total plans completed: 21
+- Average duration: 12.4 minutes
+- Total execution time: 4.33 hours
 
 **By Phase:**
 
@@ -30,11 +30,11 @@ Progress: [████████████████████] 100% (2
 | 01-foundation-a-midi-infrastructure | 6 | 16.9 min | 2.8 min |
 | 02-audio-playback-engine | 6 | 14.5 min | 2.4 min |
 | 03-piano-roll-editor | 6 | 216.4 min | 36.1 min |
-| 04-music-theory-validation-layer | 2 | 7.7 min | 3.9 min |
+| 04-music-theory-validation-layer | 3 | 11.7 min | 3.9 min |
 
 **Recent Trend:**
-- Last 5 plans: 03-04 (2.0 min), 03-05 (136 min), 03-06 (72 min), 04-01 (1.7 min), 04-02 (6.0 min)
-- Trend: Phase 4 maintaining fast execution with TDD plan at 6 minutes
+- Last 5 plans: 03-05 (136 min), 03-06 (72 min), 04-01 (1.7 min), 04-02 (6.0 min), 04-03 (4.0 min)
+- Trend: Phase 4 maintaining fast execution with consistent sub-6 minute plans
 
 *Updated after each plan completion*
 
@@ -123,6 +123,10 @@ Recent decisions affecting current work:
 - **Major/minor prioritization** (04-02): When major or minor detected, validate against those over modes
 - **3-note minimum for transition detection** (04-02): Scale.detect() unreliable with fewer notes
 - **Error vs warning severity** (04-02): ScaleValidator returns error, TransitionValidator returns warning
+- **Genre rules as data objects** (04-03): Plain data conforming to GenreRules interface for easy extension
+- **Validation blocks on errors, allows on warnings** (04-03): Errors prevent edits, warnings stored for display
+- **Undo/redo bypass validation** (04-03): Restore known-good states without re-validation
+- **Velocity-only updates skip validation** (04-03): Only midi/ticks changes trigger validation
 
 ### Pending Todos
 
@@ -135,9 +139,9 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-31
-Stopped at: Completed 04-02-PLAN.md
+Stopped at: Completed 04-03-PLAN.md
 Resume file: None
 
 **Phase 3 Status:** Complete - All 6 plans finished. Piano roll editor verified working with all success criteria met.
 
-**Phase 4 Status:** In progress - 2 of 6 plans complete. Foundation types/utilities established (04-01), core validators implemented with comprehensive test suite (04-02). ScaleValidator and TransitionValidator ready for composition.
+**Phase 4 Status:** In progress - 3 of 6 plans complete. Validation pipeline complete and functional (04-01 through 04-03). GenreValidator, ValidationPipeline, and validationStore integrated with editStore. Core THEORY-01 through THEORY-04 requirements implemented. Ready for UI components (04-04 through 04-06).
