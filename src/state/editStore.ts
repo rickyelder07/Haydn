@@ -2,6 +2,10 @@ import { create } from 'zustand';
 import type { HaydnNote } from '@/lib/midi/types';
 import { HistoryManager } from './historyManager';
 import { useProjectStore } from './projectStore';
+import { useValidationStore } from './validationStore';
+import { createDefaultPipeline } from '@/lib/music-theory/validators/ValidationPipeline';
+import { GENRE_PRESETS } from '@/lib/music-theory/rules/genres';
+import type { ValidationContext } from '@/lib/music-theory/types';
 
 interface EditState {
   // State
@@ -25,6 +29,56 @@ interface EditState {
   selectNote: (noteId: string) => void;
   clearSelection: () => void;
   setEditing: (editing: boolean) => void;
+}
+
+/**
+ * Validate a note before applying an edit
+ * @returns true if edit should proceed, false if validation failed
+ */
+function validateNote(
+  note: HaydnNote,
+  trackIndex: number,
+  editType: 'add' | 'move' | 'update'
+): boolean {
+  const validationState = useValidationStore.getState();
+  const projectState = useProjectStore.getState();
+
+  // Clear previous validation result
+  validationState.clearResult();
+
+  // If validation disabled, allow edit
+  if (!validationState.enabled) {
+    return true;
+  }
+
+  // Get project and track
+  const project = projectState.project;
+  if (!project || trackIndex < 0 || trackIndex >= project.tracks.length) {
+    return true; // No project/track = allow edit
+  }
+
+  const track = project.tracks[trackIndex];
+
+  // Build validation context
+  const context: ValidationContext = {
+    note,
+    track,
+    project,
+    editType,
+  };
+
+  // Get genre rules
+  const genreRules = GENRE_PRESETS[validationState.activeGenre];
+
+  // Create and run validation pipeline
+  const pipeline = createDefaultPipeline(genreRules);
+  const result = pipeline.validate(context);
+
+  // Store validation result
+  validationState.setLastResult(result.errors, result.warnings);
+
+  // Return whether edit is valid (true = allow, false = block)
+  return result.valid;
 }
 
 export const useEditStore = create<EditState>((set, get) => ({
@@ -64,6 +118,13 @@ export const useEditStore = create<EditState>((set, get) => ({
 
     const project = useProjectStore.getState().project;
     if (!project) return;
+
+    // Validate note before applying edit
+    const isValid = validateNote(note, state.selectedTrackIndex, 'add');
+    if (!isValid) {
+      // Validation failed (errors present) - do NOT apply edit
+      return;
+    }
 
     // Get current notes, add new note, sort by ticks
     const currentNotes = [...project.tracks[state.selectedTrackIndex].notes];
@@ -129,12 +190,22 @@ export const useEditStore = create<EditState>((set, get) => ({
       return;
     }
 
-    // Update note position
-    currentNotes[noteIndex] = {
+    // Create updated note for validation
+    const updatedNote: HaydnNote = {
       ...currentNotes[noteIndex],
       midi: newMidi,
       ticks: newTicks,
     };
+
+    // Validate note before applying edit
+    const isValid = validateNote(updatedNote, state.selectedTrackIndex, 'move');
+    if (!isValid) {
+      // Validation failed - do NOT apply move
+      return;
+    }
+
+    // Update note position
+    currentNotes[noteIndex] = updatedNote;
 
     // Re-sort by ticks
     currentNotes.sort((a, b) => a.ticks - b.ticks);
@@ -167,11 +238,25 @@ export const useEditStore = create<EditState>((set, get) => ({
       return;
     }
 
-    // Apply updates
-    currentNotes[noteIndex] = {
+    // Create updated note
+    const updatedNote: HaydnNote = {
       ...currentNotes[noteIndex],
       ...updates,
     };
+
+    // Only validate if midi or ticks changed (not for velocity-only changes)
+    const shouldValidate = updates.midi !== undefined || updates.ticks !== undefined;
+
+    if (shouldValidate) {
+      const isValid = validateNote(updatedNote, state.selectedTrackIndex, 'update');
+      if (!isValid) {
+        // Validation failed - do NOT apply update
+        return;
+      }
+    }
+
+    // Apply updates
+    currentNotes[noteIndex] = updatedNote;
 
     // Re-sort if ticks changed
     if (updates.ticks !== undefined) {
