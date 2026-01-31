@@ -30,6 +30,7 @@ interface PianoRollCanvasProps {
   trackIndex: number;
   width: number;
   height: number;
+  scalePitchClasses?: Set<number> | null;
 }
 
 export function PianoRollCanvas({
@@ -49,6 +50,7 @@ export function PianoRollCanvas({
   trackIndex,
   width,
   height,
+  scalePitchClasses,
 }: PianoRollCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationFrameRef = useRef<number | null>(null);
@@ -138,6 +140,29 @@ export function PianoRollCanvas({
         timeSignature,
         zoomY
       );
+
+      // Draw scale-aware row highlighting (if enabled)
+      if (scalePitchClasses && scalePitchClasses.size > 0) {
+        // Calculate visible MIDI range
+        const startMidi = Math.floor(scrollY / (NOTE_HEIGHT * zoomY));
+        const endMidi = Math.ceil((scrollY + height) / (NOTE_HEIGHT * zoomY));
+
+        for (let midi = startMidi; midi <= endMidi && midi < 128; midi++) {
+          const pitchClass = midi % 12;
+          const y = midiToY(midi, scrollY, zoomY);
+
+          // Subtle highlighting based on scale membership
+          if (scalePitchClasses.has(pitchClass)) {
+            // In-scale: very faint blue tint
+            ctx.fillStyle = 'rgba(59, 130, 246, 0.06)';
+          } else {
+            // Out-of-scale: very faint red tint
+            ctx.fillStyle = 'rgba(239, 68, 68, 0.04)';
+          }
+
+          ctx.fillRect(0, y, width, NOTE_HEIGHT * zoomY);
+        }
+      }
 
       // Draw horizontal grid lines (one per semitone)
       gridLines.horizontal.forEach((line) => {
@@ -295,6 +320,7 @@ export function PianoRollCanvas({
     trackIndex,
     width,
     height,
+    scalePitchClasses,
   ]);
 
   return (
