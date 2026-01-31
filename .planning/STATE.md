@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-23)
 
 **Core value:** Natural language edits must produce musically coherent results that follow music theory, respect genre conventions, and maintain context with the existing track.
-**Current focus:** Phase 3 - Piano Roll Editor
+**Current focus:** Phase 4 - Music Theory Validation Layer
 
 ## Current Position
 
-Phase: 3 of 8 (Piano Roll Editor)
-Plan: 6 of 6 in current phase
-Status: Phase complete
-Last activity: 2026-01-29 — Completed 03-06-PLAN.md
+Phase: 4 of 8 (Music Theory Validation Layer)
+Plan: 1 of 6 in current phase
+Status: In progress
+Last activity: 2026-01-31 — Completed 04-01-PLAN.md
 
-Progress: [██████████████████] 100% (18/18 plans)
+Progress: [███████████████████░] 95% (19/20 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 18
-- Average duration: 14.2 minutes
-- Total execution time: 4.08 hours
+- Total plans completed: 19
+- Average duration: 13.4 minutes
+- Total execution time: 4.11 hours
 
 **By Phase:**
 
@@ -30,10 +30,11 @@ Progress: [██████████████████] 100% (18/18 p
 | 01-foundation-a-midi-infrastructure | 6 | 16.9 min | 2.8 min |
 | 02-audio-playback-engine | 6 | 14.5 min | 2.4 min |
 | 03-piano-roll-editor | 6 | 216.4 min | 36.1 min |
+| 04-music-theory-validation-layer | 1 | 1.7 min | 1.7 min |
 
 **Recent Trend:**
-- Last 5 plans: 03-02 (2.2 min), 03-03 (2.8 min), 03-04 (2.0 min), 03-05 (136 min), 03-06 (72 min)
-- Trend: Phase 3 plans averaged longer due to complex visual component development and human verification
+- Last 5 plans: 03-03 (2.8 min), 03-04 (2.0 min), 03-05 (136 min), 03-06 (72 min), 04-01 (1.7 min)
+- Trend: Phase 4 started with fast foundational type/utility plan
 
 *Updated after each plan completion*
 
@@ -113,6 +114,10 @@ Recent decisions affecting current work:
 - **Responsive layout strategy** (03-05): max-w-7xl for piano roll/transport (wider canvas), max-w-4xl for metadata/tracks
 - **Auto-select first track on load** (03-05): Finds first track with notes.length > 0 and auto-selects for immediate editing
 - **Human verification checkpoint** (03-06): Manual testing confirmed all 6 phase success criteria pass for piano roll editor
+- **Tonal.js main package** (04-01): Use main tonal package (not individual @tonaljs/* subpackages) for simpler dependency management
+- **Discriminated union Result type** (04-01): Use { ok: true } | { ok: false; errors: [] } pattern instead of fp-ts or monads library
+- **Chroma-based pitch comparison** (04-01): Use Note.chroma() for enharmonic-safe comparison (F# vs Gb both have chroma 6)
+- **Permissive invalid scale handling** (04-01): Return true/empty for invalid scales to avoid blocking validation on missing/bad data
 
 ### Pending Todos
 
@@ -124,8 +129,10 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-29
-Stopped at: Completed 03-06-PLAN.md (Phase 3 complete)
+Last session: 2026-01-31
+Stopped at: Completed 04-01-PLAN.md
 Resume file: None
 
-**Phase 3 Status:** Complete - All 6 plans finished. Piano roll editor verified working with all success criteria met: note display, add, delete, move, undo, and redo functionality. Ready for Phase 4 (Smart MIDI Parser).
+**Phase 3 Status:** Complete - All 6 plans finished. Piano roll editor verified working with all success criteria met.
+
+**Phase 4 Status:** In progress - 1 of 6 plans complete. Foundation types and utilities established with Tonal.js integration, validation types, pitch class conversion, and time-aware key signature lookup.
