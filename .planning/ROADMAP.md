@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation & MIDI Infrastructure** - File I/O, MIDI parsing, data model
 - [x] **Phase 2: Audio Playback Engine** - Precise timing, transport controls, synthesis
-- [ ] **Phase 3: Piano Roll Editor** - Visual editing interface with manual note control
+- [x] **Phase 3: Piano Roll Editor** - Visual editing interface with manual note control
 - [ ] **Phase 4: Music Theory Validation Layer** - Theory engine for coherent edits
 - [ ] **Phase 5: Natural Language Editing - Single-Shot** - Core NL editing with token efficiency
 - [ ] **Phase 6: Natural Language Generation** - Create MIDI from text prompts
@@ -56,12 +56,12 @@ Plans:
 **Plans**: 6 plans in 6 waves
 
 Plans:
-- [ ] 02-01-PLAN.md - Install Tone.js, AudioEngine singleton, InstrumentFactory (Wave 1)
-- [ ] 02-02-PLAN.md - Time conversion, NoteScheduler, PlaybackController (Wave 2)
-- [ ] 02-03-PLAN.md - Playback store, TransportControls UI (Wave 3)
-- [ ] 02-04-PLAN.md - Keyboard shortcuts, note highlighting, page integration (Wave 4)
-- [ ] 02-05-PLAN.md - Metronome, count-in (Wave 5)
-- [ ] 02-06-PLAN.md - Human verification checkpoint (Wave 6)
+- [x] 02-01-PLAN.md - Install Tone.js, AudioEngine singleton, InstrumentFactory (Wave 1)
+- [x] 02-02-PLAN.md - Time conversion, NoteScheduler, PlaybackController (Wave 2)
+- [x] 02-03-PLAN.md - Playback store, TransportControls UI (Wave 3)
+- [x] 02-04-PLAN.md - Keyboard shortcuts, note highlighting, page integration (Wave 4)
+- [x] 02-05-PLAN.md - Metronome, count-in (Wave 5)
+- [x] 02-06-PLAN.md - Human verification checkpoint (Wave 6)
 
 ### Phase 3: Piano Roll Editor
 **Goal**: Users can visually edit MIDI notes with manual control and undo/redo
@@ -77,15 +77,15 @@ Plans:
 **Plans**: 6 plans in 5 waves
 
 Plans:
-- [ ] 03-01-PLAN.md - Undo/redo history manager and edit store (Wave 1)
-- [ ] 03-02-PLAN.md - Piano roll canvas rendering, grid, piano keys sidebar (Wave 1, parallel)
-- [ ] 03-03-PLAN.md - Note interactions: add, delete, move with assembled editor (Wave 2)
-- [ ] 03-04-PLAN.md - Zoom controls and note inspector panel (Wave 3)
-- [ ] 03-05-PLAN.md - Page integration, track selection, keyboard shortcuts (Wave 4)
-- [ ] 03-06-PLAN.md - Human verification checkpoint (Wave 5)
+- [x] 03-01-PLAN.md - Undo/redo history manager and edit store (Wave 1)
+- [x] 03-02-PLAN.md - Piano roll canvas rendering, grid, piano keys sidebar (Wave 1, parallel)
+- [x] 03-03-PLAN.md - Note interactions: add, delete, move with assembled editor (Wave 2)
+- [x] 03-04-PLAN.md - Zoom controls and note inspector panel (Wave 3)
+- [x] 03-05-PLAN.md - Page integration, track selection, keyboard shortcuts (Wave 4)
+- [x] 03-06-PLAN.md - Human verification checkpoint (Wave 5)
 
 ### Phase 4: Music Theory Validation Layer
-**Goal**: System validates all edits against music theory rules before applying
+**Goal**: System validates all edits against music theory rules before applying, with visual feedback showing scale conformance
 **Depends on**: Phase 3
 **Requirements**: THEORY-01, THEORY-02, THEORY-03, THEORY-04
 **Success Criteria** (what must be TRUE):
@@ -93,10 +93,14 @@ Plans:
   2. Chord progressions follow functional harmony rules for the specified genre
   3. Transitions between edited and existing sections sound smooth without jarring key changes
   4. System provides visual feedback showing which notes conform to current key/scale
-**Plans**: TBD
+**Plans**: 5 plans in 5 waves
 
 Plans:
-- [ ] 04-01: [To be determined during planning]
+- [ ] 04-01-PLAN.md - Install Tonal.js, validation types, pitch class and key signature utilities (Wave 1)
+- [ ] 04-02-PLAN.md - TDD: ScaleValidator and TransitionValidator with test suites (Wave 2)
+- [ ] 04-03-PLAN.md - GenreValidator, ValidationPipeline, genre presets, validation store, edit store integration (Wave 3)
+- [ ] 04-04-PLAN.md - Piano roll visual feedback, validation messages, theory controls UI (Wave 4)
+- [ ] 04-05-PLAN.md - Human verification checkpoint (Wave 5)
 
 ### Phase 5: Natural Language Editing - Single-Shot
 **Goal**: Users can edit MIDI using natural language prompts without conversation context
@@ -169,7 +173,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8
 | 1. Foundation & MIDI Infrastructure | 6/6 | Complete | 2026-01-24 |
 | 2. Audio Playback Engine | 6/6 | Complete | 2026-01-26 |
 | 3. Piano Roll Editor | 6/6 | Complete | 2026-01-30 |
-| 4. Music Theory Validation Layer | 0/TBD | Not started | - |
+| 4. Music Theory Validation Layer | 0/5 | Not started | - |
 | 5. Natural Language Editing - Single-Shot | 0/TBD | Not started | - |
 | 6. Natural Language Generation | 0/TBD | Not started | - |
 | 7. Multi-Track Support | 0/TBD | Not started | - |
