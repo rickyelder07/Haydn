@@ -17,6 +17,13 @@ export type ValidationResult =
   | { ok: true }
   | { ok: false; errors: ValidationError[] };
 
+// Pipeline result (includes both errors and warnings)
+export interface PipelineResult {
+  valid: boolean;         // true if no 'error' severity issues
+  errors: ValidationError[];   // severity: 'error' items
+  warnings: ValidationError[]; // severity: 'warning' items
+}
+
 // Context passed to every validator
 export interface ValidationContext {
   note: HaydnNote;               // The note being validated
