@@ -4,11 +4,14 @@ import { useState, useRef, useEffect } from 'react';
 import { useProjectStore } from '@/state/projectStore';
 import { useEditStore } from '@/state/editStore';
 import { usePlaybackStore } from '@/state/playbackStore';
+import { useValidationStore } from '@/state/validationStore';
 import { PianoRollCanvas } from './PianoRollCanvas';
 import { PianoKeysSidebar } from './PianoKeysSidebar';
 import { usePianoRollInteractions } from './usePianoRollInteractions';
 import { ZoomControls } from './ZoomControls';
 import { NoteInspector } from './NoteInspector';
+import { ValidationFeedback } from './ValidationFeedback';
+import { TheoryControls } from './TheoryControls';
 import { NOTE_HEIGHT, PIANO_KEY_WIDTH } from './gridUtils';
 
 const EDITOR_HEIGHT = 700;
@@ -24,6 +27,9 @@ export function PianoRollEditor() {
   const updateNote = useEditStore((state) => state.updateNote);
   const deleteNote = useEditStore((state) => state.deleteNote);
   const playheadTicks = usePlaybackStore((state) => state.position.ticks);
+  const scalePitchClasses = useValidationStore((state) => state.scalePitchClasses);
+  const validationEnabled = useValidationStore((state) => state.enabled);
+  const updateScaleInfo = useValidationStore((state) => state.updateScaleInfo);
 
   const [scrollX, setScrollX] = useState(0);
   const [scrollY, setScrollY] = useState(0);
@@ -68,6 +74,13 @@ export function PianoRollEditor() {
     const centerY = c4Y - canvasHeight / 2;
     setScrollY(Math.max(0, centerY));
   }, [canvasHeight, zoomY]);
+
+  // Update scale info when track or project changes
+  useEffect(() => {
+    if (project) {
+      updateScaleInfo(project.metadata.keySignatures, playheadTicks || 0);
+    }
+  }, [project, selectedTrackIndex, playheadTicks, updateScaleInfo]);
 
   // Keyboard shortcuts for undo/redo
   useEffect(() => {
@@ -209,6 +222,11 @@ export function PianoRollEditor() {
 
         <div className="h-6 w-px bg-gray-700 mx-2"></div>
 
+        {/* Theory controls */}
+        <TheoryControls />
+
+        <div className="h-6 w-px bg-gray-700 mx-2"></div>
+
         {/* Mode indicator */}
         <div className="text-sm text-gray-400">
           Click to add | Right-click to delete | Drag to move
@@ -221,6 +239,9 @@ export function PianoRollEditor() {
           {selectedTrack?.name}
         </div>
       </div>
+
+      {/* Validation feedback */}
+      <ValidationFeedback />
 
       {/* Main editor area */}
       <div
@@ -253,6 +274,7 @@ export function PianoRollEditor() {
             trackIndex={selectedTrackIndex}
             width={canvasWidth}
             height={canvasHeight}
+            scalePitchClasses={validationEnabled ? scalePitchClasses : null}
             onCanvasClick={(ticks, midi) => {
               // Handled by usePianoRollInteractions via handleMouseDown
             }}
