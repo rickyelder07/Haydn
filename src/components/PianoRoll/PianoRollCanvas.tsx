@@ -143,9 +143,9 @@ export function PianoRollCanvas({
 
       // Draw scale-aware row highlighting (if enabled)
       if (scalePitchClasses && scalePitchClasses.size > 0) {
-        // Calculate visible MIDI range
-        const startMidi = Math.floor(scrollY / (NOTE_HEIGHT * zoomY));
-        const endMidi = Math.ceil((scrollY + height) / (NOTE_HEIGHT * zoomY));
+        // Calculate visible MIDI range (use yToMidi to properly handle inverted Y axis)
+        const startMidi = yToMidi(height, scrollY, zoomY);
+        const endMidi = yToMidi(0, scrollY, zoomY);
 
         for (let midi = startMidi; midi <= endMidi && midi < 128; midi++) {
           const pitchClass = midi % 12;
