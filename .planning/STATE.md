@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-01-23)
 
 **Core value:** Natural language edits must produce musically coherent results that follow music theory, respect genre conventions, and maintain context with the existing track.
-**Current focus:** Phase 4 - Music Theory Validation Layer
+**Current focus:** Phase 5 - Natural Language Editing - Single-Shot
 
 ## Current Position
 
-Phase: 4 of 8 (Music Theory Validation Layer)
-Plan: 5 of 6 in current phase
-Status: In progress
-Last activity: 2026-02-02 — Completed 04-05-PLAN.md
+Phase: 5 of 8 (Natural Language Editing - Single-Shot)
+Plan: 0 of TBD in current phase
+Status: Not started
+Last activity: 2026-02-02 — Completed Phase 4
 
 Progress: [█████████████████████] 115% (23/20 plans)
 
@@ -144,9 +144,9 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-02
-Stopped at: Completed 04-05-PLAN.md
+Stopped at: Completed Phase 4
 Resume file: None
 
 **Phase 3 Status:** Complete - All 6 plans finished. Piano roll editor verified working with all success criteria met.
 
-**Phase 4 Status:** In progress - 5 of 6 plans complete. Music Theory Validation Layer is substantially complete and verified working. All validation infrastructure (ScaleValidator, TransitionValidator, GenreValidator, ValidationPipeline) is functional and integrated with piano roll editor. Visual feedback is clear (row highlighting, error/warning banners), theory controls work correctly (toggle, genre selector, key display), and end-to-end human verification confirms all 4 phase success criteria pass.
+**Phase 4 Status:** Complete - All 5 plans finished. Music Theory Validation Layer fully implemented and verified. ScaleValidator blocks out-of-scale notes with clear error messages, TransitionValidator warns on context clashes, GenreValidator enforces genre-specific interval rules (classical, jazz, trap, pop, none). ValidationPipeline coordinates all validators. Visual feedback shows in-scale/out-of-scale rows via subtle piano roll highlighting. Theory controls (toggle, genre selector, key display) integrated in toolbar. Human verification confirmed all 4 phase success criteria pass. Phase goal achieved: system validates all edits against music theory rules with visual feedback showing scale conformance.

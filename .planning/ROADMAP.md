@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Foundation & MIDI Infrastructure** - File I/O, MIDI parsing, data model
 - [x] **Phase 2: Audio Playback Engine** - Precise timing, transport controls, synthesis
 - [x] **Phase 3: Piano Roll Editor** - Visual editing interface with manual note control
-- [ ] **Phase 4: Music Theory Validation Layer** - Theory engine for coherent edits
+- [x] **Phase 4: Music Theory Validation Layer** - Theory engine for coherent edits
 - [ ] **Phase 5: Natural Language Editing - Single-Shot** - Core NL editing with token efficiency
 - [ ] **Phase 6: Natural Language Generation** - Create MIDI from text prompts
 - [ ] **Phase 7: Multi-Track Support** - Expand to multiple tracks with track management
@@ -96,11 +96,11 @@ Plans:
 **Plans**: 5 plans in 5 waves
 
 Plans:
-- [ ] 04-01-PLAN.md - Install Tonal.js, validation types, pitch class and key signature utilities (Wave 1)
-- [ ] 04-02-PLAN.md - TDD: ScaleValidator and TransitionValidator with test suites (Wave 2)
-- [ ] 04-03-PLAN.md - GenreValidator, ValidationPipeline, genre presets, validation store, edit store integration (Wave 3)
-- [ ] 04-04-PLAN.md - Piano roll visual feedback, validation messages, theory controls UI (Wave 4)
-- [ ] 04-05-PLAN.md - Human verification checkpoint (Wave 5)
+- [x] 04-01-PLAN.md - Install Tonal.js, validation types, pitch class and key signature utilities (Wave 1)
+- [x] 04-02-PLAN.md - TDD: ScaleValidator and TransitionValidator with test suites (Wave 2)
+- [x] 04-03-PLAN.md - GenreValidator, ValidationPipeline, genre presets, validation store, edit store integration (Wave 3)
+- [x] 04-04-PLAN.md - Piano roll visual feedback, validation messages, theory controls UI (Wave 4)
+- [x] 04-05-PLAN.md - Human verification checkpoint (Wave 5)
 
 ### Phase 5: Natural Language Editing - Single-Shot
 **Goal**: Users can edit MIDI using natural language prompts without conversation context
@@ -173,7 +173,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8
 | 1. Foundation & MIDI Infrastructure | 6/6 | Complete | 2026-01-24 |
 | 2. Audio Playback Engine | 6/6 | Complete | 2026-01-26 |
 | 3. Piano Roll Editor | 6/6 | Complete | 2026-01-30 |
-| 4. Music Theory Validation Layer | 0/5 | Not started | - |
+| 4. Music Theory Validation Layer | 5/5 | Complete | 2026-02-02 |
 | 5. Natural Language Editing - Single-Shot | 0/TBD | Not started | - |
 | 6. Natural Language Generation | 0/TBD | Not started | - |
 | 7. Multi-Track Support | 0/TBD | Not started | - |
