@@ -112,10 +112,13 @@ Plans:
   3. User can specify which track to edit (e.g., "add strings to track 2")
   4. GPT-4o returns structured edit instructions (not MIDI bytes) that system executes
   5. System tracks token usage and displays cost per edit operation
-**Plans**: TBD
+**Plans**: 4 plans in 4 waves
 
 Plans:
-- [ ] 05-01: [To be determined during planning]
+- [ ] 05-01-PLAN.md - OpenAI SDK, Zod schemas, retry logic, token counter, API route (Wave 1)
+- [ ] 05-02-PLAN.md - Context builder, edit executor, NL edit store with async flow (Wave 2)
+- [ ] 05-03-PLAN.md - CommandInput UI component and page integration (Wave 3)
+- [ ] 05-04-PLAN.md - Human verification checkpoint (Wave 4)
 
 ### Phase 6: Natural Language Generation
 **Goal**: Users can generate MIDI from scratch using text descriptions
@@ -174,7 +177,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8
 | 2. Audio Playback Engine | 6/6 | Complete | 2026-01-26 |
 | 3. Piano Roll Editor | 6/6 | Complete | 2026-01-30 |
 | 4. Music Theory Validation Layer | 5/5 | Complete | 2026-02-02 |
-| 5. Natural Language Editing - Single-Shot | 0/TBD | Not started | - |
+| 5. Natural Language Editing - Single-Shot | 0/4 | Not started | - |
 | 6. Natural Language Generation | 0/TBD | Not started | - |
 | 7. Multi-Track Support | 0/TBD | Not started | - |
 | 8. Conversational Editing Mode | 0/TBD | Not started | - |
