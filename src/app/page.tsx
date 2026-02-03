@@ -11,7 +11,9 @@ import { ExportButton } from '@/components/ExportButton';
 import { ErrorDisplay } from '@/components/ErrorDisplay';
 import { TransportControls } from '@/components/TransportControls';
 import { PianoRollEditor } from '@/components/PianoRoll';
+import { CommandInput } from '@/components/CommandInput';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
+import { Toaster } from 'sonner';
 
 export default function Home() {
   const { project } = useProjectStore();
@@ -63,6 +65,17 @@ export default function Home() {
           <FileUpload />
         </div>
 
+        {/* Natural Language Command Input - conditionally shown */}
+        {project && selectedTrackIndex !== null ? (
+          <div className="max-w-4xl mx-auto mb-6">
+            <CommandInput />
+          </div>
+        ) : project ? (
+          <div className="max-w-4xl mx-auto mb-6 text-center text-gray-500 py-8">
+            Select a track to use natural language editing
+          </div>
+        ) : null}
+
         {/* Transport Controls - wider for piano roll */}
         {project && (
           <div className="max-w-7xl mx-auto mb-6">
@@ -104,6 +117,9 @@ export default function Home() {
           Haydn - Natural Language MIDI Editing
         </div>
       </footer>
+
+      {/* Toast notifications for theory violations and other alerts */}
+      <Toaster position="bottom-right" richColors />
     </main>
   );
 }
