@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-23)
 ## Current Position
 
 Phase: 5 of 8 (Natural Language Editing - Single-Shot)
-Plan: 1 of TBD in current phase
+Plan: 2 of TBD in current phase
 Status: In progress
-Last activity: 2026-02-03 — Completed 05-01-PLAN.md
+Last activity: 2026-02-03 — Completed 05-02-PLAN.md
 
-Progress: [█████████████████████] 120% (24/20 plans)
+Progress: [█████████████████████] 125% (25/20 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 24
-- Average duration: 10.7 minutes
-- Total execution time: 4.46 hours
+- Total plans completed: 25
+- Average duration: 10.3 minutes
+- Total execution time: 4.48 hours
 
 **By Phase:**
 
@@ -31,11 +31,11 @@ Progress: [█████████████████████] 120%
 | 02-audio-playback-engine | 6 | 14.5 min | 2.4 min |
 | 03-piano-roll-editor | 6 | 216.4 min | 36.1 min |
 | 04-music-theory-validation-layer | 5 | 16.7 min | 3.3 min |
-| 05-natural-language-editing-single-shot | 1 | 4.2 min | 4.2 min |
+| 05-natural-language-editing-single-shot | 2 | 5.2 min | 2.6 min |
 
 **Recent Trend:**
-- Last 5 plans: 04-02 (6.0 min), 04-03 (4.0 min), 04-04 (3.0 min), 04-05 (2.0 min), 05-01 (4.2 min)
-- Trend: Consistent fast execution, Phase 5 starting strong with sub-5 minute foundation plan
+- Last 5 plans: 04-03 (4.0 min), 04-04 (3.0 min), 04-05 (2.0 min), 05-01 (4.2 min), 05-02 (1.0 min)
+- Trend: Phase 5 maintaining exceptionally fast execution with sub-2 minute orchestration layer
 
 *Updated after each plan completion*
 
@@ -138,6 +138,10 @@ Recent decisions affecting current work:
 - **500-char prompt limit** (05-01): Prevents abuse and excessive costs for single-shot editing commands
 - **js-tiktoken for cost estimation** (05-01): Accurate token counting using GPT-4o tokenizer before API calls
 - **Theory validation context in prompts** (05-01): System prompt includes scale/genre validation state when enabled
+- **Context builder error handling** (05-02): Throw errors for missing project/track rather than silent defaults
+- **Partial execution on errors** (05-02): Edit executor continues after failures rather than all-or-nothing
+- **Reverse-order deletion** (05-02): Sort indices descending before deletion to avoid index shifting
+- **Token cost calculation in store** (05-02): Calculate estimated cost ($2.50/M input, $10/M output) for immediate user feedback
 
 ### Pending Todos
 
@@ -150,11 +154,11 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-03
-Stopped at: Completed 05-01-PLAN.md
+Stopped at: Completed 05-02-PLAN.md
 Resume file: None
 
 **Phase 3 Status:** Complete - All 6 plans finished. Piano roll editor verified working with all success criteria met.
 
 **Phase 4 Status:** Complete - All 5 plans finished. Music Theory Validation Layer fully implemented and verified. ScaleValidator blocks out-of-scale notes with clear error messages, TransitionValidator warns on context clashes, GenreValidator enforces genre-specific interval rules (classical, jazz, trap, pop, none). ValidationPipeline coordinates all validators. Visual feedback shows in-scale/out-of-scale rows via subtle piano roll highlighting. Theory controls (toggle, genre selector, key display) integrated in toolbar. Human verification confirmed all 4 phase success criteria pass. Phase goal achieved: system validates all edits against music theory rules with visual feedback showing scale conformance.
 
-**Phase 5 Status:** In progress - 1 of TBD plans finished. OpenAI integration foundation complete with GPT-4o client, Zod schemas for 6 edit operation types, exponential backoff retry logic, token counter, and POST /api/nl-edit endpoint. Ready for client-side UI implementation.
+**Phase 5 Status:** In progress - 2 of TBD plans finished. OpenAI integration foundation complete (05-01), client-side orchestration layer complete (05-02). Context builder serializes project state into compact MIDI JSON, edit executor applies 6 operation types with undo support, NL edit store orchestrates full async pipeline (build context → API call → execution → state update). Ready for UI integration.
