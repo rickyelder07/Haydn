@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-23)
 ## Current Position
 
 Phase: 5 of 8 (Natural Language Editing - Single-Shot)
-Plan: 0 of TBD in current phase
-Status: Not started
-Last activity: 2026-02-02 — Completed Phase 4
+Plan: 1 of TBD in current phase
+Status: In progress
+Last activity: 2026-02-03 — Completed 05-01-PLAN.md
 
-Progress: [█████████████████████] 115% (23/20 plans)
+Progress: [█████████████████████] 120% (24/20 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 23
-- Average duration: 11.3 minutes
-- Total execution time: 4.39 hours
+- Total plans completed: 24
+- Average duration: 10.7 minutes
+- Total execution time: 4.46 hours
 
 **By Phase:**
 
@@ -31,10 +31,11 @@ Progress: [█████████████████████] 115%
 | 02-audio-playback-engine | 6 | 14.5 min | 2.4 min |
 | 03-piano-roll-editor | 6 | 216.4 min | 36.1 min |
 | 04-music-theory-validation-layer | 5 | 16.7 min | 3.3 min |
+| 05-natural-language-editing-single-shot | 1 | 4.2 min | 4.2 min |
 
 **Recent Trend:**
-- Last 5 plans: 04-01 (1.7 min), 04-02 (6.0 min), 04-03 (4.0 min), 04-04 (3.0 min), 04-05 (2.0 min)
-- Trend: Phase 4 maintaining fast execution with consistent sub-6 minute plans
+- Last 5 plans: 04-02 (6.0 min), 04-03 (4.0 min), 04-04 (3.0 min), 04-05 (2.0 min), 05-01 (4.2 min)
+- Trend: Consistent fast execution, Phase 5 starting strong with sub-5 minute foundation plan
 
 *Updated after each plan completion*
 
@@ -132,6 +133,11 @@ Recent decisions affecting current work:
 - **Warning auto-dismiss timing** (04-04): 4-second timeout for warnings, manual dismiss only for errors
 - **Theory controls location** (04-04): Inline with toolbar after zoom controls
 - **Scale info update triggers** (04-04): Update on project/track/playhead changes
+- **Flat parameters object for Structured Outputs** (05-01): Use single Zod object with all fields optional instead of discriminated unions
+- **Custom exponential backoff with jitter** (05-01): 3 attempts max, exponential backoff with ±30% jitter, retry on 429/5xx only
+- **500-char prompt limit** (05-01): Prevents abuse and excessive costs for single-shot editing commands
+- **js-tiktoken for cost estimation** (05-01): Accurate token counting using GPT-4o tokenizer before API calls
+- **Theory validation context in prompts** (05-01): System prompt includes scale/genre validation state when enabled
 
 ### Pending Todos
 
@@ -143,10 +149,12 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-02
-Stopped at: Completed Phase 4
+Last session: 2026-02-03
+Stopped at: Completed 05-01-PLAN.md
 Resume file: None
 
 **Phase 3 Status:** Complete - All 6 plans finished. Piano roll editor verified working with all success criteria met.
 
 **Phase 4 Status:** Complete - All 5 plans finished. Music Theory Validation Layer fully implemented and verified. ScaleValidator blocks out-of-scale notes with clear error messages, TransitionValidator warns on context clashes, GenreValidator enforces genre-specific interval rules (classical, jazz, trap, pop, none). ValidationPipeline coordinates all validators. Visual feedback shows in-scale/out-of-scale rows via subtle piano roll highlighting. Theory controls (toggle, genre selector, key display) integrated in toolbar. Human verification confirmed all 4 phase success criteria pass. Phase goal achieved: system validates all edits against music theory rules with visual feedback showing scale conformance.
+
+**Phase 5 Status:** In progress - 1 of TBD plans finished. OpenAI integration foundation complete with GPT-4o client, Zod schemas for 6 edit operation types, exponential backoff retry logic, token counter, and POST /api/nl-edit endpoint. Ready for client-side UI implementation.
