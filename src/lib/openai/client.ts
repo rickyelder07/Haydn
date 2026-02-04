@@ -12,6 +12,6 @@ import OpenAI from 'openai';
  */
 export const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
-  timeout: 30000,
+  timeout: 60000, // 60 seconds (increased for large contexts)
   maxRetries: 0, // Custom retry logic in withExponentialBackoff
 });
