@@ -5,21 +5,21 @@
 See: .planning/PROJECT.md (updated 2026-01-23)
 
 **Core value:** Natural language edits must produce musically coherent results that follow music theory, respect genre conventions, and maintain context with the existing track.
-**Current focus:** Phase 5 - Natural Language Editing - Single-Shot
+**Current focus:** Phase 6 - Natural Language Generation
 
 ## Current Position
 
-Phase: 5 of 8 (Natural Language Editing - Single-Shot)
-Plan: 3 of TBD in current phase
-Status: In progress
-Last activity: 2026-02-03 — Completed 05-03-PLAN.md
+Phase: 6 of 8 (Natural Language Generation)
+Plan: 0 of TBD in current phase
+Status: Not started
+Last activity: 2026-02-04 — Completed Phase 5
 
-Progress: [█████████████████████] 130% (26/20 plans)
+Progress: [█████████████████████] 135% (27/20 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 26
+- Total plans completed: 27
 - Average duration: 9.9 minutes
 - Total execution time: 4.50 hours
 
@@ -31,11 +31,11 @@ Progress: [█████████████████████] 130%
 | 02-audio-playback-engine | 6 | 14.5 min | 2.4 min |
 | 03-piano-roll-editor | 6 | 216.4 min | 36.1 min |
 | 04-music-theory-validation-layer | 5 | 16.7 min | 3.3 min |
-| 05-natural-language-editing-single-shot | 3 | 7.2 min | 2.4 min |
+| 05-natural-language-editing-single-shot | 4 | 7.2 min | 1.8 min |
 
 **Recent Trend:**
-- Last 5 plans: 04-04 (3.0 min), 04-05 (2.0 min), 05-01 (4.2 min), 05-02 (1.0 min), 05-03 (2.0 min)
-- Trend: Phase 5 maintaining exceptionally fast execution with consistent sub-3 minute plans
+- Last 5 plans: 04-05 (2.0 min), 05-01 (4.2 min), 05-02 (1.0 min), 05-03 (2.0 min), 05-04 (manual verification)
+- Trend: Phase 5 exceptionally fast with sub-2 minute average including human verification
 
 *Updated after each plan completion*
 
@@ -166,3 +166,5 @@ Resume file: None
 **Phase 4 Status:** Complete - All 5 plans finished. Music Theory Validation Layer fully implemented and verified. ScaleValidator blocks out-of-scale notes with clear error messages, TransitionValidator warns on context clashes, GenreValidator enforces genre-specific interval rules (classical, jazz, trap, pop, none). ValidationPipeline coordinates all validators. Visual feedback shows in-scale/out-of-scale rows via subtle piano roll highlighting. Theory controls (toggle, genre selector, key display) integrated in toolbar. Human verification confirmed all 4 phase success criteria pass. Phase goal achieved: system validates all edits against music theory rules with visual feedback showing scale conformance.
 
 **Phase 5 Status:** In progress - 3 of TBD plans finished. OpenAI integration foundation complete (05-01), client-side orchestration layer complete (05-02), UI integration complete (05-03). CommandInput component provides text input for natural language prompts with inline feedback (loading spinner, success with token cost, error with retry). Conditional rendering when project loaded and track selected. Toaster configured for future theory violation warnings. Full async pipeline operational: user types prompt → API call → GPT-4o response → operations applied to project state → feedback displayed.
+
+**Phase 5 Status:** Complete - All 4 plans finished. Natural language editing pipeline fully operational. OpenAI SDK integrated with GPT-4o using Zod schemas for 6 edit operation types (add, remove, modify, transpose, change_tempo, change_key). Context builder produces compact MIDI JSON with full selected track data. Edit executor applies all operations as batch edit for single-step undo/redo. CommandInput UI component provides prompt input with loading states, inline feedback showing token cost, and example prompts tooltip. Human verification confirmed all 5 phase success criteria pass: melody edits work, tempo changes apply immediately, track targeting functional, GPT-4o returns structured operations, token usage tracked. Multiple issues fixed during verification: OpenAI Structured Outputs compatibility (nullable fields), timeout optimization (60s), batch edit for undo/redo, hover tooltip visibility. Phase goal achieved: users can edit MIDI using natural language prompts without conversation context.

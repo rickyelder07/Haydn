@@ -16,7 +16,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: Audio Playback Engine** - Precise timing, transport controls, synthesis
 - [x] **Phase 3: Piano Roll Editor** - Visual editing interface with manual note control
 - [x] **Phase 4: Music Theory Validation Layer** - Theory engine for coherent edits
-- [ ] **Phase 5: Natural Language Editing - Single-Shot** - Core NL editing with token efficiency
+- [x] **Phase 5: Natural Language Editing - Single-Shot** - Core NL editing with token efficiency
 - [ ] **Phase 6: Natural Language Generation** - Create MIDI from text prompts
 - [ ] **Phase 7: Multi-Track Support** - Expand to multiple tracks with track management
 - [ ] **Phase 8: Conversational Editing Mode** - Multi-turn context with edit history
@@ -115,9 +115,10 @@ Plans:
 **Plans**: 4 plans in 4 waves
 
 Plans:
-- [ ] 05-01-PLAN.md - OpenAI SDK, Zod schemas, retry logic, token counter, API route (Wave 1)
-- [ ] 05-02-PLAN.md - Context builder, edit executor, NL edit store with async flow (Wave 2)
-- [ ] 05-03-PLAN.md - CommandInput UI component and page integration (Wave 3)
+- [x] 05-01-PLAN.md - OpenAI SDK, Zod schemas, retry logic, token counter, API route (Wave 1)
+- [x] 05-02-PLAN.md - Context builder, edit executor, NL edit store with async flow (Wave 2)
+- [x] 05-03-PLAN.md - CommandInput UI component and page integration (Wave 3)
+- [x] 05-04-PLAN.md - Human verification checkpoint (Wave 4)
 - [ ] 05-04-PLAN.md - Human verification checkpoint (Wave 4)
 
 ### Phase 6: Natural Language Generation
@@ -177,7 +178,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8
 | 2. Audio Playback Engine | 6/6 | Complete | 2026-01-26 |
 | 3. Piano Roll Editor | 6/6 | Complete | 2026-01-30 |
 | 4. Music Theory Validation Layer | 5/5 | Complete | 2026-02-02 |
-| 5. Natural Language Editing - Single-Shot | 0/4 | Not started | - |
+| 5. Natural Language Editing - Single-Shot | 4/4 | Complete | 2026-02-04 |
 | 6. Natural Language Generation | 0/TBD | Not started | - |
 | 7. Multi-Track Support | 0/TBD | Not started | - |
 | 8. Conversational Editing Mode | 0/TBD | Not started | - |
