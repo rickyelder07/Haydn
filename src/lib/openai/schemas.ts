@@ -28,10 +28,10 @@ const NoteSchema = z.object({
 const NoteModificationSchema = z.object({
   noteIndex: z.number().int().min(0),
   updates: z.object({
-    midi: z.number().int().min(0).max(127).optional(),
-    ticks: z.number().min(0).optional(),
-    durationTicks: z.number().positive().optional(),
-    velocity: z.number().min(0).max(1).optional(),
+    midi: z.number().int().min(0).max(127).optional().nullable(),
+    ticks: z.number().min(0).optional().nullable(),
+    durationTicks: z.number().positive().optional().nullable(),
+    velocity: z.number().min(0).max(1).optional().nullable(),
   }),
 });
 
@@ -44,25 +44,25 @@ const NoteModificationSchema = z.object({
  */
 const EditParametersSchema = z.object({
   // add_notes parameters
-  notes: z.array(NoteSchema).optional(),
+  notes: z.array(NoteSchema).optional().nullable(),
 
   // remove_notes parameters
-  noteIndices: z.array(z.number().int().min(0)).optional(),
+  noteIndices: z.array(z.number().int().min(0)).optional().nullable(),
 
   // modify_notes parameters
-  modifications: z.array(NoteModificationSchema).optional(),
+  modifications: z.array(NoteModificationSchema).optional().nullable(),
 
   // transpose parameters
-  semitones: z.number().int().min(-48).max(48).optional(),
-  startTick: z.number().min(0).optional(),
-  endTick: z.number().min(0).optional(),
+  semitones: z.number().int().min(-48).max(48).optional().nullable(),
+  startTick: z.number().min(0).optional().nullable(),
+  endTick: z.number().min(0).optional().nullable(),
 
   // change_tempo parameters
-  newTempo: z.number().min(20).max(300).optional(),
+  newTempo: z.number().min(20).max(300).optional().nullable(),
 
   // change_key parameters
-  newKey: z.string().optional(),
-  newScale: z.enum(['major', 'minor']).optional(),
+  newKey: z.string().optional().nullable(),
+  newScale: z.enum(['major', 'minor']).optional().nullable(),
 });
 
 /**
