@@ -122,7 +122,24 @@ export function executeEditOperations(
               continue;
             }
 
-            editState.updateNote(mod.noteIndex, mod.updates);
+            // Filter out null values from updates (OpenAI Structured Outputs requirement)
+            const updates: Partial<HaydnNote> = {};
+            if (mod.updates.midi !== null && mod.updates.midi !== undefined)
+              updates.midi = mod.updates.midi;
+            if (mod.updates.ticks !== null && mod.updates.ticks !== undefined)
+              updates.ticks = mod.updates.ticks;
+            if (
+              mod.updates.durationTicks !== null &&
+              mod.updates.durationTicks !== undefined
+            )
+              updates.durationTicks = mod.updates.durationTicks;
+            if (
+              mod.updates.velocity !== null &&
+              mod.updates.velocity !== undefined
+            )
+              updates.velocity = mod.updates.velocity;
+
+            editState.updateNote(mod.noteIndex, updates);
           }
 
           appliedOps++;
@@ -131,7 +148,7 @@ export function executeEditOperations(
 
         case 'transpose': {
           const semitones = operation.parameters.semitones;
-          if (semitones === undefined) {
+          if (semitones === undefined || semitones === null) {
             errors.push(
               `Operation ${i + 1} (transpose): Missing semitones parameter`
             );
@@ -160,7 +177,7 @@ export function executeEditOperations(
 
         case 'change_tempo': {
           const newTempo = operation.parameters.newTempo;
-          if (newTempo === undefined) {
+          if (newTempo === undefined || newTempo === null) {
             errors.push(
               `Operation ${i + 1} (change_tempo): Missing newTempo parameter`
             );
