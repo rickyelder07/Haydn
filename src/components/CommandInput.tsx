@@ -41,6 +41,7 @@ const XIcon = () => (
 
 export function CommandInput() {
   const [localPrompt, setLocalPrompt] = useState('');
+  const [showTooltip, setShowTooltip] = useState(false);
 
   const {
     isLoading,
@@ -88,14 +89,33 @@ export function CommandInput() {
         {/* Input row */}
         <div className="flex items-center gap-2 mb-2">
           {/* Info icon with tooltip */}
-          <button
-            type="button"
-            className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
-            title={`Example prompts:\n${examplePrompts.join('\n')}`}
-            aria-label="Show example prompts"
-          >
-            <InfoIcon />
-          </button>
+          <div className="relative">
+            <button
+              type="button"
+              className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+              onMouseEnter={() => setShowTooltip(true)}
+              onMouseLeave={() => setShowTooltip(false)}
+              aria-label="Show example prompts"
+            >
+              <InfoIcon />
+            </button>
+
+            {/* Tooltip */}
+            {showTooltip && (
+              <div className="absolute left-0 bottom-full mb-2 w-64 p-3 bg-gray-900 border border-gray-700 rounded-lg shadow-lg z-50">
+                <div className="text-xs font-semibold text-gray-300 mb-2">
+                  Example prompts:
+                </div>
+                <ul className="text-xs text-gray-400 space-y-1">
+                  {examplePrompts.map((prompt, i) => (
+                    <li key={i}>• {prompt}</li>
+                  ))}
+                </ul>
+                {/* Arrow pointing down */}
+                <div className="absolute left-4 top-full w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-gray-900" />
+              </div>
+            )}
+          </div>
 
           {/* Text input */}
           <input
