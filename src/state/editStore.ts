@@ -24,6 +24,7 @@ interface EditState {
   deleteNote: (noteIndex: number) => void;
   moveNote: (noteIndex: number, newMidi: number, newTicks: number) => void;
   updateNote: (noteIndex: number, updates: Partial<HaydnNote>) => void;
+  applyBatchEdit: (notes: HaydnNote[]) => void;
   undo: () => void;
   redo: () => void;
   selectNote: (noteId: string) => void;
@@ -268,6 +269,29 @@ export const useEditStore = create<EditState>((set, get) => ({
 
     // Sync to project store
     syncToProjectStore(state.selectedTrackIndex, currentNotes);
+
+    // Update undo/redo flags
+    set({
+      canUndo: state._history.canUndo(),
+      canRedo: state._history.canRedo(),
+    });
+  },
+
+  // Apply batch edit (for NL edits - single undo/redo step)
+  applyBatchEdit: (notes) => {
+    const state = get();
+    if (state.selectedTrackIndex === null || !state._history) {
+      return;
+    }
+
+    // Sort notes by ticks
+    const sortedNotes = [...notes].sort((a, b) => a.ticks - b.ticks);
+
+    // Push to history as single entry
+    state._history.push(sortedNotes);
+
+    // Sync to project store
+    syncToProjectStore(state.selectedTrackIndex, sortedNotes);
 
     // Update undo/redo flags
     set({

@@ -16,8 +16,9 @@ export interface ExecutionResult {
 /**
  * Execute structured edit operations from GPT-4o response.
  *
- * Applies all operations to project state using editStore actions to preserve
- * undo/redo support. Continues on errors (partial execution allowed).
+ * IMPORTANT: All operations are applied to a cloned notes array and then
+ * pushed to history as a SINGLE entry. This ensures undo/redo works correctly
+ * (undo reverses the entire NL edit in one step, redo restores it).
  *
  * @param operations Array of edit operations to execute
  * @returns ExecutionResult with success flag, applied count, and errors
@@ -53,6 +54,10 @@ export function executeEditOperations(
 
   const track = project.tracks[selectedTrackIndex];
 
+  // Clone current notes - we'll apply all operations to this array
+  let workingNotes = [...track.notes];
+  let hasNoteChanges = false;
+
   // Execute each operation
   for (let i = 0; i < operations.length; i++) {
     const operation = operations[i];
@@ -68,10 +73,9 @@ export function executeEditOperations(
             continue;
           }
 
-          // Add each note using editStore action (preserves undo/redo)
-          for (const note of notes) {
-            editState.addNote(note);
-          }
+          // Add notes to working array
+          workingNotes.push(...notes);
+          hasNoteChanges = true;
 
           appliedOps++;
           break;
@@ -89,17 +93,18 @@ export function executeEditOperations(
           // Sort indices in reverse order to avoid index shifting during deletion
           const sortedIndices = [...noteIndices].sort((a, b) => b - a);
 
-          // Delete each note by index
+          // Remove notes from working array
           for (const index of sortedIndices) {
-            if (index < 0 || index >= track.notes.length) {
+            if (index < 0 || index >= workingNotes.length) {
               errors.push(
                 `Operation ${i + 1} (remove_notes): Invalid note index ${index}`
               );
               continue;
             }
-            editState.deleteNote(index);
+            workingNotes.splice(index, 1);
           }
 
+          hasNoteChanges = true;
           appliedOps++;
           break;
         }
@@ -113,9 +118,9 @@ export function executeEditOperations(
             continue;
           }
 
-          // Apply each modification
+          // Apply modifications to working array
           for (const mod of modifications) {
-            if (mod.noteIndex < 0 || mod.noteIndex >= track.notes.length) {
+            if (mod.noteIndex < 0 || mod.noteIndex >= workingNotes.length) {
               errors.push(
                 `Operation ${i + 1} (modify_notes): Invalid note index ${mod.noteIndex}`
               );
@@ -139,9 +144,14 @@ export function executeEditOperations(
             )
               updates.velocity = mod.updates.velocity;
 
-            editState.updateNote(mod.noteIndex, updates);
+            // Apply updates to note in working array
+            workingNotes[mod.noteIndex] = {
+              ...workingNotes[mod.noteIndex],
+              ...updates,
+            };
           }
 
+          hasNoteChanges = true;
           appliedOps++;
           break;
         }
@@ -158,19 +168,16 @@ export function executeEditOperations(
           const startTick = operation.parameters.startTick ?? 0;
           const endTick = operation.parameters.endTick ?? Infinity;
 
-          // Filter notes in range
-          const notesToTranspose = track.notes
-            .map((note, index) => ({ note, index }))
-            .filter(
-              ({ note }) => note.ticks >= startTick && note.ticks < endTick
-            );
-
-          // Transpose each note using updateNote (preserves undo/redo)
-          for (const { note, index } of notesToTranspose) {
-            const newMidi = Math.max(0, Math.min(127, note.midi + semitones));
-            editState.updateNote(index, { midi: newMidi });
+          // Transpose notes in working array
+          for (let j = 0; j < workingNotes.length; j++) {
+            const note = workingNotes[j];
+            if (note.ticks >= startTick && note.ticks < endTick) {
+              const newMidi = Math.max(0, Math.min(127, note.midi + semitones));
+              workingNotes[j] = { ...note, midi: newMidi };
+            }
           }
 
+          hasNoteChanges = true;
           appliedOps++;
           break;
         }
@@ -184,12 +191,10 @@ export function executeEditOperations(
             continue;
           }
 
-          // Update tempo in project metadata
+          // Update tempo in project metadata (not batched with notes)
           if (project.metadata.tempos.length === 0) {
-            // Create initial tempo if none exists
             project.metadata.tempos = [{ ticks: 0, bpm: newTempo }];
           } else {
-            // Update first tempo
             project.metadata.tempos[0].bpm = newTempo;
           }
 
@@ -211,14 +216,12 @@ export function executeEditOperations(
             continue;
           }
 
-          // Update key signature in project metadata
+          // Update key signature in project metadata (not batched with notes)
           if (project.metadata.keySignatures.length === 0) {
-            // Create initial key signature if none exists
             project.metadata.keySignatures = [
               { ticks: 0, key: newKey, scale: newScale },
             ];
           } else {
-            // Update first key signature
             project.metadata.keySignatures[0].key = newKey;
             project.metadata.keySignatures[0].scale = newScale;
           }
@@ -249,6 +252,11 @@ export function executeEditOperations(
         `Operation ${i + 1} (${operation.operation}): ${error instanceof Error ? error.message : String(error)}`
       );
     }
+  }
+
+  // Apply all note changes as a single history entry (enables proper undo/redo)
+  if (hasNoteChanges) {
+    editState.applyBatchEdit(workingNotes);
   }
 
   return {
