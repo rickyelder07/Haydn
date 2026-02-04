@@ -46,6 +46,12 @@ export interface MIDIContext {
 const MAX_PROMPT_LENGTH = 500;
 
 /**
+ * Maximum number of notes to include in context to prevent timeout and excessive costs.
+ * For large MIDI files, we sample the first N notes and provide a summary.
+ */
+const MAX_NOTES_IN_CONTEXT = 100;
+
+/**
  * Build system prompt that provides GPT-4o with full MIDI context.
  *
  * Includes project metadata, current track notes, other track summaries,
@@ -69,12 +75,17 @@ ${project.keySignature ? `- **Key Signature:** ${project.keySignature.key} ${pro
 **Name:** ${currentTrack.name}
 **Instrument:** ${currentTrack.instrumentName} (Program ${currentTrack.instrumentNumber})
 **Channel:** ${currentTrack.channel}
-**Note Count:** ${currentTrack.notes.length}
+**Total Note Count:** ${currentTrack.notes.length}
 
-**Notes (in chronological order):**
+${currentTrack.notes.length > MAX_NOTES_IN_CONTEXT ? `⚠️ **Large track:** Showing first ${MAX_NOTES_IN_CONTEXT} notes as sample. Full track has ${currentTrack.notes.length} notes.
+
+` : ''}**Notes (in chronological order):**
 \`\`\`json
-${JSON.stringify(currentTrack.notes, null, 2)}
-\`\`\`
+${JSON.stringify(currentTrack.notes.slice(0, MAX_NOTES_IN_CONTEXT), null, 2)}
+\`\`\`${currentTrack.notes.length > MAX_NOTES_IN_CONTEXT ? `
+
+**Note range:** MIDI ${Math.min(...currentTrack.notes.map(n => n.midi))}-${Math.max(...currentTrack.notes.map(n => n.midi))}
+**Duration:** ${currentTrack.notes[0]?.ticks || 0} to ${currentTrack.notes[currentTrack.notes.length - 1]?.ticks || 0} ticks` : ''}
 
 ## Other Tracks (for context)
 
