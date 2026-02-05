@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-23)
 ## Current Position
 
 Phase: 6 of 8 (Natural Language Generation)
-Plan: 0 of TBD in current phase
-Status: Not started
-Last activity: 2026-02-04 — Completed Phase 5
+Plan: 1 of TBD in current phase
+Status: In progress
+Last activity: 2026-02-05 — Completed 06-01-PLAN.md
 
-Progress: [█████████████████████] 135% (27/20 plans)
+Progress: [█████████████████████] 140% (28/20 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 27
-- Average duration: 9.9 minutes
-- Total execution time: 4.50 hours
+- Total plans completed: 28
+- Average duration: 9.5 minutes
+- Total execution time: 4.53 hours
 
 **By Phase:**
 
@@ -32,10 +32,11 @@ Progress: [█████████████████████] 135%
 | 03-piano-roll-editor | 6 | 216.4 min | 36.1 min |
 | 04-music-theory-validation-layer | 5 | 16.7 min | 3.3 min |
 | 05-natural-language-editing-single-shot | 4 | 7.2 min | 1.8 min |
+| 06-natural-language-generation | 1 | 1.9 min | 1.9 min |
 
 **Recent Trend:**
-- Last 5 plans: 04-05 (2.0 min), 05-01 (4.2 min), 05-02 (1.0 min), 05-03 (2.0 min), 05-04 (manual verification)
-- Trend: Phase 5 exceptionally fast with sub-2 minute average including human verification
+- Last 5 plans: 05-01 (4.2 min), 05-02 (1.0 min), 05-03 (2.0 min), 05-04 (manual verification), 06-01 (1.9 min)
+- Trend: Phases 5-6 exceptionally fast with sub-2 minute average
 
 *Updated after each plan completion*
 
@@ -146,6 +147,11 @@ Recent decisions affecting current work:
 - **Clear input on success only** (05-03): After successful submission, clear input field; preserve text on error for retry
 - **CommandInput conditional rendering** (05-03): Show only when project loaded AND track selected
 - **Toaster bottom-right position** (05-03): Position toast notifications in bottom-right corner for future theory warnings
+- **All GenerationParams fields required** (06-01): GPT-4o must fill in genre-appropriate defaults for unspecified values
+- **Genre defaults table in system prompt** (06-01): Each genre has default tempo, scale, keys, emotion, instruments
+- **Default song structure** (06-01): intro(4), verse(8), chorus(8), verse(8), chorus(8), outro(4)
+- **Emotion as coordinates** (06-01): Valence (happy/sad) and arousal (energetic/calm) guide expressive generation
+- **GM instrument numbers per role** (06-01): Instrumentation defined by role (drums, bass, melody, chords) and GM number
 
 ### Pending Todos
 
@@ -157,14 +163,14 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-03
-Stopped at: Completed 05-03-PLAN.md
+Last session: 2026-02-05
+Stopped at: Completed 06-01-PLAN.md
 Resume file: None
 
 **Phase 3 Status:** Complete - All 6 plans finished. Piano roll editor verified working with all success criteria met.
 
 **Phase 4 Status:** Complete - All 5 plans finished. Music Theory Validation Layer fully implemented and verified. ScaleValidator blocks out-of-scale notes with clear error messages, TransitionValidator warns on context clashes, GenreValidator enforces genre-specific interval rules (classical, jazz, trap, pop, none). ValidationPipeline coordinates all validators. Visual feedback shows in-scale/out-of-scale rows via subtle piano roll highlighting. Theory controls (toggle, genre selector, key display) integrated in toolbar. Human verification confirmed all 4 phase success criteria pass. Phase goal achieved: system validates all edits against music theory rules with visual feedback showing scale conformance.
 
-**Phase 5 Status:** In progress - 3 of TBD plans finished. OpenAI integration foundation complete (05-01), client-side orchestration layer complete (05-02), UI integration complete (05-03). CommandInput component provides text input for natural language prompts with inline feedback (loading spinner, success with token cost, error with retry). Conditional rendering when project loaded and track selected. Toaster configured for future theory violation warnings. Full async pipeline operational: user types prompt → API call → GPT-4o response → operations applied to project state → feedback displayed.
-
 **Phase 5 Status:** Complete - All 4 plans finished. Natural language editing pipeline fully operational. OpenAI SDK integrated with GPT-4o using Zod schemas for 6 edit operation types (add, remove, modify, transpose, change_tempo, change_key). Context builder produces compact MIDI JSON with full selected track data. Edit executor applies all operations as batch edit for single-step undo/redo. CommandInput UI component provides prompt input with loading states, inline feedback showing token cost, and example prompts tooltip. Human verification confirmed all 5 phase success criteria pass: melody edits work, tempo changes apply immediately, track targeting functional, GPT-4o returns structured operations, token usage tracked. Multiple issues fixed during verification: OpenAI Structured Outputs compatibility (nullable fields), timeout optimization (60s), batch edit for undo/redo, hover tooltip visibility. Phase goal achieved: users can edit MIDI using natural language prompts without conversation context.
+
+**Phase 6 Status:** In progress - 1 of TBD plans finished. LLM parameter extraction complete (06-01). GenerationParamsSchema defines 10 structured fields (genre, tempo, key, scale, timeSignature, structure, emotion, instrumentation, description). POST /api/nl-generate endpoint parses natural language prompts into GenerationParams using GPT-4o with genre-appropriate defaults. System prompt includes defaults for all 6 genres (lofi, trap, boom-bap, jazz, classical, pop) with tempo ranges, scales, keys, emotion coordinates, GM instruments. All fields required - GPT fills in defaults for unspecified values. Much smaller system prompts (~500 tokens) vs editing (~2000-5000) due to no MIDI context. Ready for melody/chord/drum generation algorithms in next plans.
