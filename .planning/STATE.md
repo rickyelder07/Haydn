@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-23)
 ## Current Position
 
 Phase: 6 of 8 (Natural Language Generation)
-Plan: 1 of TBD in current phase
+Plan: 2 of TBD in current phase
 Status: In progress
-Last activity: 2026-02-05 — Completed 06-01-PLAN.md
+Last activity: 2026-02-05 — Completed 06-02-PLAN.md
 
-Progress: [█████████████████████] 140% (28/20 plans)
+Progress: [█████████████████████] 145% (29/20 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 28
-- Average duration: 9.5 minutes
-- Total execution time: 4.53 hours
+- Total plans completed: 29
+- Average duration: 9.2 minutes
+- Total execution time: 4.57 hours
 
 **By Phase:**
 
@@ -32,11 +32,11 @@ Progress: [█████████████████████] 140%
 | 03-piano-roll-editor | 6 | 216.4 min | 36.1 min |
 | 04-music-theory-validation-layer | 5 | 16.7 min | 3.3 min |
 | 05-natural-language-editing-single-shot | 4 | 7.2 min | 1.8 min |
-| 06-natural-language-generation | 1 | 1.9 min | 1.9 min |
+| 06-natural-language-generation | 2 | 5.9 min | 3.0 min |
 
 **Recent Trend:**
-- Last 5 plans: 05-01 (4.2 min), 05-02 (1.0 min), 05-03 (2.0 min), 05-04 (manual verification), 06-01 (1.9 min)
-- Trend: Phases 5-6 exceptionally fast with sub-2 minute average
+- Last 5 plans: 05-02 (1.0 min), 05-03 (2.0 min), 05-04 (manual verification), 06-01 (1.9 min), 06-02 (4.0 min)
+- Trend: Phase 6 averaging 3 minutes with increased complexity vs Phase 5's sub-2 minute average
 
 *Updated after each plan completion*
 
@@ -152,6 +152,12 @@ Recent decisions affecting current work:
 - **Default song structure** (06-01): intro(4), verse(8), chorus(8), verse(8), chorus(8), outro(4)
 - **Emotion as coordinates** (06-01): Valence (happy/sad) and arousal (energetic/calm) guide expressive generation
 - **GM instrument numbers per role** (06-01): Instrumentation defined by role (drums, bass, melody, chords) and GM number
+- **Tonal.js Note.transpose for intervals** (06-02): transpose method is on Note module, not Interval module
+- **5 section types in genre templates** (06-02): verse, chorus, bridge, intro, outro with fallback to verse
+- **Walking bass chromatic approach** (06-02): Last beat of final bar uses semitone below next chord root
+- **Chord-tone preference on strong beats** (06-02): 70% probability on beats 1 and 3 vs 50% on weak beats
+- **Arousal modifies density** (06-02): High arousal adds kick hits, low arousal reduces hats to quarter notes
+- **Classical genre no drums** (06-02): Empty drum arrays in template, generateDrumTrack returns empty array
 
 ### Pending Todos
 
@@ -164,7 +170,7 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-05
-Stopped at: Completed 06-01-PLAN.md
+Stopped at: Completed 06-02-PLAN.md
 Resume file: None
 
 **Phase 3 Status:** Complete - All 6 plans finished. Piano roll editor verified working with all success criteria met.
@@ -173,4 +179,4 @@ Resume file: None
 
 **Phase 5 Status:** Complete - All 4 plans finished. Natural language editing pipeline fully operational. OpenAI SDK integrated with GPT-4o using Zod schemas for 6 edit operation types (add, remove, modify, transpose, change_tempo, change_key). Context builder produces compact MIDI JSON with full selected track data. Edit executor applies all operations as batch edit for single-step undo/redo. CommandInput UI component provides prompt input with loading states, inline feedback showing token cost, and example prompts tooltip. Human verification confirmed all 5 phase success criteria pass: melody edits work, tempo changes apply immediately, track targeting functional, GPT-4o returns structured operations, token usage tracked. Multiple issues fixed during verification: OpenAI Structured Outputs compatibility (nullable fields), timeout optimization (60s), batch edit for undo/redo, hover tooltip visibility. Phase goal achieved: users can edit MIDI using natural language prompts without conversation context.
 
-**Phase 6 Status:** In progress - 1 of TBD plans finished. LLM parameter extraction complete (06-01). GenerationParamsSchema defines 10 structured fields (genre, tempo, key, scale, timeSignature, structure, emotion, instrumentation, description). POST /api/nl-generate endpoint parses natural language prompts into GenerationParams using GPT-4o with genre-appropriate defaults. System prompt includes defaults for all 6 genres (lofi, trap, boom-bap, jazz, classical, pop) with tempo ranges, scales, keys, emotion coordinates, GM instruments. All fields required - GPT fills in defaults for unspecified values. Much smaller system prompts (~500 tokens) vs editing (~2000-5000) due to no MIDI context. Ready for melody/chord/drum generation algorithms in next plans.
+**Phase 6 Status:** In progress - 2 of TBD plans finished. LLM parameter extraction complete (06-01). GenerationParamsSchema defines 10 structured fields (genre, tempo, key, scale, timeSignature, structure, emotion, instrumentation, description). POST /api/nl-generate endpoint parses natural language prompts into GenerationParams using GPT-4o with genre-appropriate defaults. System prompt includes defaults for all 6 genres (lofi, trap, boom-bap, jazz, classical, pop) with tempo ranges, scales, keys, emotion coordinates, GM instruments. All fields required - GPT fills in defaults for unspecified values. Much smaller system prompts (~500 tokens) vs editing (~2000-5000) due to no MIDI context. Rule-based generators complete (06-02). Five pure-function modules in src/lib/nl-generation/: genreTemplates (6 genres with chord progressions, drum patterns, configs), chordGenerator (roman numerals to MIDI voicings via Tonal.js), rhythmGenerator (genre-appropriate drums on channel 9 with arousal modifiers), melodyGenerator (weighted random walk preferring chord tones on strong beats), bassGenerator (three rhythm styles: root-notes, walking, arpeggiated). All use Tonal.js for music theory. ChordSymbol type provides timing coordination. Ready for orchestrator to combine LLM params with generators.
