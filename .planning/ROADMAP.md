@@ -119,7 +119,6 @@ Plans:
 - [x] 05-02-PLAN.md - Context builder, edit executor, NL edit store with async flow (Wave 2)
 - [x] 05-03-PLAN.md - CommandInput UI component and page integration (Wave 3)
 - [x] 05-04-PLAN.md - Human verification checkpoint (Wave 4)
-- [ ] 05-04-PLAN.md - Human verification checkpoint (Wave 4)
 
 ### Phase 6: Natural Language Generation
 **Goal**: Users can generate MIDI from scratch using text descriptions
@@ -130,10 +129,13 @@ Plans:
   2. Generated MIDI follows correct scales and functional harmony (no random notes)
   3. Generated MIDI matches genre conventions (trap drums sound like trap, not jazz)
   4. User can specify tempo, key, and time signature in prompt (e.g., "120 BPM in D minor, 4/4")
-**Plans**: TBD
+**Plans**: 4 plans in 3 waves
 
 Plans:
-- [ ] 06-01: [To be determined during planning]
+- [ ] 06-01-PLAN.md - GenerationParams schema and /api/nl-generate endpoint (Wave 1)
+- [ ] 06-02-PLAN.md - Genre templates and music generators (chords, drums, melody, bass) (Wave 1, parallel)
+- [ ] 06-03-PLAN.md - MIDI assembler, generation store, GenerationInput UI, page integration (Wave 2)
+- [ ] 06-04-PLAN.md - Human verification checkpoint (Wave 3)
 
 ### Phase 7: Multi-Track Support
 **Goal**: Users can work with multiple tracks and manage them independently
@@ -179,6 +181,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8
 | 3. Piano Roll Editor | 6/6 | Complete | 2026-01-30 |
 | 4. Music Theory Validation Layer | 5/5 | Complete | 2026-02-02 |
 | 5. Natural Language Editing - Single-Shot | 4/4 | Complete | 2026-02-04 |
-| 6. Natural Language Generation | 0/TBD | Not started | - |
+| 6. Natural Language Generation | 0/4 | Planning complete | - |
 | 7. Multi-Track Support | 0/TBD | Not started | - |
 | 8. Conversational Editing Mode | 0/TBD | Not started | - |
