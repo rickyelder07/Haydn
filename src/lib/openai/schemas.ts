@@ -96,3 +96,87 @@ export const EditResponseSchema = z.object({
 export type EditOperation = z.infer<typeof EditOperationSchema>;
 export type EditResponse = z.infer<typeof EditResponseSchema>;
 export type EditParameters = z.infer<typeof EditParametersSchema>;
+
+/**
+ * Generation parameters schema for natural language MIDI generation.
+ *
+ * Defines structured musical parameters that GPT-4o extracts from a user's
+ * generation prompt. All fields are required - GPT must fill in genre-appropriate
+ * defaults for any values not explicitly specified in the prompt.
+ */
+export const GenerationParamsSchema = z.object({
+  genre: z
+    .enum(['lofi', 'trap', 'boom-bap', 'jazz', 'classical', 'pop'])
+    .describe('Musical genre that determines overall style and feel'),
+  tempo: z
+    .number()
+    .int()
+    .min(40)
+    .max(240)
+    .describe('Tempo in beats per minute (BPM)'),
+  key: z.string().describe('Musical key like "C", "D#", "Bb"'),
+  scale: z
+    .enum(['major', 'minor', 'harmonic minor', 'dorian', 'mixolydian'])
+    .describe('Scale type that defines harmonic content'),
+  timeSignatureNumerator: z
+    .number()
+    .int()
+    .min(2)
+    .max(16)
+    .describe('Top number of time signature (beats per bar)'),
+  timeSignatureDenominator: z
+    .number()
+    .int()
+    .min(2)
+    .max(16)
+    .describe('Bottom number of time signature (note value per beat)'),
+  structure: z
+    .array(
+      z.object({
+        section: z
+          .enum(['intro', 'verse', 'chorus', 'bridge', 'outro'])
+          .describe('Section type'),
+        bars: z
+          .number()
+          .int()
+          .min(1)
+          .max(64)
+          .describe('Number of bars for this section'),
+      })
+    )
+    .describe('Song structure as sequence of sections'),
+  emotion: z
+    .object({
+      valence: z
+        .number()
+        .min(-1)
+        .max(1)
+        .describe('Emotional valence: happy (1) to sad (-1)'),
+      arousal: z
+        .number()
+        .min(-1)
+        .max(1)
+        .describe('Energy level: energetic (1) to calm (-1)'),
+    })
+    .describe('Emotional character of the music'),
+  instrumentation: z
+    .array(
+      z.object({
+        role: z
+          .enum(['drums', 'bass', 'melody', 'chords'])
+          .describe('Musical role in the arrangement'),
+        instrument: z
+          .number()
+          .int()
+          .min(0)
+          .max(127)
+          .describe('General MIDI instrument number (0-127)'),
+      })
+    )
+    .describe('Instruments and their roles in the arrangement'),
+  description: z
+    .string()
+    .describe('Original user prompt preserved for reference'),
+});
+
+export type GenerationParams = z.infer<typeof GenerationParamsSchema>;
