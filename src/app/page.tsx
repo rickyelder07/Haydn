@@ -12,6 +12,7 @@ import { ErrorDisplay } from '@/components/ErrorDisplay';
 import { TransportControls } from '@/components/TransportControls';
 import { PianoRollEditor } from '@/components/PianoRoll';
 import { CommandInput } from '@/components/CommandInput';
+import { GenerationInput } from '@/components/GenerationInput';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { Toaster } from 'sonner';
 
@@ -101,12 +102,36 @@ export default function Home() {
           </div>
         )}
 
-        {/* Empty State */}
+        {/* Empty State - Generation and Upload */}
         {!project && (
-          <div className="text-center py-12">
-            <p className="text-gray-500">
-              Upload a MIDI or MusicXML file to get started
-            </p>
+          <div className="max-w-4xl mx-auto space-y-8">
+            {/* Generation Section */}
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4 text-center">
+                Generate Music from Text
+              </h2>
+              <GenerationInput />
+            </div>
+
+            {/* Divider */}
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-4 bg-gray-50 text-gray-500">or</span>
+              </div>
+            </div>
+
+            {/* Upload Section */}
+            <div className="text-center">
+              <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                Upload an Existing File
+              </h2>
+              <p className="text-gray-500 text-sm mb-4">
+                Import MIDI or MusicXML files to edit
+              </p>
+            </div>
           </div>
         )}
       </div>
