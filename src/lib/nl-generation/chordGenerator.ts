@@ -60,8 +60,16 @@ export function generateChordProgression(
     // Get chord progressions for this section type (fall back to verse)
     const progressions = template.chordProgressions[sectionType] || template.chordProgressions.verse;
 
-    // Select a progression (use first one for consistency)
-    const romanNumerals = progressions[0] || ['I', 'IV', 'V', 'I'];
+    // Select a progression based on section type for variety
+    // Verse uses first progression (stable), chorus uses second (dynamic)
+    let progressionIndex = 0;
+    if (sectionType === 'chorus' || sectionType === 'bridge') {
+      progressionIndex = Math.min(1, progressions.length - 1);
+    } else if (sectionType === 'intro' || sectionType === 'outro') {
+      // Random choice for intro/outro
+      progressionIndex = Math.floor(Math.random() * progressions.length);
+    }
+    const romanNumerals = progressions[progressionIndex] || ['I', 'IV', 'V', 'I'];
 
     // Convert roman numerals to actual chord names using Tonal.js
     let chordNames: string[];

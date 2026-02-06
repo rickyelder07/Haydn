@@ -100,11 +100,16 @@ export function assembleProject(params: GenerationParams): HaydnProject {
 
     // Only add track if it has notes
     if (notes.length > 0) {
+      // Special handling for drums (channel 9)
+      const instrumentName = channel === 9
+        ? 'Standard Drum Kit'
+        : getInstrumentName(instrumentNumber) || 'Unknown';
+
       tracks.push({
         name: trackName,
         channel,
         instrumentNumber,
-        instrumentName: getInstrumentName(instrumentNumber) || 'Unknown',
+        instrumentName,
         notes,
         controlChanges: []
       });

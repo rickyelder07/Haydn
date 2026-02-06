@@ -128,9 +128,10 @@ function selectNextNote(
   const currentChroma = currentMidi % 12;
 
   // Adjust probabilities for strong beats (prefer chord tones)
-  const chordToneProb = isStrongBeat ? 0.7 : 0.5;
-  const scaleToneProb = 0.35;
-  const chromaticProb = 0.15;
+  // Strong beats: 70% chord, 25% scale, 5% chromatic
+  // Weak beats: 40% chord, 40% scale, 20% chromatic
+  const chordToneProb = isStrongBeat ? 0.7 : 0.4;
+  const scaleToneProb = isStrongBeat ? 0.25 : 0.4;
 
   // Choose note type
   const rand = Math.random();
@@ -178,16 +179,15 @@ function selectNextNote(
   }
 
   // Apply stepwise preference: choose candidate closest to current MIDI
+  // This enforces smoother melodic lines with smaller intervals
   const sorted = candidates.sort((a, b) => {
     const distA = Math.abs(a - currentMidi);
     const distB = Math.abs(b - currentMidi);
     return distA - distB;
   });
 
-  // Use weighted selection favoring closer notes
-  // Take from top 3 closest options
-  const topCandidates = sorted.slice(0, Math.min(3, sorted.length));
-  const selectedMidi = topCandidates[Math.floor(Math.random() * topCandidates.length)];
+  // Always pick the closest note for strong stepwise motion
+  const selectedMidi = sorted[0];
 
   // Clamp to valid MIDI range
   return Math.max(0, Math.min(127, selectedMidi));

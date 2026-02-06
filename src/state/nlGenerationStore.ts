@@ -13,6 +13,7 @@ import { create } from 'zustand';
 import type { GenerationParams } from '@/lib/openai/schemas';
 import { assembleProject } from '@/lib/nl-generation/midiAssembler';
 import { useProjectStore } from './projectStore';
+import { createDefaultPipeline } from '@/lib/music-theory/validators/ValidationPipeline';
 
 interface TokenUsage {
   promptTokens: number;
@@ -88,6 +89,38 @@ export const useNLGenerationStore = create<NLGenerationState>((set, get) => ({
 
       // Step 2: Assemble MIDI project from params
       const project = assembleProject(params);
+
+      // Step 2.5: Validate generated MIDI (log warnings, don't block)
+      // Research recommendation: validate with WARNING severity, not ERROR
+      try {
+        const pipeline = createDefaultPipeline();
+
+        // Validate each track
+        for (const track of project.tracks) {
+          // Skip drums (channel 9) - percussion doesn't follow scale rules
+          if (track.channel === 9) continue;
+
+          const context = {
+            notes: track.notes,
+            key: project.metadata.keySignatures[0]?.key || params.key,
+            scale: project.metadata.keySignatures[0]?.scale || 'major',
+            existingNotes: [], // No pre-existing notes for generation
+          };
+
+          const result = pipeline.validate(context);
+
+          // Log warnings but don't block generation
+          if (result.warnings.length > 0) {
+            console.warn(`[Generation Validation] Track "${track.name}" has music theory warnings:`, result.warnings);
+          }
+          if (result.errors.length > 0) {
+            console.warn(`[Generation Validation] Track "${track.name}" has music theory issues:`, result.errors);
+          }
+        }
+      } catch (validationError) {
+        // Don't fail generation due to validation errors
+        console.error('[Generation Validation] Validation failed:', validationError);
+      }
 
       // Step 3: Load project into app
       const { setProject } = useProjectStore.getState();
