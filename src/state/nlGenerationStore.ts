@@ -100,21 +100,41 @@ export const useNLGenerationStore = create<NLGenerationState>((set, get) => ({
           // Skip drums (channel 9) - percussion doesn't follow scale rules
           if (track.channel === 9) continue;
 
-          const context = {
-            notes: track.notes,
-            key: project.metadata.keySignatures[0]?.key || params.key,
-            scale: project.metadata.keySignatures[0]?.scale || 'major',
-            existingNotes: [], // No pre-existing notes for generation
-          };
+          const trackErrors: string[] = [];
+          const trackWarnings: string[] = [];
 
-          const result = pipeline.validate(context);
+          // Validate each note in the track
+          for (const note of track.notes) {
+            const context = {
+              note,
+              track,
+              project,
+              editType: 'add' as const
+            };
 
-          // Log warnings but don't block generation
-          if (result.warnings.length > 0) {
-            console.warn(`[Generation Validation] Track "${track.name}" has music theory warnings:`, result.warnings);
+            const result = pipeline.validate(context);
+
+            // Collect errors and warnings
+            if (!result.ok) {
+              result.errors.forEach(error => {
+                if (error.severity === 'error') {
+                  trackErrors.push(error.message);
+                } else {
+                  trackWarnings.push(error.message);
+                }
+              });
+            }
           }
-          if (result.errors.length > 0) {
-            console.warn(`[Generation Validation] Track "${track.name}" has music theory issues:`, result.errors);
+
+          // Log unique issues (avoid spam from repeated errors)
+          const uniqueErrors = [...new Set(trackErrors)];
+          const uniqueWarnings = [...new Set(trackWarnings)];
+
+          if (uniqueErrors.length > 0) {
+            console.warn(`[Generation Validation] Track "${track.name}" has ${uniqueErrors.length} type(s) of theory issues:`, uniqueErrors);
+          }
+          if (uniqueWarnings.length > 0) {
+            console.info(`[Generation Validation] Track "${track.name}" has ${uniqueWarnings.length} type(s) of warnings:`, uniqueWarnings);
           }
         }
       } catch (validationError) {
