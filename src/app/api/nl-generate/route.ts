@@ -83,9 +83,13 @@ If the user doesn't specify structure, use:
 ## Instructions
 
 1. **Extract all parameters** from the user's prompt
-2. **User requirements ALWAYS override genre defaults** - if user says "with a bass part", bass MUST be in instrumentation even if genre defaults don't include it
-3. **Validate completeness**: Check that all user-mentioned instruments/parts are in the instrumentation array
-4. **Fill in genre-appropriate defaults** ONLY for unspecified values
+2. **CRITICAL: User requirements ALWAYS override genre defaults**
+   - If user says "with a bass part" or "with bass" → { role: "bass", instrument: <genre-bass-number> } MUST be in instrumentation
+   - If user says "with piano" or "piano chords" → { role: "chords", instrument: 0 } MUST be in instrumentation
+   - If user says "with melody" or "melodic" → { role: "melody", instrument: <genre-melody-number> } MUST be in instrumentation
+   - If user says "with drums" or "beat" → { role: "drums", instrument: 0 } MUST be in instrumentation
+3. **Validate completeness**: Before returning, verify that EVERY instrument/part mentioned in the user's prompt appears in the instrumentation array
+4. **Fill in genre-appropriate defaults** ONLY for unspecified values (don't remove user-requested parts)
 5. **Be smart about interpretation**: "upbeat jazz tune" → jazz genre, higher tempo (160 BPM), major scale, positive valence
 6. **Preserve the original prompt** in the description field
 7. **Output ONLY the structured parameters** - no explanatory text
@@ -191,6 +195,54 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
+
+    // Debug logging to see what GPT-4o returns
+    console.log('[nl-generate] User prompt:', prompt);
+    console.log('[nl-generate] GPT-4o returned instrumentation:', parsed.instrumentation);
+
+    // Server-side validation: ensure user-mentioned instruments are included
+    // This is a safety net in case GPT-4o ignores the system prompt
+    const promptLower = prompt.toLowerCase();
+    const hasRoleInInstrumentation = (role: string) =>
+      parsed.instrumentation.some(inst => inst.role === role);
+
+    // Get genre-specific instrument numbers for filling in missing parts
+    const genreDefaults: Record<string, { drums: number; bass: number; chords: number; melody: number }> = {
+      trap: { drums: 0, bass: 38, chords: 90, melody: 81 },
+      lofi: { drums: 0, bass: 33, chords: 4, melody: 11 },
+      'boom-bap': { drums: 0, bass: 33, chords: 4, melody: 65 },
+      jazz: { drums: 0, bass: 32, chords: 0, melody: 66 },
+      classical: { drums: 0, bass: 42, chords: 0, melody: 40 },
+      pop: { drums: 0, bass: 33, chords: 0, melody: 0 },
+    };
+
+    const defaults = genreDefaults[parsed.genre] || genreDefaults.pop;
+
+    // Check for bass mentions
+    if ((promptLower.includes('bass') || promptLower.includes('low end')) && !hasRoleInInstrumentation('bass')) {
+      console.warn('[nl-generate] User mentioned bass but GPT-4o did not include it. Adding bass.');
+      parsed.instrumentation.push({ role: 'bass', instrument: defaults.bass });
+    }
+
+    // Check for melody mentions
+    if ((promptLower.includes('melody') || promptLower.includes('melodic') || promptLower.includes('lead')) && !hasRoleInInstrumentation('melody')) {
+      console.warn('[nl-generate] User mentioned melody but GPT-4o did not include it. Adding melody.');
+      parsed.instrumentation.push({ role: 'melody', instrument: defaults.melody });
+    }
+
+    // Check for chord mentions
+    if ((promptLower.includes('chord') || promptLower.includes('piano') || promptLower.includes('pad')) && !hasRoleInInstrumentation('chords')) {
+      console.warn('[nl-generate] User mentioned chords but GPT-4o did not include it. Adding chords.');
+      parsed.instrumentation.push({ role: 'chords', instrument: defaults.chords });
+    }
+
+    // Check for drum mentions (beat, drums, rhythm)
+    if ((promptLower.includes('beat') || promptLower.includes('drum') || promptLower.includes('rhythm')) && !hasRoleInInstrumentation('drums')) {
+      console.warn('[nl-generate] User mentioned drums but GPT-4o did not include it. Adding drums.');
+      parsed.instrumentation.push({ role: 'drums', instrument: defaults.drums });
+    }
+
+    console.log('[nl-generate] Final instrumentation after validation:', parsed.instrumentation);
 
     // Extract usage stats
     const usage = {
