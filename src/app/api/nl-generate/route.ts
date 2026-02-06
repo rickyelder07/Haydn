@@ -83,10 +83,33 @@ If the user doesn't specify structure, use:
 ## Instructions
 
 1. **Extract all parameters** from the user's prompt
-2. **Fill in genre-appropriate defaults** for any unspecified values
-3. **Be smart about interpretation**: "upbeat jazz tune" → jazz genre, higher tempo (160 BPM), major scale, positive valence
-4. **Preserve the original prompt** in the description field
-5. **Output ONLY the structured parameters** - no explanatory text
+2. **User requirements ALWAYS override genre defaults** - if user says "with a bass part", bass MUST be in instrumentation even if genre defaults don't include it
+3. **Validate completeness**: Check that all user-mentioned instruments/parts are in the instrumentation array
+4. **Fill in genre-appropriate defaults** ONLY for unspecified values
+5. **Be smart about interpretation**: "upbeat jazz tune" → jazz genre, higher tempo (160 BPM), major scale, positive valence
+6. **Preserve the original prompt** in the description field
+7. **Output ONLY the structured parameters** - no explanatory text
+
+## Instrumentation Rules
+
+- If user mentions specific instruments (e.g., "with bass", "add piano", "include strings"), those MUST appear in the instrumentation array
+- Genre defaults provide baseline instrumentation, but user requests override and extend
+- Each role (drums, bass, melody, chords) can only appear once in the instrumentation array
+- If user doesn't mention instrumentation at all, use the full genre default (all 4 roles)
+
+## Examples
+
+**Prompt:** "make a trap beat with a bass part"
+→ instrumentation MUST include: [{ role: "drums", instrument: 0 }, { role: "bass", instrument: 38 }]
+→ User explicitly requested bass, so it's included even if they didn't mention other parts
+
+**Prompt:** "create a lo-fi beat"
+→ instrumentation: Use all 4 default lofi roles (drums, bass, chords, melody)
+→ No specific requests, so use complete genre defaults
+
+**Prompt:** "trap beat with piano chords and heavy bass"
+→ instrumentation MUST include: [{ role: "drums", instrument: 0 }, { role: "bass", instrument: 38 }, { role: "chords", instrument: 0 }]
+→ User mentioned "piano chords" (instrument 0 for chords role) and "bass"
 
 If the user doesn't specify a genre, infer it from their description or default to "pop".`;
 }
