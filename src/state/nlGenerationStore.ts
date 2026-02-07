@@ -115,7 +115,7 @@ export const useNLGenerationStore = create<NLGenerationState>((set, get) => ({
             const result = pipeline.validate(context);
 
             // Collect errors and warnings
-            if (!result.ok) {
+            if (!result.valid) {
               result.errors.forEach(error => {
                 if (error.severity === 'error') {
                   trackErrors.push(error.message);
