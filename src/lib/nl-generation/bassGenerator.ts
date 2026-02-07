@@ -29,9 +29,13 @@ export function generateBassTrack(
 ): HaydnNote[] {
   const notes: HaydnNote[] = [];
 
+  console.log(`[bassGenerator] Generating bass for genre: ${genre}, chords: ${chordSymbols.length}, key: ${key}`);
+
   // Get genre template (default to pop if not found)
   const template = GENRE_TEMPLATES[genre] || GENRE_TEMPLATES.pop;
   const config = template.bassConfig;
+
+  console.log(`[bassGenerator] Bass config:`, config);
 
   // Process each chord
   for (let i = 0; i < chordSymbols.length; i++) {
@@ -73,6 +77,7 @@ export function generateBassTrack(
     }
   }
 
+  console.log(`[bassGenerator] Generated ${notes.length} bass notes`);
   return notes;
 }
 

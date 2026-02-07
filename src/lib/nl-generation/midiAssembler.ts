@@ -44,11 +44,15 @@ export function assembleProject(params: GenerationParams): HaydnProject {
   );
 
   // Generate all tracks based on instrumentation
+  console.log('[assembleProject] Processing instrumentation:', params.instrumentation);
+
   for (const instrument of params.instrumentation) {
     let notes: HaydnNote[] = [];
     let channel = 0;
     let instrumentNumber = instrument.instrument;
     let trackName = '';
+
+    console.log(`[assembleProject] Generating track for role: ${instrument.role}`);
 
     switch (instrument.role) {
       case 'drums':
@@ -99,6 +103,8 @@ export function assembleProject(params: GenerationParams): HaydnProject {
     }
 
     // Only add track if it has notes
+    console.log(`[assembleProject] Role ${instrument.role} generated ${notes.length} notes`);
+
     if (notes.length > 0) {
       // Special handling for drums (channel 9)
       const instrumentName = channel === 9
@@ -113,6 +119,9 @@ export function assembleProject(params: GenerationParams): HaydnProject {
         notes,
         controlChanges: []
       });
+      console.log(`[assembleProject] Added track: ${trackName} with ${notes.length} notes`);
+    } else {
+      console.warn(`[assembleProject] Skipping ${instrument.role} track - no notes generated`);
     }
   }
 
