@@ -34,7 +34,7 @@ When the user specifies a genre, use these defaults for any unspecified paramete
 - Tempo: 140-160 BPM
 - Scale: minor
 - Time Signature: 4/4
-- Common Keys: C#m, Fm, Gm
+- Common Keys: C#, F, G
 - Emotion: valence -0.2 (dark), arousal 0.7 (high energy)
 - Instruments: drums (0), bass (38 - Synth Bass 1), chords (90 - Pad 3 polysynth), melody (81 - Lead 2 sawtooth)
 
@@ -42,7 +42,7 @@ When the user specifies a genre, use these defaults for any unspecified paramete
 - Tempo: 85-95 BPM
 - Scale: minor
 - Time Signature: 4/4
-- Common Keys: Em, Am, Dm
+- Common Keys: E, A, D
 - Emotion: valence 0.0 (neutral), arousal 0.3 (moderate)
 - Instruments: drums (0), bass (33 - Acoustic Bass), chords (4 - Electric Piano 1), melody (65 - Alto Sax)
 
@@ -58,7 +58,7 @@ When the user specifies a genre, use these defaults for any unspecified paramete
 - Tempo: 60-120 BPM
 - Scale: major or minor (depends on mood)
 - Time Signature: varies (4/4 common, but 3/4, 6/8 also used)
-- Common Keys: C, G, D, Am
+- Common Keys: C, G, D, A
 - Emotion: varies widely (valence -0.5 to 0.8, arousal -0.3 to 0.7)
 - Instruments: no drums, bass (42 - Cello), chords (0 - Acoustic Grand Piano), melody (40 - Violin)
 
