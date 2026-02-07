@@ -48,6 +48,8 @@ export function generateChordProgression(
   const notes: HaydnNote[] = [];
   const chordSymbols: ChordSymbol[] = [];
 
+  console.log(`[chordGenerator] Input: key="${key}", scale="${scale}", genre="${genre}"`);
+
   // Get genre template (default to pop if not found)
   const template = GENRE_TEMPLATES[genre] || GENRE_TEMPLATES.pop;
 
@@ -74,14 +76,18 @@ export function generateChordProgression(
     // Convert roman numerals to actual chord names using Tonal.js
     let chordNames: string[];
     try {
+      console.log(`[chordGenerator] Converting roman numerals for ${sectionType}:`, romanNumerals, 'in key:', key);
       chordNames = Progression.fromRomanNumerals(key, romanNumerals);
+      console.log(`[chordGenerator] Tonal.js returned chord names:`, chordNames);
 
       // If Tonal returns empty array, fall back to simple I-IV-V-I
       if (chordNames.length === 0) {
+        console.warn(`[chordGenerator] Tonal returned empty, using fallback`);
         chordNames = Progression.fromRomanNumerals(key, ['I', 'IV', 'V', 'I']);
       }
     } catch (error) {
       // Fall back to simple I-IV-V-I on error
+      console.error(`[chordGenerator] Error from Tonal.js:`, error);
       chordNames = Progression.fromRomanNumerals(key, ['I', 'IV', 'V', 'I']);
     }
 
@@ -139,5 +145,6 @@ export function generateChordProgression(
     }
   }
 
+  console.log(`[chordGenerator] Generated ${notes.length} chord notes and ${chordSymbols.length} chord symbols`);
   return { notes, chordSymbols };
 }
