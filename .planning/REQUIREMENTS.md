@@ -17,10 +17,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Natural Language Generation
 
-- [ ] **NL-01**: User can generate MIDI from scratch via text prompt (e.g., "create a lo-fi hip hop beat")
-- [ ] **NL-02**: Generated MIDI follows music theory rules (correct scales, functional harmony)
-- [ ] **NL-03**: Generated MIDI respects genre conventions specified in prompt
-- [ ] **NL-04**: User can specify tempo, key, and time signature in generation prompt
+- [x] **NL-01**: User can generate MIDI from scratch via text prompt (e.g., "create a lo-fi hip hop beat")
+- [x] **NL-02**: Generated MIDI follows music theory rules (correct scales, functional harmony)
+- [x] **NL-03**: Generated MIDI respects genre conventions specified in prompt
+- [x] **NL-04**: User can specify tempo, key, and time signature in generation prompt
 
 ### Natural Language Editing - Conversational Mode
 
@@ -147,10 +147,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | IO-03 | Phase 1 | Complete |
 | IO-04 | Phase 1 | Complete |
 | IO-05 | Phase 1 | Complete |
-| NL-01 | Phase 6 | Pending |
-| NL-02 | Phase 6 | Pending |
-| NL-03 | Phase 6 | Pending |
-| NL-04 | Phase 6 | Pending |
+| NL-01 | Phase 6 | Complete |
+| NL-02 | Phase 6 | Complete |
+| NL-03 | Phase 6 | Complete |
+| NL-04 | Phase 6 | Complete |
 | NL-05 | Phase 8 | Pending |
 | NL-06 | Phase 8 | Pending |
 | NL-07 | Phase 8 | Pending |

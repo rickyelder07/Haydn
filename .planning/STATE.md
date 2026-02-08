@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-23)
 
 **Core value:** Natural language edits must produce musically coherent results that follow music theory, respect genre conventions, and maintain context with the existing track.
-**Current focus:** Phase 6 - Natural Language Generation
+**Current focus:** Phase 7 - Multi-Track Support
 
 ## Current Position
 
 Phase: 6 of 8 (Natural Language Generation)
-Plan: 3 of TBD in current phase
-Status: In progress
-Last activity: 2026-02-05 — Completed 06-03-PLAN.md
+Plan: 4 of 4 in current phase
+Status: Complete
+Last activity: 2026-02-07 — Completed Phase 6
 
-Progress: [█████████████████████] 150% (30/20 plans)
+Progress: [█████████████████████] 155% (31/20 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 30
-- Average duration: 9.0 minutes
-- Total execution time: 4.63 hours
+- Total plans completed: 31
+- Average duration: 9.1 minutes
+- Total execution time: 4.70 hours
 
 **By Phase:**
 
@@ -32,11 +32,11 @@ Progress: [█████████████████████] 150%
 | 03-piano-roll-editor | 6 | 216.4 min | 36.1 min |
 | 04-music-theory-validation-layer | 5 | 16.7 min | 3.3 min |
 | 05-natural-language-editing-single-shot | 4 | 7.2 min | 1.8 min |
-| 06-natural-language-generation | 3 | 9.8 min | 3.3 min |
+| 06-natural-language-generation | 4 | 13.8 min | 3.5 min |
 
 **Recent Trend:**
-- Last 5 plans: 05-03 (2.0 min), 05-04 (manual verification), 06-01 (1.9 min), 06-02 (4.0 min), 06-03 (3.9 min)
-- Trend: Phase 6 averaging 3.3 minutes with consistent complexity, successful end-to-end integration
+- Last 5 plans: 05-04 (manual verification), 06-01 (1.9 min), 06-02 (4.0 min), 06-03 (3.9 min), 06-04 (manual verification with 6 bug fixes)
+- Trend: Phase 6 complete with verification revealing quality issues, all fixed and re-verified
 
 *Updated after each plan completion*
 
@@ -175,8 +175,8 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-05
-Stopped at: Completed 06-03-PLAN.md
+Last session: 2026-02-07
+Stopped at: Completed Phase 6
 Resume file: None
 
 **Phase 3 Status:** Complete - All 6 plans finished. Piano roll editor verified working with all success criteria met.
@@ -185,4 +185,4 @@ Resume file: None
 
 **Phase 5 Status:** Complete - All 4 plans finished. Natural language editing pipeline fully operational. OpenAI SDK integrated with GPT-4o using Zod schemas for 6 edit operation types (add, remove, modify, transpose, change_tempo, change_key). Context builder produces compact MIDI JSON with full selected track data. Edit executor applies all operations as batch edit for single-step undo/redo. CommandInput UI component provides prompt input with loading states, inline feedback showing token cost, and example prompts tooltip. Human verification confirmed all 5 phase success criteria pass: melody edits work, tempo changes apply immediately, track targeting functional, GPT-4o returns structured operations, token usage tracked. Multiple issues fixed during verification: OpenAI Structured Outputs compatibility (nullable fields), timeout optimization (60s), batch edit for undo/redo, hover tooltip visibility. Phase goal achieved: users can edit MIDI using natural language prompts without conversation context.
 
-**Phase 6 Status:** In progress - 3 of TBD plans finished. LLM parameter extraction complete (06-01). GenerationParamsSchema defines 10 structured fields (genre, tempo, key, scale, timeSignature, structure, emotion, instrumentation, description). POST /api/nl-generate endpoint parses natural language prompts into GenerationParams using GPT-4o with genre-appropriate defaults. System prompt includes defaults for all 6 genres (lofi, trap, boom-bap, jazz, classical, pop) with tempo ranges, scales, keys, emotion coordinates, GM instruments. All fields required - GPT fills in defaults for unspecified values. Much smaller system prompts (~500 tokens) vs editing (~2000-5000) due to no MIDI context. Rule-based generators complete (06-02). Five pure-function modules in src/lib/nl-generation/: genreTemplates (6 genres with chord progressions, drum patterns, configs), chordGenerator (roman numerals to MIDI voicings via Tonal.js), rhythmGenerator (genre-appropriate drums on channel 9 with arousal modifiers), melodyGenerator (weighted random walk preferring chord tones on strong beats), bassGenerator (three rhythm styles: root-notes, walking, arpeggiated). All use Tonal.js for music theory. ChordSymbol type provides timing coordination. End-to-end pipeline complete (06-03). midiAssembler.ts combines all generator outputs into HaydnProject with drums, bass, chords, melody tracks. nlGenerationStore.ts orchestrates API -> assembly -> projectStore.setProject. GenerationInput.tsx provides user-facing prompt input with examples, loading, inline feedback showing token cost. page.tsx empty state updated: generation section first (green-themed), divider, upload section below. Full pipeline functional: users type "create a lofi hip hop beat" and see complete multi-track MIDI project appear in piano roll with playback ready.
+**Phase 6 Status:** Complete - All 4 plans finished. Human verification checkpoint (06-04) revealed 6 critical quality issues which were fixed during checkpoint execution. Initial tests showed: drum track mislabeled, bass not generating, notes outside scale, chaotic melodies. Research audit comparing 06-RESEARCH.md to code found 5 gaps where research didn't translate: melody probabilities wrong, no section variation, weak stepwise motion, missing validation, drum label bug. Six fixes applied: (1) corrected melody probability distribution (40/40/20 on weak beats), (2) strengthened stepwise motion to always pick closest note, (3) added section-based chord progression selection, (4) integrated ValidationPipeline for music theory checking, (5) fixed drum track label for channel 9, (6) corrected system prompt key format examples (was "C#m", now "C#" + "minor" separate) which fixed bass generation failure. Additional fixes: validation context structure corrected, instrumentation enforcement via two-layer validation (GPT prompt + server-side check), comprehensive debug logging added, TypeScript interface mismatch fixed (result.ok → result.valid). Final verification confirmed all 4 success criteria passing. Production build verified successful. Phase goal achieved: users can generate MIDI from scratch using text descriptions with musically coherent, genre-appropriate results.

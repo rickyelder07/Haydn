@@ -17,7 +17,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Piano Roll Editor** - Visual editing interface with manual note control
 - [x] **Phase 4: Music Theory Validation Layer** - Theory engine for coherent edits
 - [x] **Phase 5: Natural Language Editing - Single-Shot** - Core NL editing with token efficiency
-- [ ] **Phase 6: Natural Language Generation** - Create MIDI from text prompts
+- [x] **Phase 6: Natural Language Generation** - Create MIDI from text prompts
 - [ ] **Phase 7: Multi-Track Support** - Expand to multiple tracks with track management
 - [ ] **Phase 8: Conversational Editing Mode** - Multi-turn context with edit history
 
@@ -132,10 +132,10 @@ Plans:
 **Plans**: 4 plans in 3 waves
 
 Plans:
-- [ ] 06-01-PLAN.md - GenerationParams schema and /api/nl-generate endpoint (Wave 1)
-- [ ] 06-02-PLAN.md - Genre templates and music generators (chords, drums, melody, bass) (Wave 1, parallel)
-- [ ] 06-03-PLAN.md - MIDI assembler, generation store, GenerationInput UI, page integration (Wave 2)
-- [ ] 06-04-PLAN.md - Human verification checkpoint (Wave 3)
+- [x] 06-01-PLAN.md - GenerationParams schema and /api/nl-generate endpoint (Wave 1)
+- [x] 06-02-PLAN.md - Genre templates and music generators (chords, drums, melody, bass) (Wave 1, parallel)
+- [x] 06-03-PLAN.md - MIDI assembler, generation store, GenerationInput UI, page integration (Wave 2)
+- [x] 06-04-PLAN.md - Human verification checkpoint (Wave 3)
 
 ### Phase 7: Multi-Track Support
 **Goal**: Users can work with multiple tracks and manage them independently
