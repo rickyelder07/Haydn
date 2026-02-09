@@ -31,7 +31,7 @@ export function PianoRollEditor() {
   const scalePitchClasses = useValidationStore((state) => state.scalePitchClasses);
   const validationEnabled = useValidationStore((state) => state.enabled);
   const updateScaleInfo = useValidationStore((state) => state.updateScaleInfo);
-  const { ghostNotesVisible, setGhostNotesVisible } = useTrackUIStore();
+  const { ghostNotesVisible, setGhostNotesVisible, isTrackVisibleInGhost } = useTrackUIStore();
 
   const [scrollX, setScrollX] = useState(0);
   const [scrollY, setScrollY] = useState(0);
@@ -51,11 +51,13 @@ export function PianoRollEditor() {
   const timeSignature = project?.metadata.timeSignatures[0] || { numerator: 4, denominator: 4, ticks: 0 };
   const durationTicks = project?.durationTicks || ppq * 16; // Default 16 beats
 
-  // Build allTracks array for ghost note rendering
-  const allTracks = project?.tracks.map((track, idx) => ({
-    notes: track.notes,
-    trackIndex: idx,
-  })) ?? [];
+  // Build allTracks array for ghost note rendering (filter out hidden tracks)
+  const allTracks = project?.tracks
+    .map((track, idx) => ({
+      notes: track.notes,
+      trackIndex: idx,
+    }))
+    .filter(({ trackIndex }) => isTrackVisibleInGhost(trackIndex, selectedTrackIndex)) ?? [];
 
   // Compute selected note for inspector
   // Note ID format: "${trackIndex}-${noteIndex}"

@@ -9,23 +9,27 @@ interface TrackUIState {
   // State
   mutedTracks: Set<number>;
   soloedTracks: Set<number>;
+  hiddenTracks: Set<number>; // Tracks hidden from ghost view
   trackOrder: number[]; // Display order (indices into project.tracks)
   ghostNotesVisible: boolean;
 
   // Actions
   toggleMute: (trackIndex: number) => void;
   toggleSolo: (trackIndex: number) => void;
+  toggleHidden: (trackIndex: number) => void;
   reorderTracks: (fromIndex: number, toIndex: number) => void;
   setGhostNotesVisible: (visible: boolean) => void;
   resetAllStates: () => void;
   initializeOrder: (trackCount: number) => void;
   isTrackAudible: (trackIndex: number) => boolean;
+  isTrackVisibleInGhost: (trackIndex: number, selectedTrackIndex: number | null) => boolean;
 }
 
 export const useTrackUIStore = create<TrackUIState>((set, get) => ({
   // Initial state
   mutedTracks: new Set<number>(),
   soloedTracks: new Set<number>(),
+  hiddenTracks: new Set<number>(),
   trackOrder: [],
   ghostNotesVisible: true,
 
@@ -65,6 +69,19 @@ export const useTrackUIStore = create<TrackUIState>((set, get) => ({
     });
   },
 
+  // Toggle hide from ghost view
+  toggleHidden: (trackIndex) => {
+    set((state) => {
+      const newHidden = new Set(state.hiddenTracks);
+      if (newHidden.has(trackIndex)) {
+        newHidden.delete(trackIndex);
+      } else {
+        newHidden.add(trackIndex);
+      }
+      return { hiddenTracks: newHidden };
+    });
+  },
+
   // Reorder tracks in display order
   reorderTracks: (fromIndex, toIndex) => {
     set((state) => {
@@ -85,6 +102,7 @@ export const useTrackUIStore = create<TrackUIState>((set, get) => ({
     set({
       mutedTracks: new Set<number>(),
       soloedTracks: new Set<number>(),
+      hiddenTracks: new Set<number>(),
     });
 
     // Unmute all tracks in audio
@@ -99,6 +117,7 @@ export const useTrackUIStore = create<TrackUIState>((set, get) => ({
       trackOrder: Array.from({ length: trackCount }, (_, i) => i),
       mutedTracks: new Set<number>(),
       soloedTracks: new Set<number>(),
+      hiddenTracks: new Set<number>(),
     });
   },
 
@@ -113,5 +132,18 @@ export const useTrackUIStore = create<TrackUIState>((set, get) => ({
 
     // No solos: only non-muted tracks are audible
     return !state.mutedTracks.has(trackIndex);
+  },
+
+  // Check if a track should be visible as ghost notes
+  isTrackVisibleInGhost: (trackIndex, selectedTrackIndex) => {
+    const state = get();
+
+    // Selected track is always visible (rendered separately, not as ghost)
+    if (trackIndex === selectedTrackIndex) {
+      return false;
+    }
+
+    // Hidden tracks are not visible in ghost view
+    return !state.hiddenTracks.has(trackIndex);
   },
 }));

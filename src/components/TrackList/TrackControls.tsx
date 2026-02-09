@@ -7,9 +7,10 @@ interface TrackControlsProps {
 }
 
 export function TrackControls({ trackIndex }: TrackControlsProps) {
-  const { mutedTracks, soloedTracks, toggleMute, toggleSolo } = useTrackUIStore();
+  const { mutedTracks, soloedTracks, hiddenTracks, toggleMute, toggleSolo, toggleHidden } = useTrackUIStore();
   const isMuted = mutedTracks.has(trackIndex);
   const isSoloed = soloedTracks.has(trackIndex);
+  const isHidden = hiddenTracks.has(trackIndex);
 
   return (
     <div className="flex items-center gap-1.5">
@@ -101,6 +102,63 @@ export function TrackControls({ trackIndex }: TrackControlsProps) {
             strokeLinecap="round"
             fill="none"
           />
+        </svg>
+      </button>
+
+      {/* Hide from ghost view button */}
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          toggleHidden(trackIndex);
+        }}
+        className={`h-7 w-7 flex items-center justify-center rounded transition-all ${
+          isHidden
+            ? 'bg-gray-400 text-white opacity-50'
+            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+        }`}
+        title={isHidden ? 'Show in ghost view' : 'Hide from ghost view'}
+      >
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          {isHidden ? (
+            // Eye slash icon (hidden)
+            <>
+              <path
+                d="M3 3l18 18M10.5 10.677a2 2 0 002.823 2.823"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+              <path
+                d="M7.362 7.561C5.68 8.74 4.279 10.42 3 12c1.889 2.991 5.282 6 9 6 1.55 0 3.043-.523 4.395-1.35M17 14.25c.97-1.016 1.737-2.189 2.426-3.256.06-.093.093-.136.11-.207a.643.643 0 000-.274c-.017-.07-.05-.114-.11-.207C17.6 7.404 14.5 4 12 4c-.446 0-.887.052-1.32.145"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+            </>
+          ) : (
+            // Eye icon (visible)
+            <>
+              <path
+                d="M12 5C8.24 5 5.29 7.61 3.42 10.42a2 2 0 000 2.16C5.29 15.39 8.24 18 12 18s6.71-2.61 8.58-5.42a2 2 0 000-2.16C18.71 7.61 15.76 5 12 5z"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+              <circle
+                cx="12"
+                cy="12"
+                r="3"
+                stroke="currentColor"
+                strokeWidth="2"
+              />
+            </>
+          )}
         </svg>
       </button>
     </div>
