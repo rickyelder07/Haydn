@@ -5,6 +5,7 @@ import { useProjectStore } from '@/state/projectStore';
 import { useEditStore } from '@/state/editStore';
 import { usePlaybackStore } from '@/state/playbackStore';
 import { useValidationStore } from '@/state/validationStore';
+import { useTrackUIStore } from '@/state/trackUIStore';
 import { PianoRollCanvas } from './PianoRollCanvas';
 import { PianoKeysSidebar } from './PianoKeysSidebar';
 import { usePianoRollInteractions } from './usePianoRollInteractions';
@@ -30,6 +31,7 @@ export function PianoRollEditor() {
   const scalePitchClasses = useValidationStore((state) => state.scalePitchClasses);
   const validationEnabled = useValidationStore((state) => state.enabled);
   const updateScaleInfo = useValidationStore((state) => state.updateScaleInfo);
+  const { ghostNotesVisible } = useTrackUIStore();
 
   const [scrollX, setScrollX] = useState(0);
   const [scrollY, setScrollY] = useState(0);
@@ -48,6 +50,12 @@ export function PianoRollEditor() {
   const ppq = project?.metadata.ppq || 480;
   const timeSignature = project?.metadata.timeSignatures[0] || { numerator: 4, denominator: 4, ticks: 0 };
   const durationTicks = project?.durationTicks || ppq * 16; // Default 16 beats
+
+  // Build allTracks array for ghost note rendering
+  const allTracks = project?.tracks.map((track, idx) => ({
+    notes: track.notes,
+    trackIndex: idx,
+  })) ?? [];
 
   // Compute selected note for inspector
   // Note ID format: "${trackIndex}-${noteIndex}"
@@ -275,6 +283,8 @@ export function PianoRollEditor() {
             width={canvasWidth}
             height={canvasHeight}
             scalePitchClasses={validationEnabled ? scalePitchClasses : null}
+            allTracks={allTracks}
+            ghostNotesVisible={ghostNotesVisible}
             onCanvasClick={(ticks, midi) => {
               // Handled by usePianoRollInteractions via handleMouseDown
             }}
