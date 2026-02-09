@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-23)
 
 **Core value:** Natural language edits must produce musically coherent results that follow music theory, respect genre conventions, and maintain context with the existing track.
-**Current focus:** Phase 7 - Multi-Track Support
+**Current focus:** Phase 8 - Conversational Editing Mode
 
 ## Current Position
 
 Phase: 7 of 8 (Multi-Track Support)
-Plan: 5 of 6 in current phase
+Plan: 6 of 6 in current phase
 Status: Complete
-Last activity: 2026-02-09 — Completed 07-05-PLAN.md
+Last activity: 2026-02-09 — Completed Phase 7
 
-Progress: [█████████████████████] 175% (35/20 plans)
+Progress: [█████████████████████] 185% (37/20 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 35
-- Average duration: 8.4 minutes
-- Total execution time: 4.94 hours
+- Total plans completed: 37
+- Average duration: 8.9 minutes
+- Total execution time: 5.56 hours
 
 **By Phase:**
 
@@ -33,11 +33,11 @@ Progress: [█████████████████████] 175%
 | 04-music-theory-validation-layer | 5 | 16.7 min | 3.3 min |
 | 05-natural-language-editing-single-shot | 4 | 7.2 min | 1.8 min |
 | 06-natural-language-generation | 4 | 13.8 min | 3.5 min |
-| 07-multi-track-support | 4 | 14.1 min | 3.5 min |
+| 07-multi-track-support | 6 | 37.1 min | 6.2 min |
 
 **Recent Trend:**
-- Last 5 plans: 06-04 (manual verification with 6 bug fixes), 07-01 (1.5 min), 07-02 (2.8 min), 07-03 (5.1 min), 07-05 (4.7 min)
-- Trend: Phase 7 nearing completion - ghost notes provide multi-track context in piano roll
+- Last 5 plans: 07-02 (2.8 min), 07-03 (5.1 min), 07-04 (5.0 min), 07-05 (4.7 min), 07-06 (18 min checkpoint with bug fixes)
+- Trend: Phase 7 complete - multi-track support with mute/solo, drag-and-drop, ghost notes, and hide toggles
 
 *Updated after each plan completion*
 
@@ -173,9 +173,13 @@ Recent decisions affecting current work:
 - **Tone.Part.mute for real-time control** (07-02): Use Part.mute property to stop callbacks without rescheduling notes
 - **Dynamic import for circular dependency** (07-02): trackUIStore uses dynamic import to call NoteScheduler functions
 - **Callback pattern for audibility** (07-02): updateTrackMuteStates accepts isAudible callback for state sync
-- **Inline toolbar integration** (07-05): Ghost notes toggle added directly to PianoRollEditor toolbar instead of separate Toolbar.tsx component- **6-dot grip drag handle** (07-03): Clear visual affordance for dragging, common pattern users recognize
+- **Inline toolbar integration** (07-05): Ghost notes toggle added directly to PianoRollEditor toolbar instead of separate Toolbar.tsx component
+- **6-dot grip drag handle** (07-03): Clear visual affordance for dragging, common pattern users recognize
 - **Left accent bar for selection** (07-03): border-l-4 provides strong indicator without intrusive space usage
 - **stopPropagation on control buttons** (07-03): Prevents accidental track selection when clicking mute/solo
+- **syncMuteStates after reschedule** (07-06): PlaybackController reapplies trackUIStore states after stop() to preserve mute/solo
+- **SSR guard for dynamic imports** (07-06): Browser-only check prevents Next.js build errors with dynamic imports
+- **Hidden tracks for visual clarity** (07-06): User-requested feature to hide specific tracks from ghost view in large projects
 
 ### Pending Todos
 
@@ -188,7 +192,7 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-09
-Stopped at: Completed 07-03-PLAN.md
+Stopped at: Completed Phase 7
 Resume file: None
 
 **Phase 3 Status:** Complete - All 6 plans finished. Piano roll editor verified working with all success criteria met.
@@ -199,4 +203,4 @@ Resume file: None
 
 **Phase 6 Status:** Complete - All 4 plans finished. Human verification checkpoint (06-04) revealed 6 critical quality issues which were fixed during checkpoint execution. Initial tests showed: drum track mislabeled, bass not generating, notes outside scale, chaotic melodies. Research audit comparing 06-RESEARCH.md to code found 5 gaps where research didn't translate: melody probabilities wrong, no section variation, weak stepwise motion, missing validation, drum label bug. Six fixes applied: (1) corrected melody probability distribution (40/40/20 on weak beats), (2) strengthened stepwise motion to always pick closest note, (3) added section-based chord progression selection, (4) integrated ValidationPipeline for music theory checking, (5) fixed drum track label for channel 9, (6) corrected system prompt key format examples (was "C#m", now "C#" + "minor" separate) which fixed bass generation failure. Additional fixes: validation context structure corrected, instrumentation enforcement via two-layer validation (GPT prompt + server-side check), comprehensive debug logging added, TypeScript interface mismatch fixed (result.ok → result.valid). Final verification confirmed all 4 success criteria passing. Production build verified successful. Phase goal achieved: users can generate MIDI from scratch using text descriptions with musically coherent, genre-appropriate results.
 
-**Phase 7 Status:** In Progress - 3 of 6 plans complete. Foundation layer (07-01) established trackUIStore for mute/solo/order state management. Mute control (07-02) integrated NoteScheduler with trackUIStore via Tone.Part.mute property for real-time audio response. Track List UI (07-03) rebuilt with dnd-kit for drag-drop reordering, inline mute/solo controls (TrackControls component), and sortable track items (TrackItem component with useSortable hook). DndContext wraps list with keyboard accessibility. Left accent bar indicates selected track. Note: Task 3 (TrackList refactor) was implemented in commit f37269f labeled as 07-04 due to out-of-order execution - all functionality verified complete. Next: Add/remove tracks (07-04), ghost notes (07-05), track color indicators (07-06).
+**Phase 7 Status:** Complete - All 6 plans finished. Multi-track support fully implemented and verified. Foundation layer (07-01) established trackUIStore with Set-based mute/solo state management and 12-color WCAG-compliant palette. dnd-kit installed for accessible drag-and-drop. Mute control (07-02) integrated NoteScheduler with Tone.Part.mute for real-time audio control, dynamic import pattern avoids circular dependencies. Track List UI (07-03) rebuilt with DndContext for sortable tracks, TrackControls with mute/solo buttons, TrackItem with drag handle and selection accent bar. Track management (07-04) added AddTrackModal with full GM instrument selection (128 instruments), addTrack/removeTrack actions, 32-track limit enforcement, smart channel assignment avoiding percussion channel. Ghost notes (07-05) extended PianoRollCanvas to render all tracks with per-track colors at 30% opacity, toolbar toggle for visibility. Human verification checkpoint (07-06) revealed bug where stop button lost mute/solo states - fixed by adding syncMuteStates() to reapply trackUIStore states after rescheduling (commit 0ae33b8). SSR build error fixed with browser guard (commit 3a6e6b1). User-requested feature enhancement: hide from ghost view toggle per track for reducing visual clutter in large projects (commit f0ec581). All 6 phase success criteria verified passing. Production build successful. Phase goal achieved: users can work with multiple tracks and manage them independently.

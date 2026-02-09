@@ -148,10 +148,15 @@ Plans:
   4. User can mute/unmute individual tracks during playback
   5. Projects with up to 5,000 notes across all tracks load and play without performance issues
   6. Each track displays its instrument name clearly in the interface
-**Plans**: TBD
+**Plans**: 6 plans in 3 waves
 
 Plans:
-- [ ] 07-01: [To be determined during planning]
+- [ ] 07-01-PLAN.md - Install dnd-kit, create trackUIStore and track color palette (Wave 1)
+- [ ] 07-02-PLAN.md - NoteScheduler track mute via Tone.Part.mute (Wave 2)
+- [ ] 07-03-PLAN.md - TrackList with drag-and-drop, mute/solo buttons (Wave 2, parallel)
+- [ ] 07-04-PLAN.md - AddTrackModal and track management in projectStore (Wave 2, parallel)
+- [ ] 07-05-PLAN.md - Ghost notes in PianoRollCanvas with per-track colors (Wave 2, parallel)
+- [ ] 07-06-PLAN.md - Human verification checkpoint (Wave 3)
 
 ### Phase 8: Conversational Editing Mode
 **Goal**: Users can edit MIDI through multi-turn conversations with preserved context
@@ -181,6 +186,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8
 | 3. Piano Roll Editor | 6/6 | Complete | 2026-01-30 |
 | 4. Music Theory Validation Layer | 5/5 | Complete | 2026-02-02 |
 | 5. Natural Language Editing - Single-Shot | 4/4 | Complete | 2026-02-04 |
-| 6. Natural Language Generation | 0/4 | Planning complete | - |
-| 7. Multi-Track Support | 0/TBD | Not started | - |
+| 6. Natural Language Generation | 4/4 | Complete | 2026-02-07 |
+| 7. Multi-Track Support | 6/6 | Complete | 2026-02-09 |
 | 8. Conversational Editing Mode | 0/TBD | Not started | - |
