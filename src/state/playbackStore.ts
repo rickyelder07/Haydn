@@ -4,6 +4,7 @@ import { formatTime, ticksToBarsBeat } from '@/audio/utils/timeConversion';
 import type { HaydnProject } from '@/lib/midi/types';
 import { startWithCountIn, cancelCountIn } from '@/audio/playback/CountIn';
 import { getMetronome } from '@/audio/playback/Metronome';
+import { useTrackUIStore } from './trackUIStore';
 
 interface PlaybackStoreState {
   // State
@@ -104,6 +105,9 @@ export const usePlaybackStore = create<PlaybackStoreState>((set, get) => {
 
         const duration = controller.getDuration();
         const tempo = controller.getTempo();
+
+        // Initialize trackUIStore order and reset mute/solo states
+        useTrackUIStore.getState().initializeOrder(project.tracks.length);
 
         set({
           duration,
