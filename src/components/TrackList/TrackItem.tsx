@@ -4,6 +4,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import type { TrackDisplayInfo } from '@/lib/midi/types';
 import { TrackControls } from './TrackControls';
+import { useProjectStore } from '@/state/projectStore';
 
 interface TrackItemProps {
   id: string;
@@ -20,6 +21,8 @@ export function TrackItem({
   isSelected,
   onSelect,
 }: TrackItemProps) {
+  const { removeTrack } = useProjectStore();
+
   const {
     attributes,
     listeners,
@@ -33,6 +36,13 @@ export function TrackItem({
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
+  };
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (confirm(`Remove track "${track.name}"? This cannot be undone.`)) {
+      removeTrack(trackIndex);
+    }
   };
 
   return (
@@ -100,6 +110,29 @@ export function TrackItem({
         <span className="whitespace-nowrap text-gray-400">
           {track.formattedDuration}
         </span>
+      </div>
+
+      {/* Delete button */}
+      <div className="px-3 py-4">
+        <button
+          onClick={handleDelete}
+          className="text-gray-400 hover:text-red-500 transition-colors"
+          aria-label="Remove track"
+        >
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <line x1="4" y1="4" x2="12" y2="12" />
+            <line x1="12" y1="4" x2="4" y2="12" />
+          </svg>
+        </button>
       </div>
     </div>
   );

@@ -1,71 +1,125 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 import { useProjectStore } from '@/state/projectStore';
-import { useNoteHighlighter } from '@/audio/playback/NoteHighlighter';
 import { useEditStore } from '@/state/editStore';
+import { useTrackUIStore } from '@/state/trackUIStore';
+import { TrackItem } from './TrackItem';
+import { AddTrackModal } from './AddTrackModal';
 
 export function TrackList() {
-  const { project, trackDisplayInfo } = useProjectStore();
-  const { activeNoteCountByTrack } = useNoteHighlighter();
+  const { project, trackDisplayInfo, addTrack } = useProjectStore();
   const { selectedTrackIndex, selectTrack } = useEditStore();
+  const { trackOrder, reorderTracks, resetAllStates } = useTrackUIStore();
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+  // Initialize track order when project loads
+  useEffect(() => {
+    if (project && trackOrder.length === 0) {
+      useTrackUIStore.getState().initializeOrder(project.tracks.length);
+    }
+  }, [project, trackOrder.length]);
+
+  // Set up sensors for drag and drop
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  // Handle drag end
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      const oldIndex = trackOrder.indexOf(Number(active.id));
+      const newIndex = trackOrder.indexOf(Number(over.id));
+      reorderTracks(oldIndex, newIndex);
+    }
+  }
 
   if (!project || trackDisplayInfo.length === 0) {
     return null;
   }
 
+  // If trackOrder not initialized yet, return null
+  if (trackOrder.length === 0) {
+    return null;
+  }
+
   return (
     <div className="w-full">
-      <h2 className="text-lg font-semibold text-gray-900 mb-3">
-        Tracks ({trackDisplayInfo.length})
-      </h2>
-      <div className="space-y-2">
-        {trackDisplayInfo.map((track, index) => {
-          const isSelected = selectedTrackIndex === index;
-          return (
-            <div
-              key={index}
-              onClick={() => selectTrack(index)}
-              className={`bg-white border rounded-lg p-4 transition-colors cursor-pointer ${
-                isSelected
-                  ? 'ring-2 ring-blue-500 bg-blue-50 border-blue-500'
-                  : 'border-gray-200 hover:border-gray-300'
-              }`}
-            >
-            <div className="flex items-center justify-between">
-              <div className="flex-1 min-w-0">
-                <h3 className="font-medium text-gray-900 truncate flex items-center">
-                  {track.name}
-                  {isSelected && (
-                    <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
-                      Editing
-                    </span>
-                  )}
-                  {activeNoteCountByTrack.get(index) ? (
-                    <span className="inline-flex items-center ml-2">
-                      <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                      <span className="ml-1 text-xs text-green-600">
-                        {activeNoteCountByTrack.get(index)} notes
-                      </span>
-                    </span>
-                  ) : null}
-                </h3>
-                <p className="text-sm text-gray-500 truncate">
-                  {track.instrumentName}
-                </p>
-              </div>
-              <div className="flex items-center gap-4 text-sm text-gray-600 ml-4">
-                <span className="whitespace-nowrap">
-                  {track.noteCount} {track.noteCount === 1 ? 'note' : 'notes'}
-                </span>
-                <span className="whitespace-nowrap text-gray-400">
-                  {track.formattedDuration}
-                </span>
-              </div>
-            </div>
-            </div>
-          );
-        })}
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="text-lg font-semibold text-gray-900">
+          Tracks ({trackDisplayInfo.length}/32)
+        </h2>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setIsAddModalOpen(true)}
+            disabled={trackDisplayInfo.length >= 32}
+            className="text-sm text-blue-600 hover:text-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            + Add Track
+          </button>
+          <button
+            onClick={resetAllStates}
+            className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
+          >
+            Reset Mute/Solo
+          </button>
+        </div>
       </div>
+
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext
+          items={trackOrder.map(String)}
+          strategy={verticalListSortingStrategy}
+        >
+          <div className="space-y-2">
+            {trackOrder.map((originalIndex) => {
+              const track = trackDisplayInfo[originalIndex];
+              if (!track) return null;
+              return (
+                <TrackItem
+                  key={originalIndex}
+                  id={String(originalIndex)}
+                  track={track}
+                  trackIndex={originalIndex}
+                  isSelected={selectedTrackIndex === originalIndex}
+                  onSelect={() => selectTrack(originalIndex)}
+                />
+              );
+            })}
+          </div>
+        </SortableContext>
+      </DndContext>
+
+      <AddTrackModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onAdd={(instrumentNumber, name) => {
+          addTrack(instrumentNumber, name);
+          setIsAddModalOpen(false);
+        }}
+      />
     </div>
   );
 }
