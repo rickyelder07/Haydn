@@ -6,6 +6,7 @@ import { isPercussionChannel } from '@/lib/instruments/gm-mapping';
 
 // Store references to scheduled parts and instruments for cleanup
 let scheduledParts: Part[] = [];
+let trackParts: Map<number, Part> = new Map();
 let loadedInstruments: Map<number | string, InstrumentInstance> = new Map();
 
 interface ScheduledNote {
@@ -22,6 +23,9 @@ interface ScheduledNote {
 export async function scheduleNotes(project: HaydnProject): Promise<void> {
   // Clear any existing scheduled notes
   clearScheduledNotes();
+
+  // Clear track parts map
+  trackParts.clear();
 
   const { ppq, tempos } = project.metadata;
 
@@ -93,6 +97,9 @@ export async function scheduleNotes(project: HaydnProject): Promise<void> {
 
     part.start(0);
     scheduledParts.push(part);
+
+    // Store reference for mute control
+    trackParts.set(trackIndex, part);
   }
 }
 
@@ -106,6 +113,9 @@ export function clearScheduledNotes(): void {
     part.dispose();
   });
   scheduledParts = [];
+
+  // Clear track parts map
+  trackParts.clear();
 
   // Release all instruments but keep them loaded
   loadedInstruments.forEach(instrument => {
@@ -129,4 +139,24 @@ export function disposeAllInstruments(): void {
  */
 export function getLoadedInstrumentCount(): number {
   return loadedInstruments.size;
+}
+
+/**
+ * Set mute state for a specific track (real-time, no reschedule).
+ */
+export function setTrackMuted(trackIndex: number, muted: boolean): void {
+  const part = trackParts.get(trackIndex);
+  if (part) {
+    part.mute = muted;
+  }
+}
+
+/**
+ * Update all track mute states based on isAudible callback.
+ * Call this when solo/mute state changes.
+ */
+export function updateTrackMuteStates(isAudible: (trackIndex: number) => boolean): void {
+  trackParts.forEach((part, trackIndex) => {
+    part.mute = !isAudible(trackIndex);
+  });
 }
