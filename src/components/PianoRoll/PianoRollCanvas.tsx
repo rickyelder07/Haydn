@@ -12,6 +12,7 @@ import {
   getSnapTicks,
   snapToGrid,
 } from './gridUtils';
+import { getTrackColor, GHOST_NOTE_OPACITY } from '@/lib/constants/trackColors';
 
 interface PianoRollCanvasProps {
   notes: HaydnNote[];
@@ -31,6 +32,8 @@ interface PianoRollCanvasProps {
   width: number;
   height: number;
   scalePitchClasses?: Set<number> | null;
+  allTracks?: { notes: HaydnNote[]; trackIndex: number }[]; // All tracks for ghost notes
+  ghostNotesVisible?: boolean; // Whether to show ghost notes
 }
 
 export function PianoRollCanvas({
@@ -51,6 +54,8 @@ export function PianoRollCanvas({
   width,
   height,
   scalePitchClasses,
+  allTracks,
+  ghostNotesVisible,
 }: PianoRollCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationFrameRef = useRef<number | null>(null);
@@ -222,6 +227,37 @@ export function PianoRollCanvas({
         }
       });
 
+      // Draw ghost notes (non-selected tracks) - render first (behind selected track)
+      if (ghostNotesVisible && allTracks) {
+        allTracks.forEach(({ notes: ghostNotes, trackIndex: ghostTrackIndex }) => {
+          // Skip selected track (will be drawn at full opacity later)
+          if (ghostTrackIndex === trackIndex) return;
+
+          const trackColor = getTrackColor(ghostTrackIndex);
+          ctx.globalAlpha = GHOST_NOTE_OPACITY; // 0.3
+
+          ghostNotes.forEach((note) => {
+            const x = ticksToX(note.ticks, pixelsPerTick, scrollX);
+            const endX = ticksToX(note.ticks + note.durationTicks, pixelsPerTick, scrollX);
+            const y = midiToY(note.midi, scrollY, zoomY);
+
+            let noteWidth = endX - x;
+            if (noteWidth < 3) noteWidth = 3;
+
+            // Skip notes outside viewport
+            if (x + noteWidth < 0 || x > width) return;
+            if (y + NOTE_HEIGHT * zoomY < 0 || y > height) return;
+
+            // Draw ghost note (simpler style - no rounded corners needed)
+            ctx.fillStyle = trackColor;
+            ctx.fillRect(x, y, noteWidth, NOTE_HEIGHT * zoomY);
+          });
+        });
+
+        // Reset alpha for selected track notes
+        ctx.globalAlpha = 1.0;
+      }
+
       // Draw notes
       notes.forEach((note, index) => {
         const noteId = `${trackIndex}-${index}`;
@@ -321,6 +357,8 @@ export function PianoRollCanvas({
     width,
     height,
     scalePitchClasses,
+    allTracks,
+    ghostNotesVisible,
   ]);
 
   return (
