@@ -266,10 +266,16 @@ class PlaybackController {
    * Call after scheduleNotes() to preserve mute/solo states.
    */
   private syncMuteStates(): void {
+    // Only run in browser (not during SSR)
+    if (typeof window === 'undefined') return;
+
     // Dynamically import to avoid circular dependency
     import('@/state/trackUIStore').then(({ useTrackUIStore }) => {
       const { isTrackAudible } = useTrackUIStore.getState();
       updateTrackMuteStates((trackIndex) => isTrackAudible(trackIndex));
+    }).catch((err) => {
+      // Silently fail if import fails (e.g., during SSR edge cases)
+      console.warn('Failed to sync mute states:', err);
     });
   }
 }
