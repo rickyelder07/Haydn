@@ -18,7 +18,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 4: Music Theory Validation Layer** - Theory engine for coherent edits
 - [x] **Phase 5: Natural Language Editing - Single-Shot** - Core NL editing with token efficiency
 - [x] **Phase 6: Natural Language Generation** - Create MIDI from text prompts
-- [ ] **Phase 7: Multi-Track Support** - Expand to multiple tracks with track management
+- [x] **Phase 7: Multi-Track Support** - Expand to multiple tracks with track management
 - [ ] **Phase 8: Conversational Editing Mode** - Multi-turn context with edit history
 
 ## Phase Details
@@ -151,12 +151,12 @@ Plans:
 **Plans**: 6 plans in 3 waves
 
 Plans:
-- [ ] 07-01-PLAN.md - Install dnd-kit, create trackUIStore and track color palette (Wave 1)
-- [ ] 07-02-PLAN.md - NoteScheduler track mute via Tone.Part.mute (Wave 2)
-- [ ] 07-03-PLAN.md - TrackList with drag-and-drop, mute/solo buttons (Wave 2, parallel)
-- [ ] 07-04-PLAN.md - AddTrackModal and track management in projectStore (Wave 2, parallel)
-- [ ] 07-05-PLAN.md - Ghost notes in PianoRollCanvas with per-track colors (Wave 2, parallel)
-- [ ] 07-06-PLAN.md - Human verification checkpoint (Wave 3)
+- [x] 07-01-PLAN.md - Install dnd-kit, create trackUIStore and track color palette (Wave 1)
+- [x] 07-02-PLAN.md - NoteScheduler track mute via Tone.Part.mute (Wave 2)
+- [x] 07-03-PLAN.md - TrackList with drag-and-drop, mute/solo buttons (Wave 2, parallel)
+- [x] 07-04-PLAN.md - AddTrackModal and track management in projectStore (Wave 2, parallel)
+- [x] 07-05-PLAN.md - Ghost notes in PianoRollCanvas with per-track colors (Wave 2, parallel)
+- [x] 07-06-PLAN.md - Human verification checkpoint (Wave 3)
 
 ### Phase 8: Conversational Editing Mode
 **Goal**: Users can edit MIDI through multi-turn conversations with preserved context
@@ -169,10 +169,14 @@ Plans:
   4. User can make note-level changes (e.g., "raise the melody an octave", "change to minor key")
   5. User can swap instruments or add/remove tracks conversationally (e.g., "replace piano with strings")
   6. User can adjust timing conversationally (e.g., "swing the hi-hats", "quantize to 16th notes")
-**Plans**: TBD
+**Plans**: 5 plans in 4 waves
 
 Plans:
-- [ ] 08-01: [To be determined during planning]
+- [ ] 08-01-PLAN.md - Conversation types and conversationStore (Wave 1)
+- [ ] 08-02-PLAN.md - API route for conversation with message history (Wave 2)
+- [ ] 08-03-PLAN.md - ConversationPanel UI components (Wave 2, parallel)
+- [ ] 08-04-PLAN.md - Page integration with mode toggle (Wave 3)
+- [ ] 08-05-PLAN.md - Human verification checkpoint (Wave 4)
 
 ## Progress
 
@@ -188,4 +192,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8
 | 5. Natural Language Editing - Single-Shot | 4/4 | Complete | 2026-02-04 |
 | 6. Natural Language Generation | 4/4 | Complete | 2026-02-07 |
 | 7. Multi-Track Support | 6/6 | Complete | 2026-02-09 |
-| 8. Conversational Editing Mode | 0/TBD | Not started | - |
+| 8. Conversational Editing Mode | 0/5 | Not started | - |
