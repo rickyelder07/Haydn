@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-23)
 ## Current Position
 
 Phase: 7 of 8 (Multi-Track Support)
-Plan: 2 of 6 in current phase
+Plan: 3 of 6 in current phase
 Status: Complete
-Last activity: 2026-02-09 — Completed 07-02-PLAN.md
+Last activity: 2026-02-09 — Completed 07-03-PLAN.md
 
-Progress: [█████████████████████] 165% (33/20 plans)
+Progress: [█████████████████████] 170% (34/20 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 33
-- Average duration: 8.7 minutes
-- Total execution time: 4.77 hours
+- Total plans completed: 34
+- Average duration: 8.5 minutes
+- Total execution time: 4.86 hours
 
 **By Phase:**
 
@@ -33,11 +33,11 @@ Progress: [█████████████████████] 165%
 | 04-music-theory-validation-layer | 5 | 16.7 min | 3.3 min |
 | 05-natural-language-editing-single-shot | 4 | 7.2 min | 1.8 min |
 | 06-natural-language-generation | 4 | 13.8 min | 3.5 min |
-| 07-multi-track-support | 2 | 4.3 min | 2.2 min |
+| 07-multi-track-support | 3 | 9.4 min | 3.1 min |
 
 **Recent Trend:**
-- Last 5 plans: 06-02 (4.0 min), 06-03 (3.9 min), 06-04 (manual verification with 6 bug fixes), 07-01 (1.5 min), 07-02 (2.8 min)
-- Trend: Phase 7 progressing smoothly - mute control integrated with clean state sync pattern
+- Last 5 plans: 06-03 (3.9 min), 06-04 (manual verification with 6 bug fixes), 07-01 (1.5 min), 07-02 (2.8 min), 07-03 (5.1 min)
+- Trend: Phase 7 UI components complete - drag-drop track list with mute/solo controls integrated
 
 *Updated after each plan completion*
 
@@ -173,6 +173,9 @@ Recent decisions affecting current work:
 - **Tone.Part.mute for real-time control** (07-02): Use Part.mute property to stop callbacks without rescheduling notes
 - **Dynamic import for circular dependency** (07-02): trackUIStore uses dynamic import to call NoteScheduler functions
 - **Callback pattern for audibility** (07-02): updateTrackMuteStates accepts isAudible callback for state sync
+- **6-dot grip drag handle** (07-03): Clear visual affordance for dragging, common pattern users recognize
+- **Left accent bar for selection** (07-03): border-l-4 provides strong indicator without intrusive space usage
+- **stopPropagation on control buttons** (07-03): Prevents accidental track selection when clicking mute/solo
 
 ### Pending Todos
 
@@ -185,7 +188,7 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-09
-Stopped at: Completed 07-02-PLAN.md
+Stopped at: Completed 07-03-PLAN.md
 Resume file: None
 
 **Phase 3 Status:** Complete - All 6 plans finished. Piano roll editor verified working with all success criteria met.
@@ -196,4 +199,4 @@ Resume file: None
 
 **Phase 6 Status:** Complete - All 4 plans finished. Human verification checkpoint (06-04) revealed 6 critical quality issues which were fixed during checkpoint execution. Initial tests showed: drum track mislabeled, bass not generating, notes outside scale, chaotic melodies. Research audit comparing 06-RESEARCH.md to code found 5 gaps where research didn't translate: melody probabilities wrong, no section variation, weak stepwise motion, missing validation, drum label bug. Six fixes applied: (1) corrected melody probability distribution (40/40/20 on weak beats), (2) strengthened stepwise motion to always pick closest note, (3) added section-based chord progression selection, (4) integrated ValidationPipeline for music theory checking, (5) fixed drum track label for channel 9, (6) corrected system prompt key format examples (was "C#m", now "C#" + "minor" separate) which fixed bass generation failure. Additional fixes: validation context structure corrected, instrumentation enforcement via two-layer validation (GPT prompt + server-side check), comprehensive debug logging added, TypeScript interface mismatch fixed (result.ok → result.valid). Final verification confirmed all 4 success criteria passing. Production build verified successful. Phase goal achieved: users can generate MIDI from scratch using text descriptions with musically coherent, genre-appropriate results.
 
-**Phase 7 Status:** In Progress - 2 of 6 plans complete. Foundation layer (07-01) established trackUIStore for mute/solo/order state management. Mute control (07-02) integrated NoteScheduler with trackUIStore via Tone.Part.mute property for real-time audio response. Dynamic import pattern avoids circular dependencies. playbackStore initializes trackUIStore on project load. toggleMute/toggleSolo sync to audio via updateTrackMuteStates callback. Next: Track List UI components (07-03) will expose mute/solo/reorder controls to users.
+**Phase 7 Status:** In Progress - 3 of 6 plans complete. Foundation layer (07-01) established trackUIStore for mute/solo/order state management. Mute control (07-02) integrated NoteScheduler with trackUIStore via Tone.Part.mute property for real-time audio response. Track List UI (07-03) rebuilt with dnd-kit for drag-drop reordering, inline mute/solo controls (TrackControls component), and sortable track items (TrackItem component with useSortable hook). DndContext wraps list with keyboard accessibility. Left accent bar indicates selected track. Note: Task 3 (TrackList refactor) was implemented in commit f37269f labeled as 07-04 due to out-of-order execution - all functionality verified complete. Next: Add/remove tracks (07-04), ghost notes (07-05), track color indicators (07-06).
