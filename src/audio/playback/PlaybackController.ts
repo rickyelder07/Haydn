@@ -1,7 +1,7 @@
 import { Transport } from 'tone';
 import type { HaydnProject } from '@/lib/midi/types';
 import { getAudioEngine } from '@/audio/AudioEngine';
-import { scheduleNotes, clearScheduledNotes, disposeAllInstruments } from './NoteScheduler';
+import { scheduleNotes, clearScheduledNotes, disposeAllInstruments, updateTrackMuteStates } from './NoteScheduler';
 import { ticksToSeconds } from '@/audio/utils/timeConversion';
 import { NoteHighlighter } from './NoteHighlighter';
 
@@ -62,6 +62,9 @@ class PlaybackController {
     // Schedule all notes
     await scheduleNotes(project);
 
+    // Apply initial mute/solo states (all unmuted by default)
+    this.syncMuteStates();
+
     // Schedule note highlights for UI feedback
     NoteHighlighter.scheduleHighlights(project);
   }
@@ -114,6 +117,8 @@ class PlaybackController {
     // Re-schedule notes for next play
     if (this.currentProject) {
       scheduleNotes(this.currentProject);
+      // Reapply mute/solo states from trackUIStore
+      this.syncMuteStates();
     }
 
     this.setState('stopped');
@@ -254,6 +259,18 @@ class PlaybackController {
     // Per CONTEXT.md: Stop and reset to start at end of track
     this.stop();
     this.endListeners.forEach(cb => cb());
+  }
+
+  /**
+   * Sync track mute states from trackUIStore to NoteScheduler.
+   * Call after scheduleNotes() to preserve mute/solo states.
+   */
+  private syncMuteStates(): void {
+    // Dynamically import to avoid circular dependency
+    import('@/state/trackUIStore').then(({ useTrackUIStore }) => {
+      const { isTrackAudible } = useTrackUIStore.getState();
+      updateTrackMuteStates((trackIndex) => isTrackAudible(trackIndex));
+    });
   }
 }
 
