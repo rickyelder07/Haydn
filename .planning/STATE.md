@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-23)
 ## Current Position
 
 Phase: 7 of 8 (Multi-Track Support)
-Plan: 3 of 6 in current phase
+Plan: 5 of 6 in current phase
 Status: Complete
-Last activity: 2026-02-09 — Completed 07-03-PLAN.md
+Last activity: 2026-02-09 — Completed 07-05-PLAN.md
 
-Progress: [█████████████████████] 170% (34/20 plans)
+Progress: [█████████████████████] 175% (35/20 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 34
-- Average duration: 8.5 minutes
-- Total execution time: 4.86 hours
+- Total plans completed: 35
+- Average duration: 8.4 minutes
+- Total execution time: 4.94 hours
 
 **By Phase:**
 
@@ -33,11 +33,11 @@ Progress: [█████████████████████] 170%
 | 04-music-theory-validation-layer | 5 | 16.7 min | 3.3 min |
 | 05-natural-language-editing-single-shot | 4 | 7.2 min | 1.8 min |
 | 06-natural-language-generation | 4 | 13.8 min | 3.5 min |
-| 07-multi-track-support | 3 | 9.4 min | 3.1 min |
+| 07-multi-track-support | 4 | 14.1 min | 3.5 min |
 
 **Recent Trend:**
-- Last 5 plans: 06-03 (3.9 min), 06-04 (manual verification with 6 bug fixes), 07-01 (1.5 min), 07-02 (2.8 min), 07-03 (5.1 min)
-- Trend: Phase 7 UI components complete - drag-drop track list with mute/solo controls integrated
+- Last 5 plans: 06-04 (manual verification with 6 bug fixes), 07-01 (1.5 min), 07-02 (2.8 min), 07-03 (5.1 min), 07-05 (4.7 min)
+- Trend: Phase 7 nearing completion - ghost notes provide multi-track context in piano roll
 
 *Updated after each plan completion*
 
@@ -173,7 +173,7 @@ Recent decisions affecting current work:
 - **Tone.Part.mute for real-time control** (07-02): Use Part.mute property to stop callbacks without rescheduling notes
 - **Dynamic import for circular dependency** (07-02): trackUIStore uses dynamic import to call NoteScheduler functions
 - **Callback pattern for audibility** (07-02): updateTrackMuteStates accepts isAudible callback for state sync
-- **6-dot grip drag handle** (07-03): Clear visual affordance for dragging, common pattern users recognize
+- **Inline toolbar integration** (07-05): Ghost notes toggle added directly to PianoRollEditor toolbar instead of separate Toolbar.tsx component- **6-dot grip drag handle** (07-03): Clear visual affordance for dragging, common pattern users recognize
 - **Left accent bar for selection** (07-03): border-l-4 provides strong indicator without intrusive space usage
 - **stopPropagation on control buttons** (07-03): Prevents accidental track selection when clicking mute/solo
 
