@@ -40,6 +40,11 @@ export const useTrackUIStore = create<TrackUIState>((set, get) => ({
       }
       return { mutedTracks: newMuted };
     });
+
+    // Sync to audio
+    import('@/audio/playback/NoteScheduler').then(({ updateTrackMuteStates }) => {
+      updateTrackMuteStates((trackIndex) => get().isTrackAudible(trackIndex));
+    });
   },
 
   // Toggle solo for a track (non-exclusive - multiple tracks can be soloed)
@@ -52,6 +57,11 @@ export const useTrackUIStore = create<TrackUIState>((set, get) => ({
         newSoloed.add(trackIndex);
       }
       return { soloedTracks: newSoloed };
+    });
+
+    // Sync to audio
+    import('@/audio/playback/NoteScheduler').then(({ updateTrackMuteStates }) => {
+      updateTrackMuteStates((trackIndex) => get().isTrackAudible(trackIndex));
     });
   },
 
@@ -75,6 +85,11 @@ export const useTrackUIStore = create<TrackUIState>((set, get) => ({
     set({
       mutedTracks: new Set<number>(),
       soloedTracks: new Set<number>(),
+    });
+
+    // Unmute all tracks in audio
+    import('@/audio/playback/NoteScheduler').then(({ updateTrackMuteStates }) => {
+      updateTrackMuteStates(() => true); // All audible
     });
   },
 
