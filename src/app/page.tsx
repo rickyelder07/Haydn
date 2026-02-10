@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useProjectStore } from '@/state/projectStore';
 import { usePlaybackStore } from '@/state/playbackStore';
 import { useEditStore } from '@/state/editStore';
@@ -13,6 +13,8 @@ import { TransportControls } from '@/components/TransportControls';
 import { PianoRollEditor } from '@/components/PianoRoll';
 import { CommandInput } from '@/components/CommandInput';
 import { GenerationInput } from '@/components/GenerationInput';
+import { EditModeToggle } from '@/components/EditModeToggle';
+import { ConversationPanel } from '@/components/ConversationPanel/ConversationPanel';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { Toaster } from 'sonner';
 
@@ -20,6 +22,9 @@ export default function Home() {
   const { project } = useProjectStore();
   const { loadProject } = usePlaybackStore();
   const { selectedTrackIndex, selectTrack } = useEditStore();
+
+  // Edit mode state (single-shot vs conversation)
+  const [editMode, setEditMode] = useState<'single-shot' | 'conversation'>('single-shot');
 
   // Add keyboard shortcuts
   useKeyboardShortcuts();
@@ -66,16 +71,31 @@ export default function Home() {
           <FileUpload />
         </div>
 
-        {/* Natural Language Command Input - conditionally shown */}
-        {project && selectedTrackIndex !== null ? (
+        {/* Editing Interface - conditionally shown when project and track selected */}
+        {project && selectedTrackIndex !== null && (
           <div className="max-w-4xl mx-auto mb-6">
-            <CommandInput />
+            {/* Edit Mode Toggle */}
+            <div className="flex justify-center mb-4">
+              <EditModeToggle mode={editMode} onChange={setEditMode} />
+            </div>
+
+            {/* Conditional rendering based on mode */}
+            {editMode === 'single-shot' ? (
+              <CommandInput />
+            ) : (
+              <div className="h-96">
+                <ConversationPanel />
+              </div>
+            )}
           </div>
-        ) : project ? (
+        )}
+
+        {/* Prompt to select track when project loaded but no track selected */}
+        {project && selectedTrackIndex === null && (
           <div className="max-w-4xl mx-auto mb-6 text-center text-gray-500 py-8">
             Select a track to use natural language editing
           </div>
-        ) : null}
+        )}
 
         {/* Transport Controls - wider for piano roll */}
         {project && (
