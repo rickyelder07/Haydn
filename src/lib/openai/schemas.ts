@@ -85,6 +85,13 @@ export const EditOperationSchema = z.object({
  * Complete structured response from GPT-4o with operations, summary, and warnings.
  */
 export const EditResponseSchema = z.object({
+  targetTrack: z
+    .string()
+    .optional()
+    .nullable()
+    .describe(
+      'Name of the track to modify (e.g., "bass", "drums"). Only needed if user mentions a different track than the active one. Leave null to modify currently selected track.'
+    ),
   operations: z.array(EditOperationSchema),
   summary: z.string().describe('Overall description of what changed'),
   warnings: z

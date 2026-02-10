@@ -63,15 +63,26 @@ export const useNLGenerationStore = create<NLGenerationState>((set, get) => ({
     set({ isLoading: true, lastError: null, lastPrompt: prompt });
 
     try {
-      // Step 1: Call API to parse prompt into params
+      // Step 1: Call API to parse prompt into params (with timeout)
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 90000); // 90 second timeout
+
+      console.log('[NL Generation] Calling /api/nl-generate with prompt:', prompt);
+
       const response = await fetch('/api/nl-generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt })
+        body: JSON.stringify({ prompt }),
+        signal: controller.signal
       });
+
+      clearTimeout(timeoutId);
+
+      console.log('[NL Generation] Response status:', response.status);
 
       if (!response.ok) {
         const error = await response.json();
+        console.error('[NL Generation] API error:', error);
         throw new Error(error.error || 'Failed to parse prompt');
       }
 
@@ -155,7 +166,18 @@ export const useNLGenerationStore = create<NLGenerationState>((set, get) => ({
       });
     } catch (error) {
       // Handle errors
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      console.error('[NL Generation] Error:', error);
+
+      let errorMessage = 'Unknown error occurred';
+
+      if (error instanceof Error) {
+        if (error.name === 'AbortError') {
+          errorMessage = 'Request timed out after 90 seconds. Please try again or use a simpler prompt.';
+        } else {
+          errorMessage = error.message;
+        }
+      }
+
       set({
         isLoading: false,
         lastError: errorMessage,

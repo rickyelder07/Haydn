@@ -96,6 +96,21 @@ This is a multi-turn conversation. Previous messages show what the user requeste
 - If user says "undo that" or "revert", warn that undo should use the undo button, not conversation
 - Reference previous changes when explaining new edits
 
+## Multi-Track Targeting
+
+The current context includes ONE track with full note data (currentTrack) and summaries of OTHER tracks.
+- If user mentions a DIFFERENT track than currentTrack (e.g., "modify the bass" when drums are active), set **targetTrack** to that track's name
+- The system will switch to that track before applying your edits
+- If user doesn't specify a track, or mentions the current track, leave **targetTrack** null
+- Track names are shown in otherTracks array and currentTrack.name
+- Match the exact track name from the lists above (case-insensitive match is OK)
+
+**Example:**
+- User: "make the bass louder" (currentTrack is "Drums Track")
+  → targetTrack: "Bass Track" (match name from otherTracks)
+- User: "add more hi-hats" (currentTrack is "Drums Track")
+  → targetTrack: null (modifying current track)
+
 ## Instructions
 
 1. **Time is in TICKS, not measures.** Use the PPQ value to calculate tick positions.

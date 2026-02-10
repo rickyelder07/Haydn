@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { useConversationStore } from '@/state/conversationStore';
+import { useProjectStore } from '@/state/projectStore';
+import { useEditStore } from '@/state/editStore';
 import { MessageList } from './MessageList';
 import { PromptInput } from './PromptInput';
 import { buildMIDIContext } from '@/lib/nl-edit/contextBuilder';
@@ -68,6 +70,32 @@ export function ConversationPanel() {
       const assistantResponse: EditResponse = data.result;
       const usage: { promptTokens: number; completionTokens: number; totalTokens: number } =
         data.usage;
+
+      // Handle track targeting: switch to target track if specified
+      if (assistantResponse.targetTrack) {
+        const { project } = useProjectStore.getState();
+        const { selectTrack } = useEditStore.getState();
+
+        if (project) {
+          // Find track by name (case-insensitive match)
+          const targetName = assistantResponse.targetTrack.toLowerCase();
+          const trackIndex = project.tracks.findIndex(
+            (track) => track.name.toLowerCase().includes(targetName)
+          );
+
+          if (trackIndex !== -1) {
+            // Switch to target track
+            selectTrack(trackIndex);
+            console.log(
+              `[Conversation] Switched to track: ${project.tracks[trackIndex].name}`
+            );
+          } else {
+            console.warn(
+              `[Conversation] Target track "${assistantResponse.targetTrack}" not found. Using currently selected track.`
+            );
+          }
+        }
+      }
 
       // Execute edit operations
       const executionResult = executeEditOperations(assistantResponse.operations);
