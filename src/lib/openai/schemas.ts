@@ -14,6 +14,7 @@ import { z } from 'zod';
  * - transpose: Shift notes by semitones
  * - change_tempo: Update project tempo
  * - change_key: Update project key signature
+ * - change_instrument: Change track instrument (GM program 0-127)
  */
 
 // Individual parameter schemas for each operation type
@@ -63,6 +64,9 @@ const EditParametersSchema = z.object({
   // change_key parameters
   newKey: z.string().optional().nullable(),
   newScale: z.enum(['major', 'minor']).optional().nullable(),
+
+  // change_instrument parameters
+  newInstrument: z.number().int().min(0).max(127).optional().nullable(),
 });
 
 /**
@@ -76,6 +80,7 @@ export const EditOperationSchema = z.object({
     'transpose',
     'change_tempo',
     'change_key',
+    'change_instrument',
   ]),
   parameters: EditParametersSchema,
   explanation: z.string().describe('Description of what this operation does'),

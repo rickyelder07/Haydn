@@ -112,6 +112,7 @@ ${theoryValidation?.enabled ? '7. **Validate theory conformance.** Warn if edits
 - **transpose:** Shift notes by semitones (optionally within tick range)
 - **change_tempo:** Update project tempo (affects all tracks)
 - **change_key:** Update project key signature (affects all tracks)
+- **change_instrument:** Change track instrument using GM program number (0-127, e.g., 65=Alto Sax, 66=Tenor Sax, 0=Acoustic Grand Piano)
 `;
 
   return prompt;

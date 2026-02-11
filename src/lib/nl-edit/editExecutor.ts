@@ -3,6 +3,7 @@ import type { HaydnNote } from '@/lib/midi/types';
 import { useProjectStore } from '@/state/projectStore';
 import { useEditStore } from '@/state/editStore';
 import { useValidationStore } from '@/state/validationStore';
+import { getInstrumentName } from '@/lib/instruments/gm-mapping';
 
 /**
  * Result of executing edit operations
@@ -236,6 +237,32 @@ export function executeEditOperations(
               0
             );
           }
+
+          appliedOps++;
+          break;
+        }
+
+        case 'change_instrument': {
+          const newInstrument = operation.parameters.newInstrument;
+
+          if (
+            newInstrument === undefined ||
+            newInstrument === null ||
+            newInstrument < 0 ||
+            newInstrument > 127
+          ) {
+            errors.push(
+              `Operation ${i + 1} (change_instrument): Missing or invalid newInstrument parameter (must be 0-127)`
+            );
+            continue;
+          }
+
+          // Update track instrument number and name
+          track.instrumentNumber = newInstrument;
+          track.instrumentName = getInstrumentName(newInstrument);
+
+          // Trigger project update
+          projectState.setProject({ ...project });
 
           appliedOps++;
           break;
