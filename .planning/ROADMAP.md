@@ -19,7 +19,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 5: Natural Language Editing - Single-Shot** - Core NL editing with token efficiency
 - [x] **Phase 6: Natural Language Generation** - Create MIDI from text prompts
 - [x] **Phase 7: Multi-Track Support** - Expand to multiple tracks with track management
-- [ ] **Phase 8: Conversational Editing Mode** - Multi-turn context with edit history
+- [x] **Phase 8: Conversational Editing Mode** - Multi-turn context with edit history
 
 ## Phase Details
 
@@ -172,11 +172,11 @@ Plans:
 **Plans**: 5 plans in 4 waves
 
 Plans:
-- [ ] 08-01-PLAN.md - Conversation types and conversationStore (Wave 1)
-- [ ] 08-02-PLAN.md - API route for conversation with message history (Wave 2)
-- [ ] 08-03-PLAN.md - ConversationPanel UI components (Wave 2, parallel)
-- [ ] 08-04-PLAN.md - Page integration with mode toggle (Wave 3)
-- [ ] 08-05-PLAN.md - Human verification checkpoint (Wave 4)
+- [x] 08-01-PLAN.md - Conversation types and conversationStore (Wave 1)
+- [x] 08-02-PLAN.md - API route for conversation with message history (Wave 2)
+- [x] 08-03-PLAN.md - ConversationPanel UI components (Wave 2, parallel)
+- [x] 08-04-PLAN.md - Page integration with mode toggle (Wave 3)
+- [x] 08-05-PLAN.md - Human verification checkpoint (Wave 4)
 
 ## Progress
 
@@ -192,4 +192,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8
 | 5. Natural Language Editing - Single-Shot | 4/4 | Complete | 2026-02-04 |
 | 6. Natural Language Generation | 4/4 | Complete | 2026-02-07 |
 | 7. Multi-Track Support | 6/6 | Complete | 2026-02-09 |
-| 8. Conversational Editing Mode | 0/5 | Not started | - |
+| 8. Conversational Editing Mode | 5/5 | Complete | 2026-02-11 |
