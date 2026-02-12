@@ -151,14 +151,76 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| *(To be filled by roadmapper)* | — | Pending |
+| UI-01 | Phase 9 | Pending |
+| UI-02 | Phase 9 | Pending |
+| UI-03 | Phase 9 | Pending |
+| UI-04 | Phase 9 | Pending |
+| UI-05 | Phase 9 | Pending |
+| UI-06 | Phase 9 | Pending |
+| UI-07 | Phase 9 | Pending |
+| UI-08 | Phase 9 | Pending |
+| UI-09 | Phase 9 | Pending |
+| AUDIO-01 | Phase 10 | Pending |
+| AUDIO-02 | Phase 10 | Pending |
+| AUDIO-03 | Phase 10 | Pending |
+| AUDIO-04 | Phase 10 | Pending |
+| AUDIO-05 | Phase 10 | Pending |
+| AUDIO-06 | Phase 10 | Pending |
+| AUDIO-07 | Phase 10 | Pending |
+| AI-01 | Phase 11 | Pending |
+| AI-02 | Phase 11 | Pending |
+| AI-03 | Phase 11 | Pending |
+| AI-04 | Phase 11 | Pending |
+| AI-05 | Phase 11 | Pending |
+| AI-06 | Phase 11 | Pending |
+| AI-07 | Phase 11 | Pending |
+| AI-08 | Phase 11 | Pending |
+| AI-09 | Phase 11 | Pending |
+| AI-10 | Phase 11 | Pending |
+| TMPL-01 | Phase 12 | Pending |
+| TMPL-02 | Phase 12 | Pending |
+| TMPL-03 | Phase 12 | Pending |
+| TMPL-04 | Phase 12 | Pending |
+| TMPL-05 | Phase 12 | Pending |
+| TMPL-06 | Phase 12 | Pending |
+| VEL-01 | Phase 13 | Pending |
+| VEL-02 | Phase 13 | Pending |
+| VEL-03 | Phase 13 | Pending |
+| VEL-04 | Phase 13 | Pending |
+| VEL-05 | Phase 13 | Pending |
+| VEL-06 | Phase 13 | Pending |
+| QUANT-01 | Phase 13 | Pending |
+| QUANT-02 | Phase 13 | Pending |
+| QUANT-03 | Phase 13 | Pending |
+| QUANT-04 | Phase 13 | Pending |
+| QUANT-05 | Phase 13 | Pending |
+| QUANT-06 | Phase 13 | Pending |
+| QUANT-07 | Phase 13 | Pending |
+| CHORD-01 | Phase 13 | Pending |
+| CHORD-02 | Phase 13 | Pending |
+| CHORD-03 | Phase 13 | Pending |
+| CHORD-04 | Phase 13 | Pending |
+| CHORD-05 | Phase 13 | Pending |
+| MIDI-01 | Phase 14 | Pending |
+| MIDI-02 | Phase 14 | Pending |
+| MIDI-03 | Phase 14 | Pending |
+| MIDI-04 | Phase 14 | Pending |
+| MIDI-05 | Phase 14 | Pending |
+| MIDI-06 | Phase 14 | Pending |
+| MIDI-07 | Phase 14 | Pending |
+| MIDI-08 | Phase 14 | Pending |
+| MIDI-09 | Phase 14 | Pending |
+| MIDI-10 | Phase 14 | Pending |
+| MIDI-11 | Phase 14 | Pending |
+| MIDI-12 | Phase 14 | Pending |
+| MIDI-13 | Phase 14 | Pending |
 
 **Coverage:**
 - v1.1 requirements: 58 total
-- Mapped to phases: (pending roadmap creation)
-- Unmapped: (pending roadmap creation)
+- Mapped to phases: 58/58 (100%)
+- Unmapped: 0
 
 ---
 
 *Requirements defined: 2026-02-12*
-*Last updated: 2026-02-12 after research completion*
+*Last updated: 2026-02-12 after roadmap creation*

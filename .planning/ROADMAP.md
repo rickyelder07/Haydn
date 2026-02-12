@@ -7,6 +7,7 @@ Haydn transforms natural language into musical MIDI edits through an 8-phase jou
 ## Milestones
 
 - ✅ **v1.0 MVP** — Phases 1-8 (shipped 2026-02-12)
+- 🚧 **v1.1 Polish & Enhancement** — Phases 9-14 (in progress)
 
 ## Phases
 
@@ -62,7 +63,113 @@ Haydn transforms natural language into musical MIDI edits through an 8-phase jou
 
 </details>
 
+### 🚧 v1.1 Polish & Enhancement (In Progress)
+
+**Milestone Goal:** Transform MVP into polished, production-ready tool with professional UI/UX, improved audio quality, more creative MIDI generation, and advanced editing capabilities.
+
+#### Phase 9: Professional Layout
+**Goal**: Application has professional DAW-style layout with resizable sidebar and integrated timeline
+**Depends on**: Nothing (milestone start)
+**Requirements**: UI-01, UI-02, UI-03, UI-04, UI-05, UI-06, UI-07, UI-08, UI-09
+**Success Criteria** (what must be TRUE):
+  1. User can resize sidebar by dragging edge and width persists across sessions
+  2. User can drag playhead triangle or click timeline to jump playback position
+  3. User can edit track and project names by clicking inline (Enter confirms, Escape cancels)
+  4. Timeline ruler displays measure and beat ticks integrated with piano roll
+  5. Transport controls are visually integrated with piano roll (not separate section)
+**Plans**: TBD
+
+Plans:
+- [ ] 09-01: TBD
+- [ ] 09-02: TBD
+
+#### Phase 10: Synthesis Enhancement
+**Goal**: Audio quality reaches "good enough to compose with" standard via per-instrument envelopes and filtering
+**Depends on**: Phase 9
+**Requirements**: AUDIO-01, AUDIO-02, AUDIO-03, AUDIO-04, AUDIO-05, AUDIO-06, AUDIO-07
+**Success Criteria** (what must be TRUE):
+  1. Piano sounds percussive (short attack, medium decay) not sustained
+  2. Strings sound sustained and alive with subtle vibrato (not robotic)
+  3. Brass sounds punchy with appropriate envelope
+  4. All instruments lack harsh high frequencies (filtered 2-5kHz)
+  5. Audio quality is noticeably better than v1.0 (subjective improvement confirmed by user)
+**Plans**: TBD
+
+Plans:
+- [ ] 10-01: TBD
+- [ ] 10-02: TBD
+
+#### Phase 11: AI Composition Mode
+**Goal**: Users can generate unique MIDI compositions via conversational AI with GPT-4o direct synthesis
+**Depends on**: Phase 10
+**Requirements**: AI-01, AI-02, AI-03, AI-04, AI-05, AI-06, AI-07, AI-08, AI-09, AI-10
+**Success Criteria** (what must be TRUE):
+  1. User can toggle between Template and AI composition modes before generation
+  2. AI mode shows token cost estimate and asks up to 3 clarifying questions
+  3. User can skip questions and generate with defaults if desired
+  4. AI-generated MIDI passes through ValidationPipeline (fails cause retry, fallback after 3 attempts)
+  5. Conversation history visible during question flow and token usage displayed after generation
+**Plans**: TBD
+
+Plans:
+- [ ] 11-01: TBD
+- [ ] 11-02: TBD
+- [ ] 11-03: TBD
+
+#### Phase 12: Template Variations
+**Goal**: Template generation produces varied, unpredictable results through pattern randomization
+**Depends on**: Phase 11
+**Requirements**: TMPL-01, TMPL-02, TMPL-03, TMPL-04, TMPL-05, TMPL-06
+**Success Criteria** (what must be TRUE):
+  1. Each genre has 3-5 verse and chorus pattern variations that select randomly
+  2. Drum fills (8 variations per genre) insert randomly at section boundaries
+  3. Generated MIDI sounds different across generations but maintains genre consistency
+**Plans**: TBD
+
+Plans:
+- [ ] 12-01: TBD
+- [ ] 12-02: TBD
+
+#### Phase 13: Advanced Piano Roll Editing
+**Goal**: Users can edit velocity, quantize timing, and view chord symbols in piano roll
+**Depends on**: Phase 9 (requires new UI layout)
+**Requirements**: VEL-01, VEL-02, VEL-03, VEL-04, VEL-05, VEL-06, QUANT-01, QUANT-02, QUANT-03, QUANT-04, QUANT-05, QUANT-06, QUANT-07, CHORD-01, CHORD-02, CHORD-03, CHORD-04, CHORD-05
+**Success Criteria** (what must be TRUE):
+  1. Velocity lane renders below piano roll showing stalks that user can drag to edit velocities
+  2. Velocity lane scrolls in sync with piano roll and highlights selected notes
+  3. Quantization controls accessible in toolbar with strength, grid, swing, and threshold settings
+  4. Quantization applies to selected notes (or all if none selected) and is undoable
+  5. Chord symbols display above note grid, detect from notes in each bar (3+ notes), and highlight notes when clicked
+  6. User can toggle chord symbol visibility on/off
+**Plans**: TBD
+
+Plans:
+- [ ] 13-01: TBD
+- [ ] 13-02: TBD
+- [ ] 13-03: TBD
+
+#### Phase 14: MIDI Hardware Integration
+**Goal**: Users can play and record MIDI using hardware keyboards via Web MIDI API
+**Depends on**: Phase 13
+**Requirements**: MIDI-01, MIDI-02, MIDI-03, MIDI-04, MIDI-05, MIDI-06, MIDI-07, MIDI-08, MIDI-09, MIDI-10, MIDI-11, MIDI-12, MIDI-13
+**Success Criteria** (what must be TRUE):
+  1. System detects Web MIDI availability and displays clear error if unsupported (Firefox/Safari)
+  2. User can connect MIDI keyboard, see connected devices, and play current track when paused
+  3. Keyboard input respects velocity sensitivity and sustain pedal (CC 64) works properly
+  4. User can arm track for recording, start during playback with count-in (1 bar)
+  5. Recorded notes align with beat grid (latency compensation applied) and recording is undoable
+  6. Recording indicator visible during active recording
+**Plans**: TBD
+
+Plans:
+- [ ] 14-01: TBD
+- [ ] 14-02: TBD
+- [ ] 14-03: TBD
+
 ## Progress
+
+**Execution Order:**
+Phases execute in numeric order: 1-8 (complete) → 9 → 10 → 11 → 12 → 13 → 14
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -74,3 +181,13 @@ Haydn transforms natural language into musical MIDI edits through an 8-phase jou
 | 6. Natural Language Generation | v1.0 | 4/4 | Complete | 2026-02-07 |
 | 7. Multi-Track Support | v1.0 | 6/6 | Complete | 2026-02-09 |
 | 8. Conversational Editing Mode | v1.0 | 5/5 | Complete | 2026-02-11 |
+| 9. Professional Layout | v1.1 | 0/TBD | Not started | - |
+| 10. Synthesis Enhancement | v1.1 | 0/TBD | Not started | - |
+| 11. AI Composition Mode | v1.1 | 0/TBD | Not started | - |
+| 12. Template Variations | v1.1 | 0/TBD | Not started | - |
+| 13. Advanced Piano Roll Editing | v1.1 | 0/TBD | Not started | - |
+| 14. MIDI Hardware Integration | v1.1 | 0/TBD | Not started | - |
+
+---
+
+*Last updated: 2026-02-12 after v1.1 roadmap creation*
