@@ -2,19 +2,19 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-01-23)
+See: .planning/PROJECT.md (updated 2026-02-12)
 
 **Core value:** Natural language edits must produce musically coherent results that follow music theory, respect genre conventions, and maintain context with the existing track.
-**Current focus:** Phase 8 - Conversational Editing Mode
+**Current focus:** v1.0 MVP shipped — Planning next milestone
 
 ## Current Position
 
-Phase: 8 of 8 (Conversational Editing Mode)
-Plan: 5 of 5 in current phase
-Status: Complete
-Last activity: 2026-02-11 — Completed Phase 8 with bug fix
+**Milestone:** v1.0 MVP — SHIPPED 2026-02-12
+**Phases:** 1-8 complete (42 plans, 19 days)
+**Status:** All v1 requirements validated
+**Last activity:** 2026-02-12 — Completed v1.0 milestone
 
-Progress: [██████████████████████] 210% (42/20 plans)
+Progress: [████████████████████████] 100% (8/8 phases complete)
 
 ## Performance Metrics
 
@@ -49,14 +49,17 @@ Progress: [██████████████████████] 2
 
 ### Decisions
 
-Decisions are logged in PROJECT.md Key Decisions table.
-Recent decisions affecting current work:
+All decisions from v1.0 are documented in PROJECT.md Key Decisions table with outcomes.
 
-- Web app strategy for cross-platform access
-- Single-session architecture for v1 to validate core value before persistence
-- GPT-4o for natural language processing
-- Library-based MIDI manipulation to reduce token costs
-- Both conversational and single-shot modes for flexibility
+Key architectural decisions validated:
+- Web app with Next.js (✓ Good — no installation friction)
+- Single-session strategy (✓ Good — shipped in 19 days)
+- GPT-4o with Structured Outputs (✓ Good — reliable operation parsing)
+- @tonejs/midi + Tone.js (✓ Good — solid I/O, synthesis acceptable)
+- Canvas-based piano roll (✓ Good — smooth rendering)
+- Validation pipeline (✓ Good — blocks invalid edits, warns on context issues)
+
+For complete decision log with 200+ implementation decisions, see PROJECT.md and phase SUMMARY files in .planning/phases/
 - **Tick-based time representation** (01-01): Use MIDI ticks as primary time unit, convert to seconds only for display
 - **General MIDI standard mapping** (01-01): Use 128-instrument GM mapping for consistent naming
 - **Zustand for state management** (01-01): Lightweight state management with computed display info pattern
