@@ -35,7 +35,9 @@ Natural language edits must produce musically coherent results that follow music
 
 ### Active
 
-(None — define requirements for v1.1)
+<!-- Current scope. Building toward these. -->
+
+(To be defined in REQUIREMENTS.md)
 
 ### Out of Scope
 
@@ -87,6 +89,18 @@ Minimized LLM token usage via:
 - Compact MIDI JSON context (selected track data only)
 - Token counting with js-tiktoken for cost transparency
 
+## Current Milestone: v1.1 Polish & Enhancement
+
+**Goal:** Transform the MVP into a polished, production-ready tool with professional UI/UX, improved audio quality, more creative MIDI generation, and advanced editing capabilities.
+
+**Target features:**
+- Professional UI redesign (resizable sidebar, integrated timeline, inline editing)
+- Improved synthesis quality (addressing harsh/robotic sound)
+- AI composition mode (GPT-4o direct sequence generation with conversational flow)
+- Enhanced template generation (varied patterns, random selection)
+- Advanced editing tools (velocity editing, quantization, chord symbols)
+- MIDI hardware support (keyboard input, live recording)
+
 ## Constraints
 
 - Single-session usage (no persistence) — v1.0 strategy to validate core value before adding user accounts
@@ -109,4 +123,4 @@ Minimized LLM token usage via:
 | PolySynth over @tonejs/piano | CDN reliability issues led to pure synthesis | ⚠️ Revisit — Audio quality acceptable but not great, consider SoundFont for v2 |
 
 ---
-*Last updated: 2026-02-12 after v1.0 milestone completion*
+*Last updated: 2026-02-12 after v1.1 milestone start*
