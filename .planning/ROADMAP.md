@@ -77,11 +77,13 @@ Haydn transforms natural language into musical MIDI edits through an 8-phase jou
   3. User can edit track and project names by clicking inline (Enter confirms, Escape cancels)
   4. Timeline ruler displays measure and beat ticks integrated with piano roll
   5. Transport controls are visually integrated with piano roll (not separate section)
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] 09-01: TBD
-- [ ] 09-02: TBD
+- [ ] 09-01-PLAN.md — Resizable sidebar with persistence (UI-01, UI-02, UI-03)
+- [ ] 09-02-PLAN.md — Inline editing for track/project names (UI-07, UI-08)
+- [ ] 09-03-PLAN.md — Timeline ruler with hierarchical ticks and transport strip (UI-06, UI-09)
+- [ ] 09-04-PLAN.md — Playhead interaction (drag and click) (UI-04, UI-05)
 
 #### Phase 10: Synthesis Enhancement
 **Goal**: Audio quality reaches "good enough to compose with" standard via per-instrument envelopes and filtering
@@ -181,7 +183,7 @@ Phases execute in numeric order: 1-8 (complete) → 9 → 10 → 11 → 12 → 1
 | 6. Natural Language Generation | v1.0 | 4/4 | Complete | 2026-02-07 |
 | 7. Multi-Track Support | v1.0 | 6/6 | Complete | 2026-02-09 |
 | 8. Conversational Editing Mode | v1.0 | 5/5 | Complete | 2026-02-11 |
-| 9. Professional Layout | v1.1 | 0/TBD | Not started | - |
+| 9. Professional Layout | v1.1 | 0/4 | Planned | - |
 | 10. Synthesis Enhancement | v1.1 | 0/TBD | Not started | - |
 | 11. AI Composition Mode | v1.1 | 0/TBD | Not started | - |
 | 12. Template Variations | v1.1 | 0/TBD | Not started | - |
