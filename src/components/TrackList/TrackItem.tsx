@@ -5,6 +5,7 @@ import { CSS } from '@dnd-kit/utilities';
 import type { TrackDisplayInfo } from '@/lib/midi/types';
 import { TrackControls } from './TrackControls';
 import { useProjectStore } from '@/state/projectStore';
+import { InlineEdit } from '@/components/InlineEdit';
 
 interface TrackItemProps {
   id: string;
@@ -21,7 +22,7 @@ export function TrackItem({
   isSelected,
   onSelect,
 }: TrackItemProps) {
-  const { removeTrack } = useProjectStore();
+  const { removeTrack, updateTrackName } = useProjectStore();
 
   const {
     attributes,
@@ -51,16 +52,16 @@ export function TrackItem({
       style={style}
       {...attributes}
       onClick={onSelect}
-      className={`flex items-center rounded-lg transition-all cursor-pointer ${
+      className={`flex items-center rounded-xl transition-all cursor-pointer glass-panel border overflow-hidden ${
         isSelected
-          ? 'bg-blue-50 border-blue-500 border-l-4'
-          : 'bg-white hover:bg-gray-50 border-l-4 border-transparent'
-      } border border-gray-200 overflow-hidden`}
+          ? 'border-cyan-500/50 border-l-4 shadow-lg shadow-cyan-500/20'
+          : 'hover:bg-white/5 border-l-4 border-transparent border-white/10'
+      }`}
     >
       {/* Drag handle */}
       <div
         {...listeners}
-        className="cursor-grab active:cursor-grabbing px-3 py-4 hover:bg-gray-100 transition-colors"
+        className="cursor-grab active:cursor-grabbing px-3 py-4 hover:bg-white/5 transition-colors"
         onClick={(e) => e.stopPropagation()}
       >
         <svg
@@ -71,28 +72,36 @@ export function TrackItem({
           xmlns="http://www.w3.org/2000/svg"
         >
           {/* Grip dots (6 dots in 2 columns) */}
-          <circle cx="6" cy="3" r="1.5" fill="currentColor" className="text-gray-400" />
-          <circle cx="10" cy="3" r="1.5" fill="currentColor" className="text-gray-400" />
-          <circle cx="6" cy="8" r="1.5" fill="currentColor" className="text-gray-400" />
-          <circle cx="10" cy="8" r="1.5" fill="currentColor" className="text-gray-400" />
-          <circle cx="6" cy="13" r="1.5" fill="currentColor" className="text-gray-400" />
-          <circle cx="10" cy="13" r="1.5" fill="currentColor" className="text-gray-400" />
+          <circle cx="6" cy="3" r="1.5" fill="currentColor" className="text-tertiary" />
+          <circle cx="10" cy="3" r="1.5" fill="currentColor" className="text-tertiary" />
+          <circle cx="6" cy="8" r="1.5" fill="currentColor" className="text-tertiary" />
+          <circle cx="10" cy="8" r="1.5" fill="currentColor" className="text-tertiary" />
+          <circle cx="6" cy="13" r="1.5" fill="currentColor" className="text-tertiary" />
+          <circle cx="10" cy="13" r="1.5" fill="currentColor" className="text-tertiary" />
         </svg>
       </div>
 
       {/* Track info */}
       <div className="flex-1 min-w-0 py-4">
         <div className="flex items-center gap-2">
-          <h3 className="font-medium text-gray-900 truncate">
-            {track.name}
-          </h3>
+          <div
+            className="min-w-0 flex-1"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <InlineEdit
+              value={track.name}
+              onSave={(name) => updateTrackName(trackIndex, name)}
+              className="font-medium text-primary"
+              maxLength={50}
+            />
+          </div>
           {isSelected && (
-            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 flex-shrink-0">
               Editing
             </span>
           )}
         </div>
-        <p className="text-sm text-gray-500 truncate mt-0.5">
+        <p className="text-sm text-secondary truncate mt-0.5">
           {track.instrumentName}
         </p>
       </div>
@@ -103,11 +112,11 @@ export function TrackItem({
       </div>
 
       {/* Track stats */}
-      <div className="flex items-center gap-4 text-sm text-gray-600 px-4 py-4 border-l border-gray-200">
+      <div className="flex items-center gap-4 text-sm text-secondary px-4 py-4 border-l border-white/10">
         <span className="whitespace-nowrap">
           {track.noteCount} {track.noteCount === 1 ? 'note' : 'notes'}
         </span>
-        <span className="whitespace-nowrap text-gray-400">
+        <span className="whitespace-nowrap text-tertiary">
           {track.formattedDuration}
         </span>
       </div>
@@ -116,7 +125,7 @@ export function TrackItem({
       <div className="px-3 py-4">
         <button
           onClick={handleDelete}
-          className="text-gray-400 hover:text-red-500 transition-colors"
+          className="text-tertiary hover:text-red-400 transition-colors"
           aria-label="Remove track"
         >
           <svg
