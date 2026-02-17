@@ -15,6 +15,7 @@ import { CommandInput } from '@/components/CommandInput';
 import { GenerationInput } from '@/components/GenerationInput';
 import { EditModeToggle } from '@/components/EditModeToggle';
 import { ConversationPanel } from '@/components/ConversationPanel/ConversationPanel';
+import { Sidebar } from '@/components/Sidebar';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { Toaster } from 'sonner';
 
@@ -48,123 +49,203 @@ export default function Home() {
   }, [project, selectedTrackIndex, selectTrack]);
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-xl font-bold text-gray-900">
-            Haydn
-          </h1>
+    <div className="flex flex-col h-screen overflow-hidden relative">
+      {/* Animated Background Particles */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div
+          className="absolute w-1 h-1 rounded-full bg-cyan-400/20"
+          style={{
+            top: '20%',
+            left: '10%',
+            animation: 'particle-float 8s ease-in-out infinite',
+          }}
+        />
+        <div
+          className="absolute w-1 h-1 rounded-full bg-purple-400/20"
+          style={{
+            top: '60%',
+            left: '80%',
+            animation: 'particle-float 10s ease-in-out infinite 2s',
+          }}
+        />
+        <div
+          className="absolute w-1 h-1 rounded-full bg-amber-400/20"
+          style={{
+            top: '40%',
+            left: '50%',
+            animation: 'particle-float 12s ease-in-out infinite 4s',
+          }}
+        />
+      </div>
+
+      {/* Header - spans full width */}
+      <header className="relative z-10 glass-panel border-b border-white/5 shrink-0">
+        <div className="px-6 py-5 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
+              {/* Logo/Icon */}
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-purple-500 flex items-center justify-center shadow-lg shadow-cyan-500/20">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                </svg>
+              </div>
+              <h1 className="text-2xl font-bold tracking-tight">
+                <span className="text-gradient">Haydn</span>
+              </h1>
+            </div>
+            {project && (
+              <div className="ml-4 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20">
+                <span className="text-xs font-medium text-cyan-400 mono">PROJECT LOADED</span>
+              </div>
+            )}
+          </div>
           {project && <ExportButton />}
         </div>
       </header>
 
-      {/* Main Content */}
-      <div className="w-full px-4 py-8">
-        {/* Error Display - centered */}
-        <div className="max-w-4xl mx-auto mb-6">
-          <ErrorDisplay />
-        </div>
+      {/* Body: Sidebar + Main Content */}
+      <div className="relative z-10 flex flex-1 overflow-hidden">
+        {/* Sidebar with project info (only shown when project loaded) */}
+        {project && (
+          <Sidebar>
+            <MetadataDisplay />
+            <TrackList />
+          </Sidebar>
+        )}
 
-        {/* File Upload - centered */}
-        <div className="max-w-4xl mx-auto mb-8">
-          <FileUpload />
-        </div>
-
-        {/* Editing Interface - conditionally shown when project and track selected */}
-        {project && selectedTrackIndex !== null && (
-          <div className="max-w-4xl mx-auto mb-6">
-            {/* Edit Mode Toggle */}
-            <div className="flex justify-center mb-4">
-              <EditModeToggle mode={editMode} onChange={setEditMode} />
+        {/* Main Content Area */}
+        <main className="flex-1 overflow-y-auto">
+          <div className="px-6 py-8 space-y-6">
+            {/* Error Display */}
+            <div className="max-w-4xl mx-auto">
+              <ErrorDisplay />
             </div>
 
-            {/* Conditional rendering based on mode */}
-            {editMode === 'single-shot' ? (
-              <CommandInput />
-            ) : (
-              <div className="h-96">
-                <ConversationPanel />
+            {/* File Upload */}
+            <div className="max-w-4xl mx-auto">
+              <FileUpload />
+            </div>
+
+            {/* Editing Interface - conditionally shown when project and track selected */}
+            {project && selectedTrackIndex !== null && (
+              <div className="max-w-4xl mx-auto">
+                {/* Edit Mode Toggle */}
+                <div className="flex justify-center mb-6">
+                  <EditModeToggle mode={editMode} onChange={setEditMode} />
+                </div>
+
+                {/* Conditional rendering based on mode */}
+                {editMode === 'single-shot' ? (
+                  <CommandInput />
+                ) : (
+                  <div className="h-96">
+                    <ConversationPanel />
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Prompt to select track when project loaded but no track selected */}
+            {project && selectedTrackIndex === null && (
+              <div className="max-w-4xl mx-auto text-center py-12">
+                <div className="glass-panel rounded-2xl p-8 border border-cyan-500/20">
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-cyan-500/20 to-purple-500/20 flex items-center justify-center">
+                    <svg className="w-8 h-8 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+                    </svg>
+                  </div>
+                  <p className="text-lg font-medium text-cyan-300 mb-2">Select a Track</p>
+                  <p className="text-sm text-secondary">Choose a track in the sidebar to start editing with natural language</p>
+                </div>
+              </div>
+            )}
+
+            {/* Transport Controls */}
+            {project && (
+              <div className="max-w-7xl mx-auto">
+                <TransportControls />
+              </div>
+            )}
+
+            {/* Piano Roll Editor */}
+            {project && selectedTrackIndex !== null && (
+              <div className="max-w-7xl mx-auto">
+                <PianoRollEditor />
+              </div>
+            )}
+
+            {/* Empty State - Generation and Upload */}
+            {!project && (
+              <div className="max-w-4xl mx-auto space-y-10">
+                {/* Generation Section */}
+                <div>
+                  <div className="text-center mb-6">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-cyan-500/10 to-purple-500/10 border border-cyan-500/20 mb-4">
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
+                      </span>
+                      <span className="text-xs font-medium text-cyan-300 mono">AI-POWERED GENERATION</span>
+                    </div>
+                    <h2 className="text-3xl font-bold mb-2">
+                      <span className="text-gradient">Create Music from Text</span>
+                    </h2>
+                    <p className="text-secondary text-sm">Describe your musical idea and let AI compose it for you</p>
+                  </div>
+                  <GenerationInput />
+                </div>
+
+                {/* Divider */}
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-white/5"></div>
+                  </div>
+                  <div className="relative flex justify-center text-sm">
+                    <span className="px-6 bg-[#0B0F1A] text-tertiary font-medium">OR</span>
+                  </div>
+                </div>
+
+                {/* Upload Section */}
+                <div className="text-center">
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/20 mb-4">
+                    <svg className="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    <span className="text-xs font-medium text-amber-300 mono">IMPORT EXISTING</span>
+                  </div>
+                  <h2 className="text-2xl font-bold text-primary mb-2">
+                    Upload Your Files
+                  </h2>
+                  <p className="text-secondary text-sm mb-4">
+                    Import MIDI or MusicXML files to edit with AI
+                  </p>
+                </div>
               </div>
             )}
           </div>
-        )}
 
-        {/* Prompt to select track when project loaded but no track selected */}
-        {project && selectedTrackIndex === null && (
-          <div className="max-w-4xl mx-auto mb-6 text-center text-gray-500 py-8">
-            Select a track to use natural language editing
-          </div>
-        )}
-
-        {/* Transport Controls - wider for piano roll */}
-        {project && (
-          <div className="max-w-7xl mx-auto mb-6">
-            <TransportControls />
-          </div>
-        )}
-
-        {/* Piano Roll Editor - full width when track selected */}
-        {project && selectedTrackIndex !== null && (
-          <div className="max-w-7xl mx-auto mb-6">
-            <PianoRollEditor />
-          </div>
-        )}
-
-        {/* Project Content - centered */}
-        {project && (
-          <div className="max-w-4xl mx-auto space-y-8">
-            {/* Metadata Section */}
-            <MetadataDisplay />
-
-            {/* Track List */}
-            <TrackList />
-          </div>
-        )}
-
-        {/* Empty State - Generation and Upload */}
-        {!project && (
-          <div className="max-w-4xl mx-auto space-y-8">
-            {/* Generation Section */}
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4 text-center">
-                Generate Music from Text
-              </h2>
-              <GenerationInput />
-            </div>
-
-            {/* Divider */}
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300"></div>
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-4 bg-gray-50 text-gray-500">or</span>
+          {/* Footer */}
+          <footer className="border-t border-white/5 mt-auto">
+            <div className="px-6 py-6">
+              <div className="flex items-center justify-between text-xs">
+                <div className="flex items-center gap-2 text-tertiary">
+                  <span className="mono">HAYDN</span>
+                  <span>•</span>
+                  <span>AI-Powered MIDI Editing</span>
+                </div>
+                <div className="flex items-center gap-4 text-tertiary">
+                  <span className="hover:text-cyan-400 transition-colors cursor-pointer">About</span>
+                  <span className="hover:text-cyan-400 transition-colors cursor-pointer">Docs</span>
+                  <span className="hover:text-cyan-400 transition-colors cursor-pointer">Support</span>
+                </div>
               </div>
             </div>
-
-            {/* Upload Section */}
-            <div className="text-center">
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">
-                Upload an Existing File
-              </h2>
-              <p className="text-gray-500 text-sm mb-4">
-                Import MIDI or MusicXML files to edit
-              </p>
-            </div>
-          </div>
-        )}
+          </footer>
+        </main>
       </div>
-
-      {/* Footer */}
-      <footer className="border-t border-gray-200 mt-auto">
-        <div className="max-w-4xl mx-auto px-4 py-4 text-center text-sm text-gray-400">
-          Haydn - Natural Language MIDI Editing
-        </div>
-      </footer>
 
       {/* Toast notifications for theory violations and other alerts */}
       <Toaster position="bottom-right" richColors />
-    </main>
+    </div>
   );
 }
