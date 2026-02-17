@@ -2,9 +2,10 @@
 
 import { useState } from 'react';
 import { useProjectStore } from '@/state/projectStore';
+import { InlineEdit } from '@/components/InlineEdit';
 
 export function MetadataDisplay() {
-  const { project } = useProjectStore();
+  const { project, updateProjectName } = useProjectStore();
   const [isExpanded, setIsExpanded] = useState(true);
 
   if (!project) {
@@ -21,29 +22,31 @@ export function MetadataDisplay() {
       {/* Header with current file */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2 min-w-0">
-          <svg className="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 text-cyan-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
               d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"
             />
           </svg>
-          <span className="font-medium text-gray-900 truncate">
-            {project.originalFileName || 'Untitled Project'}
-          </span>
-          <span className="text-xs text-gray-400 flex-shrink-0">
+          <InlineEdit
+            value={project.originalFileName || 'Untitled Project'}
+            onSave={(name) => updateProjectName(name)}
+            className="font-medium text-primary"
+          />
+          <span className="text-xs text-tertiary flex-shrink-0">
             ({project.sourceFormat.toUpperCase()})
           </span>
         </div>
       </div>
 
       {/* Collapsible Metadata Section */}
-      <div className="border border-gray-200 rounded-lg overflow-hidden">
+      <div className="glass-panel border border-white/10 rounded-xl overflow-hidden">
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="w-full flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 transition-colors"
+          className="w-full flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 transition-colors"
         >
-          <span className="font-medium text-gray-700">Project Info</span>
+          <span className="font-medium text-secondary">Project Info</span>
           <svg
-            className={`w-5 h-5 text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+            className={`w-5 h-5 text-tertiary transition-transform ${isExpanded ? 'rotate-180' : ''}`}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -53,15 +56,15 @@ export function MetadataDisplay() {
         </button>
 
         {isExpanded && (
-          <div className="p-4 bg-white border-t border-gray-200">
+          <div className="p-4 border-t border-white/10">
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {/* Tempo */}
               <div>
-                <dt className="text-xs text-gray-500 uppercase tracking-wide">Tempo</dt>
-                <dd className="text-gray-900 font-medium">
+                <dt className="text-xs text-tertiary uppercase tracking-wide mono">Tempo</dt>
+                <dd className="text-primary font-medium mt-1">
                   {firstTempo ? `${Math.round(firstTempo.bpm)} BPM` : '120 BPM'}
                   {metadata.tempos.length > 1 && (
-                    <span className="text-xs text-gray-400 ml-1">
+                    <span className="text-xs text-tertiary ml-1">
                       (+{metadata.tempos.length - 1} changes)
                     </span>
                   )}
@@ -70,11 +73,11 @@ export function MetadataDisplay() {
 
               {/* Time Signature */}
               <div>
-                <dt className="text-xs text-gray-500 uppercase tracking-wide">Time Signature</dt>
-                <dd className="text-gray-900 font-medium">
+                <dt className="text-xs text-tertiary uppercase tracking-wide mono">Time Signature</dt>
+                <dd className="text-primary font-medium mt-1">
                   {firstTimeSig ? `${firstTimeSig.numerator}/${firstTimeSig.denominator}` : '4/4'}
                   {metadata.timeSignatures.length > 1 && (
-                    <span className="text-xs text-gray-400 ml-1">
+                    <span className="text-xs text-tertiary ml-1">
                       (+{metadata.timeSignatures.length - 1} changes)
                     </span>
                   )}
@@ -83,30 +86,30 @@ export function MetadataDisplay() {
 
               {/* Key Signature */}
               <div>
-                <dt className="text-xs text-gray-500 uppercase tracking-wide">Key</dt>
-                <dd className="text-gray-900 font-medium">
+                <dt className="text-xs text-tertiary uppercase tracking-wide mono">Key</dt>
+                <dd className="text-primary font-medium mt-1">
                   {firstKeySig ? `${firstKeySig.key} ${firstKeySig.scale}` : 'Not specified'}
                 </dd>
               </div>
 
               {/* PPQ / Resolution */}
               <div>
-                <dt className="text-xs text-gray-500 uppercase tracking-wide">Resolution</dt>
-                <dd className="text-gray-900 font-medium">{metadata.ppq} PPQ</dd>
+                <dt className="text-xs text-tertiary uppercase tracking-wide mono">Resolution</dt>
+                <dd className="text-primary font-medium mt-1">{metadata.ppq} PPQ</dd>
               </div>
 
               {/* Duration */}
               <div>
-                <dt className="text-xs text-gray-500 uppercase tracking-wide">Duration</dt>
-                <dd className="text-gray-900 font-medium">
+                <dt className="text-xs text-tertiary uppercase tracking-wide mono">Duration</dt>
+                <dd className="text-primary font-medium mt-1">
                   {formatDuration(project.durationTicks, metadata.ppq, firstTempo?.bpm || 120)}
                 </dd>
               </div>
 
               {/* Total Tracks */}
               <div>
-                <dt className="text-xs text-gray-500 uppercase tracking-wide">Tracks</dt>
-                <dd className="text-gray-900 font-medium">{project.tracks.length}</dd>
+                <dt className="text-xs text-tertiary uppercase tracking-wide mono">Tracks</dt>
+                <dd className="text-primary font-medium mt-1">{project.tracks.length}</dd>
               </div>
             </div>
           </div>

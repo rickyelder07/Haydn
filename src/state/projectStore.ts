@@ -19,6 +19,7 @@ interface ProjectState {
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   updateTrackName: (trackIndex: number, name: string) => void;
+  updateProjectName: (name: string) => void;
   addTrack: (instrumentNumber: number, name?: string) => void;
   removeTrack: (trackIndex: number) => void;
 }
@@ -103,6 +104,17 @@ export const useProjectStore = create<ProjectState>((set) => ({
       return {
         project: newProject,
         trackDisplayInfo: computeTrackDisplayInfo(newProject),
+      };
+    }),
+
+  updateProjectName: (name) =>
+    set((state) => {
+      if (!state.project) return state;
+      return {
+        project: {
+          ...state.project,
+          originalFileName: name,
+        },
       };
     }),
 
