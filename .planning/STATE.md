@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-12)
 ## Current Position
 
 Phase: 9 of 14 (Professional Layout)
-Plan: 3 of TBD in current phase
+Plan: 4 of TBD in current phase
 Status: Executing
-Last activity: 2026-02-17 — Completed 09-03 timeline ruler with embedded transport controls
+Last activity: 2026-02-18 — Completed 09-04 playhead interaction for timeline ruler
 
-Progress: [████████░░░░░░] 57%+ (v1.0 complete: 42/42 plans, v1.1: 3/TBD plans)
+Progress: [████████░░░░░░] 57%+ (v1.0 complete: 42/42 plans, v1.1: 4/TBD plans)
 
 ## Performance Metrics
 
@@ -43,6 +43,7 @@ Progress: [████████░░░░░░] 57%+ (v1.0 complete: 42/4
 | 09-01 | 4 min | 3 | 5 |
 | 09-02 | 2 min | 3 | 5 |
 | 09-03 | 5 min | 3 | 6 |
+| 09-04 | 2 min | 3 | 4 |
 
 **Recent Trend:**
 - v1.0 maintained consistent velocity
@@ -71,6 +72,10 @@ Recent decisions affecting v1.1 work:
 - **09-03**: TransportStrip width = PIANO_KEY_WIDTH (60px) — ruler ticks align with piano roll grid
 - **09-03**: Subdivision ticks only at zoomX > 1.5 — avoids visual clutter at lower zoom levels
 - **09-03**: Loop toggle disabled placeholder — loop state deferred to future phase
+- **09-04**: Incremental drag delta (startX updates each move) — avoids accumulated error on fast drags
+- **09-04**: Playhead visibility guard — only render when pixel position is within visible ruler width
+- **09-04**: Seek is context-agnostic — PlaybackController handles audio state, no isPlaying branching needed
+- **09-04**: Canvas pointerEvents:none + parent div onClick — clean separation of click handling from rendering
 
 ### Pending Todos
 
@@ -88,12 +93,12 @@ All pitfalls documented in research/v1.1/SUMMARY.md with prevention strategies.
 
 ## Session Continuity
 
-Last session: 2026-02-17
-Stopped at: Completed 09-03-PLAN.md (timeline ruler with embedded transport controls)
+Last session: 2026-02-18
+Stopped at: Completed 09-04-PLAN.md (playhead interaction for timeline ruler)
 Resume file: None
 
 **Next step:** Continue with next plan in Phase 9.
 
 ---
 
-*Last updated: 2026-02-17 after completing 09-03 timeline ruler*
+*Last updated: 2026-02-18 after completing 09-04 playhead interaction*
