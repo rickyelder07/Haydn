@@ -9,7 +9,6 @@ import { TrackList } from '@/components/TrackList';
 import { MetadataDisplay } from '@/components/MetadataDisplay';
 import { ExportButton } from '@/components/ExportButton';
 import { ErrorDisplay } from '@/components/ErrorDisplay';
-import { TransportControls } from '@/components/TransportControls';
 import { PianoRollEditor } from '@/components/PianoRoll';
 import { CommandInput } from '@/components/CommandInput';
 import { GenerationInput } from '@/components/GenerationInput';
@@ -157,13 +156,6 @@ export default function Home() {
                   <p className="text-lg font-medium text-cyan-300 mb-2">Select a Track</p>
                   <p className="text-sm text-secondary">Choose a track in the sidebar to start editing with natural language</p>
                 </div>
-              </div>
-            )}
-
-            {/* Transport Controls */}
-            {project && (
-              <div className="max-w-7xl mx-auto">
-                <TransportControls />
               </div>
             )}
 

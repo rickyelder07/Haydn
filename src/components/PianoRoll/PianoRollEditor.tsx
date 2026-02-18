@@ -14,6 +14,7 @@ import { NoteInspector } from './NoteInspector';
 import { ValidationFeedback } from './ValidationFeedback';
 import { TheoryControls } from './TheoryControls';
 import { NOTE_HEIGHT, PIANO_KEY_WIDTH } from './gridUtils';
+import { TimelineRuler } from '@/components/TimelineRuler';
 
 const EDITOR_HEIGHT = 700;
 
@@ -186,6 +187,15 @@ export function PianoRollEditor() {
 
   return (
     <div className="w-full border rounded-lg overflow-hidden bg-gray-900" style={{ isolation: 'isolate' }}>
+      {/* Timeline Ruler with embedded Transport Controls */}
+      <TimelineRuler
+        scrollX={scrollX}
+        zoomX={zoomX}
+        ppq={ppq}
+        timeSignature={timeSignature}
+        width={canvasWidth}
+      />
+
       {/* Toolbar */}
       <div className="flex items-center gap-2 px-4 py-2 bg-gray-800 border-b border-gray-700">
         {/* Undo button */}
