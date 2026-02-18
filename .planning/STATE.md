@@ -40,7 +40,7 @@ Progress: [████████░░░░░░] 57%+ (v1.0 complete: 42/4
 
 | Plan | Duration | Tasks | Files |
 |------|----------|-------|-------|
-| 09-01 | TBD | TBD | TBD |
+| 09-01 | 4 min | 3 | 5 |
 | 09-02 | 2 min | 3 | 5 |
 
 **Recent Trend:**
@@ -59,6 +59,10 @@ Recent decisions affecting v1.1 work:
 - **v1.0**: Canvas-based piano roll — performant, ready for velocity lane addition
 - **v1.0**: Zustand for state — clean separation, add midiInputStore for hardware
 - **v1.0**: PolySynth synthesis — needs enhancement (Phase 10 priority)
+- **09-01**: Sidebar collapses to 48px (icon-only) not 0 — toggle button always visible
+- **09-01**: useUIStore with Zustand persist — sidebar width/collapsed state persisted to localStorage
+- **09-01**: ResizeHandle uses window events — drag continues even when cursor leaves handle bounds
+- **09-01**: Sidebar only mounted when project loaded — no empty state sidebar
 - **09-02**: Double-click to enter inline edit mode (not single-click) — avoids accidental edits during track selection
 - **09-02**: Blur saves same as Enter — natural UX when clicking away from edit field
 - **09-02**: Empty string guard reverts to original name — prevents nameless tracks/projects
@@ -81,11 +85,11 @@ All pitfalls documented in research/v1.1/SUMMARY.md with prevention strategies.
 ## Session Continuity
 
 Last session: 2026-02-17
-Stopped at: Completed 09-02-PLAN.md (inline editing for track and project names)
+Stopped at: Completed 09-01-PLAN.md (resizable sidebar with localStorage persistence)
 Resume file: None
 
 **Next step:** Continue with next plan in Phase 9.
 
 ---
 
-*Last updated: 2026-02-17 after completing 09-02 inline editing*
+*Last updated: 2026-02-17 after completing 09-01 resizable sidebar*
