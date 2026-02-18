@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-12)
 ## Current Position
 
 Phase: 9 of 14 (Professional Layout)
-Plan: 2 of TBD in current phase
+Plan: 3 of TBD in current phase
 Status: Executing
-Last activity: 2026-02-17 — Completed 09-02 inline editing for track and project names
+Last activity: 2026-02-17 — Completed 09-03 timeline ruler with embedded transport controls
 
-Progress: [████████░░░░░░] 57%+ (v1.0 complete: 42/42 plans, v1.1: 2/TBD plans)
+Progress: [████████░░░░░░] 57%+ (v1.0 complete: 42/42 plans, v1.1: 3/TBD plans)
 
 ## Performance Metrics
 
@@ -42,6 +42,7 @@ Progress: [████████░░░░░░] 57%+ (v1.0 complete: 42/4
 |------|----------|-------|-------|
 | 09-01 | 4 min | 3 | 5 |
 | 09-02 | 2 min | 3 | 5 |
+| 09-03 | 5 min | 3 | 6 |
 
 **Recent Trend:**
 - v1.0 maintained consistent velocity
@@ -67,6 +68,9 @@ Recent decisions affecting v1.1 work:
 - **09-02**: Blur saves same as Enter — natural UX when clicking away from edit field
 - **09-02**: Empty string guard reverts to original name — prevents nameless tracks/projects
 - **09-02**: stopPropagation wrapper in TrackItem — isolates edit interactions from parent click handler
+- **09-03**: TransportStrip width = PIANO_KEY_WIDTH (60px) — ruler ticks align with piano roll grid
+- **09-03**: Subdivision ticks only at zoomX > 1.5 — avoids visual clutter at lower zoom levels
+- **09-03**: Loop toggle disabled placeholder — loop state deferred to future phase
 
 ### Pending Todos
 
@@ -85,11 +89,11 @@ All pitfalls documented in research/v1.1/SUMMARY.md with prevention strategies.
 ## Session Continuity
 
 Last session: 2026-02-17
-Stopped at: Completed 09-01-PLAN.md (resizable sidebar with localStorage persistence)
+Stopped at: Completed 09-03-PLAN.md (timeline ruler with embedded transport controls)
 Resume file: None
 
 **Next step:** Continue with next plan in Phase 9.
 
 ---
 
-*Last updated: 2026-02-17 after completing 09-01 resizable sidebar*
+*Last updated: 2026-02-17 after completing 09-03 timeline ruler*
