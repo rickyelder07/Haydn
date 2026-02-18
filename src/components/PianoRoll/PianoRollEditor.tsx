@@ -29,6 +29,9 @@ export function PianoRollEditor() {
   const updateNote = useEditStore((state) => state.updateNote);
   const deleteNote = useEditStore((state) => state.deleteNote);
   const playheadTicks = usePlaybackStore((state) => state.position.ticks);
+  const playbackState = usePlaybackStore((state) => state.playbackState);
+  const tempo = usePlaybackStore((state) => state.tempo);
+  const seekTo = usePlaybackStore((state) => state.seekTo);
   const scalePitchClasses = useValidationStore((state) => state.scalePitchClasses);
   const validationEnabled = useValidationStore((state) => state.enabled);
   const updateScaleInfo = useValidationStore((state) => state.updateScaleInfo);
@@ -51,6 +54,14 @@ export function PianoRollEditor() {
   const ppq = project?.metadata.ppq || 480;
   const timeSignature = project?.metadata.timeSignatures[0] || { numerator: 4, denominator: 4, ticks: 0 };
   const durationTicks = project?.durationTicks || ppq * 16; // Default 16 beats
+
+  // Convert tick position to seconds and seek
+  // Context-aware: seekTo moves position whether playing or paused;
+  // if playing, the PlaybackController resumes from the new position automatically.
+  const handleSeek = (ticks: number) => {
+    const seconds = (ticks / ppq) * (60 / tempo);
+    seekTo(seconds);
+  };
 
   // Build allTracks array for ghost note rendering (filter out hidden tracks)
   const allTracks = project?.tracks
@@ -194,6 +205,10 @@ export function PianoRollEditor() {
         ppq={ppq}
         timeSignature={timeSignature}
         width={canvasWidth}
+        playheadTicks={playheadTicks}
+        isPlaying={playbackState === 'playing'}
+        onSeek={handleSeek}
+        durationTicks={durationTicks}
       />
 
       {/* Toolbar */}
