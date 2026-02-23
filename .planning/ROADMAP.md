@@ -96,11 +96,12 @@ Plans:
   3. Brass sounds punchy with appropriate envelope
   4. All instruments lack harsh high frequencies (filtered 2-5kHz)
   5. Audio quality is noticeably better than v1.0 (subjective improvement confirmed by user)
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 10-01: TBD
-- [ ] 10-02: TBD
+- [ ] 10-01-PLAN.md — SynthInstrument + PianoSampler core audio refactor (AUDIO-01 through AUDIO-06)
+- [ ] 10-02-PLAN.md — SynthDebugPanel for real-time tuning and page.tsx integration (AUDIO-07)
+- [ ] 10-03-PLAN.md — Subjective audio quality checkpoint (AUDIO-07 human verification)
 
 #### Phase 11: AI Composition Mode
 **Goal**: Users can generate unique MIDI compositions via conversational AI with GPT-4o direct synthesis
@@ -185,7 +186,7 @@ Phases execute in numeric order: 1-8 (complete) → 9 → 10 → 11 → 12 → 1
 | 7. Multi-Track Support | v1.0 | 6/6 | Complete | 2026-02-09 |
 | 8. Conversational Editing Mode | v1.0 | 5/5 | Complete | 2026-02-11 |
 | 9. Professional Layout | v1.1 | 4/4 | Complete | 2026-02-17 |
-| 10. Synthesis Enhancement | v1.1 | 0/TBD | Not started | - |
+| 10. Synthesis Enhancement | v1.1 | 0/3 | Not started | - |
 | 11. AI Composition Mode | v1.1 | 0/TBD | Not started | - |
 | 12. Template Variations | v1.1 | 0/TBD | Not started | - |
 | 13. Advanced Piano Roll Editing | v1.1 | 0/TBD | Not started | - |
@@ -193,4 +194,4 @@ Phases execute in numeric order: 1-8 (complete) → 9 → 10 → 11 → 12 → 1
 
 ---
 
-*Last updated: 2026-02-12 after v1.1 roadmap creation*
+*Last updated: 2026-02-23 after Phase 10 planning*
