@@ -79,7 +79,7 @@ export default function Home() {
 
       {/* Header - spans full width */}
       <header className="relative z-10 glass-panel border-b border-white/5 shrink-0">
-        <div className="px-6 py-5 flex items-center justify-between">
+        <div className="px-6 py-3.5 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-3">
               {/* Logo/Icon */}
@@ -113,61 +113,57 @@ export default function Home() {
         )}
 
         {/* Main Content Area */}
-        <main className="flex-1 overflow-y-auto">
-          <div className="px-6 py-8 space-y-6">
-            {/* Error Display */}
-            <div className="max-w-4xl mx-auto">
-              <ErrorDisplay />
-            </div>
-
-            {/* File Upload */}
-            <div className="max-w-4xl mx-auto">
-              <FileUpload />
-            </div>
-
-            {/* Editing Interface - conditionally shown when project and track selected */}
-            {project && selectedTrackIndex !== null && (
-              <div className="max-w-4xl mx-auto">
-                {/* Edit Mode Toggle */}
-                <div className="flex justify-center mb-6">
-                  <EditModeToggle mode={editMode} onChange={setEditMode} />
-                </div>
-
-                {/* Conditional rendering based on mode */}
-                {editMode === 'single-shot' ? (
-                  <CommandInput />
-                ) : (
-                  <div className="h-96">
-                    <ConversationPanel />
-                  </div>
-                )}
+        <main className="flex-1 overflow-y-auto flex flex-col">
+          {project ? (
+            <>
+              {/* Error Display */}
+              <div className="px-4 pt-2">
+                <ErrorDisplay />
               </div>
-            )}
 
-            {/* Prompt to select track when project loaded but no track selected */}
-            {project && selectedTrackIndex === null && (
-              <div className="max-w-4xl mx-auto text-center py-12">
-                <div className="glass-panel rounded-2xl p-8 border border-cyan-500/20">
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-cyan-500/20 to-purple-500/20 flex items-center justify-center">
-                    <svg className="w-8 h-8 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
-                    </svg>
+              {/* Editing Interface - conditionally shown when project and track selected */}
+              {selectedTrackIndex !== null && (
+                <div className="px-6 py-4 max-w-4xl mx-auto w-full">
+                  {/* Edit Mode Toggle */}
+                  <div className="flex justify-center mb-6">
+                    <EditModeToggle mode={editMode} onChange={setEditMode} />
                   </div>
-                  <p className="text-lg font-medium text-cyan-300 mb-2">Select a Track</p>
-                  <p className="text-sm text-secondary">Choose a track in the sidebar to start editing with natural language</p>
-                </div>
-              </div>
-            )}
 
-            {/* Piano Roll Editor */}
-            {project && selectedTrackIndex !== null && (
-              <div className="max-w-7xl mx-auto">
+                  {/* Conditional rendering based on mode */}
+                  {editMode === 'single-shot' ? (
+                    <CommandInput />
+                  ) : (
+                    <div className="h-96">
+                      <ConversationPanel />
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Prompt to select track when project loaded but no track selected */}
+              {selectedTrackIndex === null && (
+                <div className="max-w-4xl mx-auto w-full text-center py-12 px-6">
+                  <div className="glass-panel rounded-2xl p-8 border border-cyan-500/20">
+                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-cyan-500/20 to-purple-500/20 flex items-center justify-center">
+                      <svg className="w-8 h-8 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+                      </svg>
+                    </div>
+                    <p className="text-lg font-medium text-cyan-300 mb-2">Select a Track</p>
+                    <p className="text-sm text-secondary">Choose a track in the sidebar to start editing with natural language</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Piano Roll Editor — edge-to-edge */}
+              {selectedTrackIndex !== null && (
                 <PianoRollEditor />
-              </div>
-            )}
+              )}
 
-            {/* Empty State - Generation and Upload */}
-            {!project && (
+            </>
+          ) : (
+            /* Empty State - Generation and Upload */
+            <div className="px-6 py-8">
               <div className="max-w-4xl mx-auto space-y-10">
                 {/* Generation Section */}
                 <div>
@@ -213,8 +209,8 @@ export default function Home() {
                   </p>
                 </div>
               </div>
-            )}
-          </div>
+            </div>
+          )}
 
           {/* Footer */}
           <footer className="border-t border-white/5 mt-auto">

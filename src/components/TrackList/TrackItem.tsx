@@ -54,8 +54,8 @@ export function TrackItem({
       onClick={onSelect}
       className={`flex items-center rounded-xl transition-all cursor-pointer glass-panel border overflow-hidden ${
         isSelected
-          ? 'border-cyan-500/50 border-l-4 shadow-lg shadow-cyan-500/20'
-          : 'hover:bg-white/5 border-l-4 border-transparent border-white/10'
+          ? 'border-cyan-500/50 shadow-[0px_10px_15px_-3px_rgba(6,182,212,0.2),0px_4px_6px_-4px_rgba(6,182,212,0.2)]'
+          : 'hover:bg-white/5 border-white/10'
       }`}
     >
       {/* Drag handle */}

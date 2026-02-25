@@ -197,7 +197,7 @@ export function PianoRollEditor() {
   }
 
   return (
-    <div className="w-full border rounded-lg overflow-hidden bg-gray-900" style={{ isolation: 'isolate' }}>
+    <div className="w-full overflow-hidden bg-gray-900" style={{ isolation: 'isolate' }}>
       {/* Timeline Ruler with embedded Transport Controls */}
       <TimelineRuler
         scrollX={scrollX}
