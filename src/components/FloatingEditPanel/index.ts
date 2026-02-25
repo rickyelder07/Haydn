@@ -1,0 +1,1 @@
+export { FloatingEditPanel } from './FloatingEditPanel';
