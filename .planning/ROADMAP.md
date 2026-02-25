@@ -96,9 +96,12 @@ Plans:
   3. Loading progress is visible in transport area (spinner/progress bar)
   4. Percussion (program 999) continues to work (may stay PolySynth)
   5. Audio quality is noticeably better than v1.0 (subjective improvement confirmed by user)
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
+- [ ] 10-01-PLAN.md — CDN sample loading foundation: gmInstrumentNames, soundfontLoader, SamplerInstrument (AUDIO-01, AUDIO-02, AUDIO-03, AUDIO-04, AUDIO-05)
+- [ ] 10-02-PLAN.md — Wire samples into audio engine: InstrumentFactory routing, NoteScheduler parallel loading (AUDIO-06)
+- [ ] 10-03-PLAN.md — User verification of audio quality improvement (AUDIO-07)
 
 #### Phase 11: AI Composition Mode
 **Goal**: Users can generate unique MIDI compositions via conversational AI with GPT-4o direct synthesis
@@ -191,4 +194,4 @@ Phases execute in numeric order: 1-8 (complete) → 9 → 10 → 11 → 12 → 1
 
 ---
 
-*Last updated: 2026-02-23 after Phase 10 planning*
+*Last updated: 2026-02-24 after Phase 10 planning*
