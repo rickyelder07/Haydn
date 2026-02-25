@@ -40,10 +40,10 @@ export function ExportButton() {
       disabled={isExporting}
       className={`
         inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium
-        transition-colors duration-200
+        transition-all duration-200
         ${isExporting
-          ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-          : 'bg-blue-600 text-white hover:bg-blue-700'
+          ? 'bg-white/5 text-tertiary cursor-not-allowed border border-white/10'
+          : 'bg-gradient-to-r from-amber-500 to-orange-400 text-white hover:from-amber-400 hover:to-orange-300 shadow-sm shadow-amber-500/20'
         }
       `}
     >

@@ -82,7 +82,7 @@ export function TrackItem({
       </div>
 
       {/* Track info */}
-      <div className="flex-1 min-w-0 py-4">
+      <div className="flex-1 min-w-0 py-3">
         <div className="flex items-center gap-2">
           <div
             className="min-w-0 flex-1"
@@ -101,24 +101,11 @@ export function TrackItem({
             </span>
           )}
         </div>
-        <p className="text-sm text-secondary truncate mt-0.5">
-          {track.instrumentName}
-        </p>
       </div>
 
       {/* Track controls (mute/solo) */}
-      <div className="px-3">
+      <div className="px-2">
         <TrackControls trackIndex={trackIndex} />
-      </div>
-
-      {/* Track stats */}
-      <div className="flex items-center gap-4 text-sm text-secondary px-4 py-4 border-l border-white/10">
-        <span className="whitespace-nowrap">
-          {track.noteCount} {track.noteCount === 1 ? 'note' : 'notes'}
-        </span>
-        <span className="whitespace-nowrap text-tertiary">
-          {track.formattedDuration}
-        </span>
       </div>
 
       {/* Delete button */}

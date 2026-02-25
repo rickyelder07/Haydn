@@ -46,16 +46,16 @@ export function ZoomControls({ zoomX, zoomY, onZoomXChange, onZoomYChange }: Zoo
         <button
           onClick={handleZoomXOut}
           disabled={zoomX <= MIN_ZOOM_X}
-          className="px-2 py-1 rounded bg-gray-700 hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed text-gray-200"
+          className="px-1.5 py-0.5 rounded bg-[#1A2030] border border-white/10 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed text-secondary hover:text-primary transition-colors"
           title="Zoom out horizontally"
         >
           −
         </button>
-        <span className="text-gray-300 w-12 text-center">H: {zoomX.toFixed(1)}x</span>
+        <span className="text-secondary w-12 text-center">H: {zoomX.toFixed(1)}x</span>
         <button
           onClick={handleZoomXIn}
           disabled={zoomX >= MAX_ZOOM_X}
-          className="px-2 py-1 rounded bg-gray-700 hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed text-gray-200"
+          className="px-1.5 py-0.5 rounded bg-[#1A2030] border border-white/10 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed text-secondary hover:text-primary transition-colors"
           title="Zoom in horizontally"
         >
           +
@@ -67,16 +67,16 @@ export function ZoomControls({ zoomX, zoomY, onZoomXChange, onZoomYChange }: Zoo
         <button
           onClick={handleZoomYOut}
           disabled={zoomY <= MIN_ZOOM_Y}
-          className="px-2 py-1 rounded bg-gray-700 hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed text-gray-200"
+          className="px-1.5 py-0.5 rounded bg-[#1A2030] border border-white/10 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed text-secondary hover:text-primary transition-colors"
           title="Zoom out vertically"
         >
           −
         </button>
-        <span className="text-gray-300 w-12 text-center">V: {zoomY.toFixed(1)}x</span>
+        <span className="text-secondary w-12 text-center">V: {zoomY.toFixed(1)}x</span>
         <button
           onClick={handleZoomYIn}
           disabled={zoomY >= MAX_ZOOM_Y}
-          className="px-2 py-1 rounded bg-gray-700 hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed text-gray-200"
+          className="px-1.5 py-0.5 rounded bg-[#1A2030] border border-white/10 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed text-secondary hover:text-primary transition-colors"
           title="Zoom in vertically"
         >
           +
@@ -86,7 +86,7 @@ export function ZoomControls({ zoomX, zoomY, onZoomXChange, onZoomYChange }: Zoo
       {/* Reset button */}
       <button
         onClick={handleReset}
-        className="px-2 py-1 rounded bg-gray-700 hover:bg-gray-600 text-gray-200 text-xs"
+        className="px-2 py-0.5 rounded bg-[#1A2030] border border-white/10 hover:bg-white/10 text-secondary hover:text-primary text-xs transition-colors"
         title="Reset zoom to 1.0x"
       >
         Reset

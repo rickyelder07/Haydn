@@ -15,11 +15,13 @@ import { ValidationFeedback } from './ValidationFeedback';
 import { TheoryControls } from './TheoryControls';
 import { NOTE_HEIGHT, PIANO_KEY_WIDTH } from './gridUtils';
 import { TimelineRuler } from '@/components/TimelineRuler';
+import { InlineEdit } from '@/components/InlineEdit';
 
 const EDITOR_HEIGHT = 700;
 
 export function PianoRollEditor() {
   const project = useProjectStore((state) => state.project);
+  const updateTrackName = useProjectStore((state) => state.updateTrackName);
   const selectedTrackIndex = useEditStore((state) => state.selectedTrackIndex);
   const selectedNoteIds = useEditStore((state) => state.selectedNoteIds);
   const canUndo = useEditStore((state) => state.canUndo);
@@ -54,6 +56,13 @@ export function PianoRollEditor() {
   const ppq = project?.metadata.ppq || 480;
   const timeSignature = project?.metadata.timeSignatures[0] || { numerator: 4, denominator: 4, ticks: 0 };
   const durationTicks = project?.durationTicks || ppq * 16; // Default 16 beats
+
+  // Metadata for the toolbar stats strip
+  const firstTempo = project?.metadata.tempos[0];
+  const firstTimeSig = project?.metadata.timeSignatures[0];
+  const firstKeySig = project?.metadata.keySignatures[0];
+  const durationSecs = project ? (project.durationTicks / ppq) * (60 / (firstTempo?.bpm || 120)) : 0;
+  const durationLabel = `${Math.floor(durationSecs / 60)}:${String(Math.floor(durationSecs % 60)).padStart(2, '0')}`;
 
   // Convert tick position to seconds and seek
   // Context-aware: seekTo moves position whether playing or paused;
@@ -197,7 +206,86 @@ export function PianoRollEditor() {
   }
 
   return (
-    <div className="w-full overflow-hidden bg-gray-900" style={{ isolation: 'isolate' }}>
+    <div className="w-full overflow-hidden" style={{ isolation: 'isolate', backgroundColor: '#0D1117' }}>
+      {/* Toolbar */}
+      <div className="flex items-center gap-2 px-3 py-2 bg-[#131824] border-b border-white/10">
+        {/* Undo button */}
+        <button
+          onClick={undo}
+          disabled={!canUndo}
+          className={`p-1.5 rounded transition-colors ${
+            canUndo
+              ? 'hover:bg-white/10 text-secondary hover:text-primary'
+              : 'text-white/20 cursor-not-allowed'
+          }`}
+          title="Undo (Cmd+Z)"
+        >
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M8 5 L3 10 L8 15 M3 10 L17 10 C17 10 17 8 14 8" stroke="currentColor" strokeWidth="1.5" fill="none" />
+          </svg>
+        </button>
+
+        {/* Redo button */}
+        <button
+          onClick={redo}
+          disabled={!canRedo}
+          className={`p-1.5 rounded transition-colors ${
+            canRedo
+              ? 'hover:bg-white/10 text-secondary hover:text-primary'
+              : 'text-white/20 cursor-not-allowed'
+          }`}
+          title="Redo (Cmd+Shift+Z)"
+        >
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M12 5 L17 10 L12 15 M17 10 L3 10 C3 10 3 8 6 8" stroke="currentColor" strokeWidth="1.5" fill="none" />
+          </svg>
+        </button>
+
+        <div className="h-5 w-px bg-white/10 mx-1"></div>
+
+        {/* Theory controls */}
+        <TheoryControls />
+
+        <div className="h-5 w-px bg-white/10 mx-1"></div>
+
+        {/* Ghost notes toggle */}
+        <button
+          onClick={() => setGhostNotesVisible(!ghostNotesVisible)}
+          className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg transition-colors ${
+            ghostNotesVisible
+              ? 'bg-[#dbeafe] text-[#1d4ed8]'
+              : 'bg-white/5 text-secondary border border-white/10 hover:bg-white/10 hover:text-primary'
+          }`}
+          title={ghostNotesVisible ? 'Hide other tracks' : 'Show other tracks'}
+        >
+          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            {ghostNotesVisible ? (
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            ) : (
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+            )}
+          </svg>
+          Ghost
+        </button>
+
+        <div className="h-5 w-px bg-white/10 mx-1"></div>
+
+        {/* Project metadata stats */}
+        <div className="flex items-center gap-3 text-xs text-tertiary">
+          <span className="font-medium text-secondary">{Math.round(firstTempo?.bpm || 120)} BPM</span>
+          <span>{firstTimeSig?.numerator ?? 4}/{firstTimeSig?.denominator ?? 4}</span>
+          {firstKeySig && <span>{firstKeySig.key} {firstKeySig.scale}</span>}
+          <span>{durationLabel}</span>
+        </div>
+
+        <div className="flex-1"></div>
+
+        {/* Track name */}
+        <div className="text-sm text-secondary font-medium">
+          {selectedTrack?.name}
+        </div>
+      </div>
+
       {/* Timeline Ruler with embedded Transport Controls */}
       <TimelineRuler
         scrollX={scrollX}
@@ -210,92 +298,6 @@ export function PianoRollEditor() {
         onSeek={handleSeek}
         durationTicks={durationTicks}
       />
-
-      {/* Toolbar */}
-      <div className="flex items-center gap-2 px-4 py-2 bg-gray-800 border-b border-gray-700">
-        {/* Undo button */}
-        <button
-          onClick={undo}
-          disabled={!canUndo}
-          className={`p-2 rounded ${
-            canUndo
-              ? 'hover:bg-gray-700 text-gray-200'
-              : 'text-gray-600 cursor-not-allowed'
-          }`}
-          title="Undo (Cmd+Z)"
-        >
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-            <path d="M8 5 L3 10 L8 15 M3 10 L17 10 C17 10 17 8 14 8" stroke="currentColor" strokeWidth="1.5" fill="none" />
-          </svg>
-        </button>
-
-        {/* Redo button */}
-        <button
-          onClick={redo}
-          disabled={!canRedo}
-          className={`p-2 rounded ${
-            canRedo
-              ? 'hover:bg-gray-700 text-gray-200'
-              : 'text-gray-600 cursor-not-allowed'
-          }`}
-          title="Redo (Cmd+Shift+Z)"
-        >
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-            <path d="M12 5 L17 10 L12 15 M17 10 L3 10 C3 10 3 8 6 8" stroke="currentColor" strokeWidth="1.5" fill="none" />
-          </svg>
-        </button>
-
-        <div className="h-6 w-px bg-gray-700 mx-2"></div>
-
-        {/* Zoom controls */}
-        <ZoomControls
-          zoomX={zoomX}
-          zoomY={zoomY}
-          onZoomXChange={setZoomX}
-          onZoomYChange={setZoomY}
-        />
-
-        <div className="h-6 w-px bg-gray-700 mx-2"></div>
-
-        {/* Theory controls */}
-        <TheoryControls />
-
-        <div className="h-6 w-px bg-gray-700 mx-2"></div>
-
-        {/* Ghost notes toggle */}
-        <button
-          onClick={() => setGhostNotesVisible(!ghostNotesVisible)}
-          className={`px-2 py-1 text-sm rounded transition-colors ${
-            ghostNotesVisible
-              ? 'bg-blue-100 text-blue-700'
-              : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-          }`}
-          title={ghostNotesVisible ? 'Hide other tracks' : 'Show other tracks'}
-        >
-          <svg className="w-4 h-4 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            {ghostNotesVisible ? (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-            ) : (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-            )}
-          </svg>
-          Ghost
-        </button>
-
-        <div className="h-6 w-px bg-gray-700 mx-2"></div>
-
-        {/* Mode indicator */}
-        <div className="text-sm text-gray-400">
-          Click to add | Right-click to delete | Drag to move
-        </div>
-
-        <div className="flex-1"></div>
-
-        {/* Track name */}
-        <div className="text-sm text-gray-300">
-          {selectedTrack?.name}
-        </div>
-      </div>
 
       {/* Validation feedback */}
       <ValidationFeedback />
@@ -379,6 +381,17 @@ export function PianoRollEditor() {
           onUpdate={updateNote}
           onDelete={deleteNote}
         />
+      </div>
+
+      {/* Zoom controls — bottom status bar */}
+      <div className="flex items-center gap-3 px-4 py-2 bg-[#131824] border-t border-white/10 shrink-0">
+        <ZoomControls
+          zoomX={zoomX}
+          zoomY={zoomY}
+          onZoomXChange={setZoomX}
+          onZoomYChange={setZoomY}
+        />
+        <div className="ml-auto text-xs text-tertiary">{ppq} PPQ</div>
       </div>
     </div>
   );

@@ -14,7 +14,7 @@ interface NoteInspectorProps {
 export function NoteInspector({ note, noteIndex, ppq, onUpdate, onDelete }: NoteInspectorProps) {
   if (!note || noteIndex === null) {
     return (
-      <div className="w-48 bg-gray-800 border-l border-gray-700 p-4 text-gray-400 text-xs">
+      <div className="w-48 bg-[#131824] border-l border-white/10 p-4 text-tertiary text-xs flex items-start">
         Select a note to view properties
       </div>
     );
@@ -45,49 +45,49 @@ export function NoteInspector({ note, noteIndex, ppq, onUpdate, onDelete }: Note
   };
 
   return (
-    <div className="w-48 bg-gray-800 border-l border-gray-700 p-4 text-xs flex flex-col gap-3">
-      <div className="text-gray-200 font-semibold border-b border-gray-700 pb-2">
+    <div className="w-48 bg-[#131824] border-l border-white/10 p-4 text-xs flex flex-col gap-3">
+      <div className="text-primary font-semibold border-b border-white/10 pb-2">
         Note Properties
       </div>
 
       {/* Pitch */}
       <div>
-        <label className="block text-gray-400 mb-1">Pitch</label>
-        <div className="text-gray-200">
+        <label className="block text-tertiary mb-1">Pitch</label>
+        <div className="text-primary font-medium">
           {noteName} ({note.midi})
         </div>
       </div>
 
       {/* Position */}
       <div>
-        <label className="block text-gray-400 mb-1">Position</label>
-        <div className="text-gray-200">
+        <label className="block text-tertiary mb-1">Position</label>
+        <div className="text-primary font-medium">
           {note.ticks} ticks
         </div>
-        <div className="text-gray-500 text-xs">
+        <div className="text-tertiary mt-0.5">
           {position}
         </div>
       </div>
 
       {/* Duration */}
       <div>
-        <label className="block text-gray-400 mb-1">Duration (beats)</label>
+        <label className="block text-tertiary mb-1">Duration (beats)</label>
         <input
           type="number"
           value={durationBeats}
           onChange={handleDurationChange}
           min="0.01"
           step="0.25"
-          className="w-full px-2 py-1 bg-gray-700 text-gray-200 rounded border border-gray-600 focus:border-blue-500 focus:outline-none"
+          className="w-full px-2 py-1 bg-[#1A2030] text-primary rounded border border-white/10 focus:border-cyan-500/50 focus:outline-none"
         />
-        <div className="text-gray-500 text-xs mt-1">
+        <div className="text-tertiary mt-1">
           {note.durationTicks} ticks
         </div>
       </div>
 
       {/* Velocity */}
       <div>
-        <label className="block text-gray-400 mb-1">
+        <label className="block text-tertiary mb-1">
           Velocity ({velocityPercent}%)
         </label>
         <input
@@ -97,14 +97,14 @@ export function NoteInspector({ note, noteIndex, ppq, onUpdate, onDelete }: Note
           step="0.05"
           value={note.velocity}
           onChange={handleVelocityChange}
-          className="w-full"
+          className="w-full accent-cyan-400"
         />
       </div>
 
       {/* Delete button */}
       <button
         onClick={handleDelete}
-        className="mt-2 px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded text-xs font-medium"
+        className="mt-2 px-3 py-1.5 bg-red-500/80 hover:bg-red-500 text-white rounded text-xs font-medium transition-colors"
       >
         Delete Note
       </button>

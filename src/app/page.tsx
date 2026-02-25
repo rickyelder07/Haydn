@@ -10,21 +10,19 @@ import { MetadataDisplay } from '@/components/MetadataDisplay';
 import { ExportButton } from '@/components/ExportButton';
 import { ErrorDisplay } from '@/components/ErrorDisplay';
 import { PianoRollEditor } from '@/components/PianoRoll';
-import { CommandInput } from '@/components/CommandInput';
 import { GenerationInput } from '@/components/GenerationInput';
-import { EditModeToggle } from '@/components/EditModeToggle';
-import { ConversationPanel } from '@/components/ConversationPanel/ConversationPanel';
+import { FloatingEditPanel } from '@/components/FloatingEditPanel';
 import { Sidebar } from '@/components/Sidebar';
+import { NewProjectButton } from '@/components/NewProjectButton';
+import { InlineEdit } from '@/components/InlineEdit';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { Toaster } from 'sonner';
 
 export default function Home() {
-  const { project } = useProjectStore();
+  const { project, updateProjectName } = useProjectStore();
   const { loadProject } = usePlaybackStore();
   const { selectedTrackIndex, selectTrack } = useEditStore();
-
-  // Edit mode state (single-shot vs conversation)
-  const [editMode, setEditMode] = useState<'single-shot' | 'conversation'>('single-shot');
+  const [showAiEditor, setShowAiEditor] = useState(true);
 
   // Add keyboard shortcuts
   useKeyboardShortcuts();
@@ -97,8 +95,23 @@ export default function Home() {
                 <span className="text-xs font-medium text-cyan-400 mono">PROJECT LOADED</span>
               </div>
             )}
+            {project && (
+              <div className="hidden sm:block">
+                <InlineEdit
+                  value={project.originalFileName || 'Untitled Project'}
+                  onSave={(name) => updateProjectName(name)}
+                  className="text-sm text-secondary mono"
+                  inputClassName="text-sm mono"
+                />
+              </div>
+            )}
           </div>
-          {project && <ExportButton />}
+          {project ? (
+            <div className="flex items-center gap-3">
+              <NewProjectButton />
+              <ExportButton />
+            </div>
+          ) : null}
         </div>
       </header>
 
@@ -107,7 +120,6 @@ export default function Home() {
         {/* Sidebar with project info (only shown when project loaded) */}
         {project && (
           <Sidebar>
-            <MetadataDisplay />
             <TrackList />
           </Sidebar>
         )}
@@ -120,40 +132,6 @@ export default function Home() {
               <div className="px-4 pt-2">
                 <ErrorDisplay />
               </div>
-
-              {/* Editing Interface - conditionally shown when project and track selected */}
-              {selectedTrackIndex !== null && (
-                <div className="px-6 py-4 max-w-4xl mx-auto w-full">
-                  {/* Edit Mode Toggle */}
-                  <div className="flex justify-center mb-6">
-                    <EditModeToggle mode={editMode} onChange={setEditMode} />
-                  </div>
-
-                  {/* Conditional rendering based on mode */}
-                  {editMode === 'single-shot' ? (
-                    <CommandInput />
-                  ) : (
-                    <div className="h-96">
-                      <ConversationPanel />
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Prompt to select track when project loaded but no track selected */}
-              {selectedTrackIndex === null && (
-                <div className="max-w-4xl mx-auto w-full text-center py-12 px-6">
-                  <div className="glass-panel rounded-2xl p-8 border border-cyan-500/20">
-                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-cyan-500/20 to-purple-500/20 flex items-center justify-center">
-                      <svg className="w-8 h-8 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
-                      </svg>
-                    </div>
-                    <p className="text-lg font-medium text-cyan-300 mb-2">Select a Track</p>
-                    <p className="text-sm text-secondary">Choose a track in the sidebar to start editing with natural language</p>
-                  </div>
-                </div>
-              )}
 
               {/* Piano Roll Editor — edge-to-edge */}
               {selectedTrackIndex !== null && (
@@ -216,24 +194,57 @@ export default function Home() {
           )}
 
           {/* Footer */}
-          <footer className="border-t border-white/5 mt-auto">
-            <div className="px-6 py-6">
-              <div className="flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2 text-tertiary">
-                  <span className="mono">HAYDN</span>
+          <footer className="border-t border-white/5 mt-auto shrink-0">
+            {project ? (
+              <div className="px-6 py-3 flex items-center justify-between">
+                <div className="flex items-center gap-2 text-tertiary text-xs">
+                  <span className="mono font-medium">HAYDN</span>
                   <span>•</span>
                   <span>AI-Powered MIDI Editing</span>
                 </div>
-                <div className="flex items-center gap-4 text-tertiary">
-                  <span className="hover:text-cyan-400 transition-colors cursor-pointer">About</span>
-                  <span className="hover:text-cyan-400 transition-colors cursor-pointer">Docs</span>
-                  <span className="hover:text-cyan-400 transition-colors cursor-pointer">Support</span>
+                <button
+                  onClick={() => setShowAiEditor((v) => !v)}
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-colors text-sm ${
+                    showAiEditor
+                      ? 'bg-cyan-500/10 border-cyan-500/20 text-cyan-400 hover:bg-cyan-500/15'
+                      : 'bg-white/5 border-white/10 text-secondary hover:bg-white/10 hover:text-primary'
+                  }`}
+                  title={showAiEditor ? 'Hide AI Editor' : 'Show AI Editor'}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                  </svg>
+                  <span>AI Editor</span>
+                  <svg
+                    className={`w-3.5 h-3.5 transition-transform ${showAiEditor ? 'rotate-180' : ''}`}
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                  </svg>
+                </button>
+              </div>
+            ) : (
+              <div className="px-6 py-6">
+                <div className="flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-2 text-tertiary">
+                    <span className="mono">HAYDN</span>
+                    <span>•</span>
+                    <span>AI-Powered MIDI Editing</span>
+                  </div>
+                  <div className="flex items-center gap-4 text-tertiary">
+                    <span className="hover:text-cyan-400 transition-colors cursor-pointer">About</span>
+                    <span className="hover:text-cyan-400 transition-colors cursor-pointer">Docs</span>
+                    <span className="hover:text-cyan-400 transition-colors cursor-pointer">Support</span>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </footer>
         </main>
       </div>
+
+      {/* Floating AI Editor — toggled via the footer AI Editor button */}
+      {project && showAiEditor && <FloatingEditPanel />}
 
       {/* Toast notifications for theory violations and other alerts */}
       <Toaster position="bottom-right" richColors />

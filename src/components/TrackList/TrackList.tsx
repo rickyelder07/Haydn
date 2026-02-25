@@ -64,20 +64,20 @@ export function TrackList() {
   return (
     <div className="w-full">
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-lg font-semibold text-gray-900">
+        <h2 className="text-sm font-semibold text-primary">
           Tracks ({trackDisplayInfo.length}/32)
         </h2>
         <div className="flex items-center gap-3">
           <button
             onClick={() => setIsAddModalOpen(true)}
             disabled={trackDisplayInfo.length >= 32}
-            className="text-sm text-blue-600 hover:text-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="text-sm text-cyan-400 hover:text-cyan-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             + Add Track
           </button>
           <button
             onClick={resetAllStates}
-            className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
+            className="text-sm text-secondary hover:text-primary transition-colors"
           >
             Reset Mute/Solo
           </button>

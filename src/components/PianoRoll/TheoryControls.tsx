@@ -11,20 +11,20 @@ export function TheoryControls() {
   const setGenre = useValidationStore((state) => state.setGenre);
 
   return (
-    <div className="flex items-center gap-3 text-sm">
+    <div className="flex items-center gap-2 text-sm">
       {/* Validation toggle */}
       <button
         onClick={() => setEnabled(!enabled)}
-        className={`flex items-center gap-2 px-2 py-1 rounded ${
+        className={`flex items-center gap-2 px-3 py-1.5 rounded-lg transition-colors ${
           enabled
-            ? 'bg-green-900/30 text-green-300 hover:bg-green-900/40'
-            : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
+            ? 'bg-green-500/15 text-green-300 border border-green-500/20 hover:bg-green-500/20'
+            : 'bg-white/5 text-secondary border border-white/10 hover:bg-white/10 hover:text-primary'
         }`}
-        title={enabled ? 'Validation enabled' : 'Validation disabled'}
+        title={enabled ? 'Theory validation enabled' : 'Theory validation disabled'}
       >
         <div
-          className={`w-2 h-2 rounded-full ${
-            enabled ? 'bg-green-400' : 'bg-gray-500'
+          className={`w-2 h-2 rounded-full flex-shrink-0 ${
+            enabled ? 'bg-green-400' : 'bg-white/30'
           }`}
         />
         <span>Theory</span>
@@ -34,7 +34,7 @@ export function TheoryControls() {
       <select
         value={activeGenre}
         onChange={(e) => setGenre(e.target.value as GenrePresetKey)}
-        className="px-2 py-1 rounded bg-gray-700 text-gray-300 border border-gray-600 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="px-2 py-1.5 rounded-lg bg-[#1A2030] text-secondary border border-white/10 hover:bg-white/5 focus:outline-none focus:ring-1 focus:ring-cyan-500/50 text-sm"
         title="Genre preset"
       >
         {Object.entries(GENRE_PRESETS).map(([key, rules]) => (
@@ -45,9 +45,9 @@ export function TheoryControls() {
       </select>
 
       {/* Current scale display */}
-      <div className="text-gray-400">
-        <span className="text-gray-500">Key:</span>{' '}
-        <span className="text-gray-300">
+      <div className="text-sm">
+        <span className="text-tertiary">Key:</span>{' '}
+        <span className="text-primary font-medium">
           {currentScaleName || '--'}
         </span>
       </div>

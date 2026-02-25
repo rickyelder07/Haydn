@@ -6,16 +6,13 @@ import { CommandInput } from '@/components/CommandInput';
 import { ConversationPanel } from '@/components/ConversationPanel/ConversationPanel';
 import { useEditStore } from '@/state/editStore';
 
-interface FloatingEditPanelProps {
-  editMode: 'single-shot' | 'conversation';
-  onEditModeChange: (mode: 'single-shot' | 'conversation') => void;
-}
-
 const MIN_WIDTH = 300;
 const MIN_HEIGHT = 200;
+const TITLE_BAR_HEIGHT = 44;
 
-export function FloatingEditPanel({ editMode, onEditModeChange }: FloatingEditPanelProps) {
+export function FloatingEditPanel() {
   const selectedTrackIndex = useEditStore((state) => state.selectedTrackIndex);
+  const [editMode, setEditMode] = useState<'single-shot' | 'conversation'>('single-shot');
   const [minimized, setMinimized] = useState(false);
   const [snapped, setSnapped] = useState(false);
   const [position, setPosition] = useState({ x: 16, y: 200 });
@@ -48,9 +45,12 @@ export function FloatingEditPanel({ editMode, onEditModeChange }: FloatingEditPa
 
     const handleMouseMove = (moveE: MouseEvent) => {
       if (!dragRef.current) return;
+      const newX = dragRef.current.startPosX + (moveE.clientX - dragRef.current.startX);
+      const newY = dragRef.current.startPosY + (moveE.clientY - dragRef.current.startY);
+      const panelH = minimized ? TITLE_BAR_HEIGHT : size.height;
       setPosition({
-        x: dragRef.current.startPosX + (moveE.clientX - dragRef.current.startX),
-        y: dragRef.current.startPosY + (moveE.clientY - dragRef.current.startY),
+        x: Math.max(0, Math.min(newX, window.innerWidth - size.width)),
+        y: Math.max(0, Math.min(newY, window.innerHeight - panelH)),
       });
     };
 
@@ -180,7 +180,7 @@ export function FloatingEditPanel({ editMode, onEditModeChange }: FloatingEditPa
             <div className="flex-1 flex flex-col gap-4 p-4 overflow-hidden">
               {/* Mode toggle */}
               <div className="flex justify-center flex-shrink-0">
-                <EditModeToggle mode={editMode} onChange={onEditModeChange} />
+                <EditModeToggle mode={editMode} onChange={setEditMode} />
               </div>
 
               {/* Editor content — fills remaining height */}
