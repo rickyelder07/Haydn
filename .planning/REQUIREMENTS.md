@@ -23,11 +23,11 @@ Requirements for v1.1 Polish & Enhancement milestone. Each maps to roadmap phase
 
 ### Audio Quality
 
-- [ ] **AUDIO-01**: Piano instruments use percussive envelope (short attack, medium decay)
-- [ ] **AUDIO-02**: String instruments use sustained envelope (long attack, high sustain)
-- [ ] **AUDIO-03**: Brass instruments use punchy envelope (medium attack, medium sustain)
-- [ ] **AUDIO-04**: All non-percussion instruments have lowpass filter (2-5kHz cutoff)
-- [ ] **AUDIO-05**: String instruments include subtle vibrato (4-5Hz frequency, 5-10 cent depth)
+- [x] **AUDIO-01**: Piano instruments use percussive envelope (short attack, medium decay)
+- [x] **AUDIO-02**: String instruments use sustained envelope (long attack, high sustain)
+- [x] **AUDIO-03**: Brass instruments use punchy envelope (medium attack, medium sustain)
+- [x] **AUDIO-04**: All non-percussion instruments have lowpass filter (2-5kHz cutoff)
+- [x] **AUDIO-05**: String instruments include subtle vibrato (4-5Hz frequency, 5-10 cent depth)
 - [ ] **AUDIO-06**: Percussion instruments (channel 9) have no vibrato or filtering
 - [ ] **AUDIO-07**: Instrument sounds are noticeably better than v1.0 (subjective: "good enough to compose with")
 
@@ -160,11 +160,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | UI-07 | Phase 9 | Pending |
 | UI-08 | Phase 9 | Pending |
 | UI-09 | Phase 9 | Pending |
-| AUDIO-01 | Phase 10 | Pending |
-| AUDIO-02 | Phase 10 | Pending |
-| AUDIO-03 | Phase 10 | Pending |
-| AUDIO-04 | Phase 10 | Pending |
-| AUDIO-05 | Phase 10 | Pending |
+| AUDIO-01 | Phase 10 | Complete |
+| AUDIO-02 | Phase 10 | Complete |
+| AUDIO-03 | Phase 10 | Complete |
+| AUDIO-04 | Phase 10 | Complete |
+| AUDIO-05 | Phase 10 | Complete |
 | AUDIO-06 | Phase 10 | Pending |
 | AUDIO-07 | Phase 10 | Pending |
 | AI-01 | Phase 11 | Pending |

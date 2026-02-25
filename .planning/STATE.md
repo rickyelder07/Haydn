@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-12)
 ## Current Position
 
 Phase: 10 of 14 (Synthesis Enhancement)
-Plan: 0 of TBD in current phase
-Status: Ready to plan
-Last activity: 2026-02-17 — Completed Phase 9 (4/4 plans, verified 5/5 must-haves)
+Plan: 1 of TBD in current phase
+Status: Executing
+Last activity: 2026-02-25 — Completed Plan 10-01 (CDN sample loading foundation — 3 new files, 0 TypeScript errors)
 
-Progress: [█████████░░░░░] 64% (v1.0 complete: 42/42 plans, v1.1: 4/TBD plans, Phase 9 complete)
+Progress: [█████████░░░░░] 64% (v1.0 complete: 42/42 plans, v1.1: 5/TBD plans, Phase 10 in progress)
 
 ## Performance Metrics
 
@@ -44,6 +44,7 @@ Progress: [█████████░░░░░] 64% (v1.0 complete: 42/42
 | 09-02 | 2 min | 3 | 5 |
 | 09-03 | 5 min | 3 | 6 |
 | 09-04 | 2 min | 3 | 4 |
+| 10-01 | 2 min | 2 | 3 |
 
 **Recent Trend:**
 - v1.0 maintained consistent velocity
@@ -76,6 +77,9 @@ Recent decisions affecting v1.1 work:
 - **09-04**: Playhead visibility guard — only render when pixel position is within visible ruler width
 - **09-04**: Seek is context-agnostic — PlaybackController handles audio state, no isPlaying branching needed
 - **09-04**: Canvas pointerEvents:none + parent div onClick — clean separation of click handling from rendering
+- **10-01**: Cache at Promise level (not resolved value) so concurrent callers share one in-flight CDN fetch
+- **10-01**: Omit baseUrl from Tone.Sampler constructor — pass data URLs directly in urls to avoid bug #899
+- **10-01**: Use onload/onerror callbacks instead of Tone.loaded() — explicit per-instrument Promise resolution
 
 ### Pending Todos
 
@@ -93,12 +97,12 @@ All pitfalls documented in research/v1.1/SUMMARY.md with prevention strategies.
 
 ## Session Continuity
 
-Last session: 2026-02-17
-Stopped at: Phase 9 complete — all 4 plans executed, verified 5/5 must-haves (passed)
+Last session: 2026-02-25
+Stopped at: Completed 10-01-PLAN.md (CDN sample loading foundation — gmInstrumentNames.ts, soundfontLoader.ts, SamplerInstrument.ts)
 Resume file: None
 
-**Next step:** `/gsd:plan-phase 10` to create detailed execution plan for Synthesis Enhancement phase.
+**Next step:** Execute Plan 10-02 to wire SamplerInstrument into InstrumentFactory and NoteScheduler.
 
 ---
 
-*Last updated: 2026-02-17 after Phase 9 completion and verification*
+*Last updated: 2026-02-25 after Plan 10-01 execution (CDN sample loading foundation)*
