@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-02-12)
 ## Current Position
 
 Phase: 10 of 14 (Synthesis Enhancement)
-Plan: 1 of TBD in current phase
+Plan: 2 of TBD in current phase
 Status: Executing
-Last activity: 2026-02-25 — Completed Plan 10-01 (CDN sample loading foundation — 3 new files, 0 TypeScript errors)
+Last activity: 2026-02-25 — Completed Plan 10-02 (CDN sample wiring — InstrumentFactory + NoteScheduler parallel loading, 3 files modified)
 
 Progress: [█████████░░░░░] 64% (v1.0 complete: 42/42 plans, v1.1: 5/TBD plans, Phase 10 in progress)
 
@@ -45,6 +45,8 @@ Progress: [█████████░░░░░] 64% (v1.0 complete: 42/42
 | 09-03 | 5 min | 3 | 6 |
 | 09-04 | 2 min | 3 | 4 |
 | 10-01 | 2 min | 2 | 3 |
+
+| 10-02 | 1 min | 2 | 3 |
 
 **Recent Trend:**
 - v1.0 maintained consistent velocity
@@ -80,6 +82,9 @@ Recent decisions affecting v1.1 work:
 - **10-01**: Cache at Promise level (not resolved value) so concurrent callers share one in-flight CDN fetch
 - **10-01**: Omit baseUrl from Tone.Sampler constructor — pass data URLs directly in urls to avoid bug #899
 - **10-01**: Use onload/onerror callbacks instead of Tone.loaded() — explicit per-instrument Promise resolution
+- [Phase 10-synthesis-enhancement]: isPercussion guard is FIRST in createInstrument, percussion never touches CDN path
+- [Phase 10-synthesis-enhancement]: Each unique GM program number is its own NoteScheduler key, no 0-7 piano grouping
+- [Phase 10-synthesis-enhancement]: Promise.all pre-load phase separated from scheduling loop, instruments ready before any Part is created
 
 ### Pending Todos
 
@@ -98,11 +103,11 @@ All pitfalls documented in research/v1.1/SUMMARY.md with prevention strategies.
 ## Session Continuity
 
 Last session: 2026-02-25
-Stopped at: Completed 10-01-PLAN.md (CDN sample loading foundation — gmInstrumentNames.ts, soundfontLoader.ts, SamplerInstrument.ts)
+Stopped at: Completed 10-02-PLAN.md (CDN sample wiring — InstrumentFactory now routes all GM programs to SamplerInstrument, NoteScheduler uses Promise.all parallel loading)
 Resume file: None
 
-**Next step:** Execute Plan 10-02 to wire SamplerInstrument into InstrumentFactory and NoteScheduler.
+**Next step:** Execute Plan 10-03 (playback loading state / spinner UX during sample loading, if applicable).
 
 ---
 
-*Last updated: 2026-02-25 after Plan 10-01 execution (CDN sample loading foundation)*
+*Last updated: 2026-02-25 after Plan 10-02 execution (CDN sample wiring — InstrumentFactory + NoteScheduler parallel loading)*

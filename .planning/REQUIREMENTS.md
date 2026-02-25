@@ -28,7 +28,7 @@ Requirements for v1.1 Polish & Enhancement milestone. Each maps to roadmap phase
 - [x] **AUDIO-03**: Brass instruments use punchy envelope (medium attack, medium sustain)
 - [x] **AUDIO-04**: All non-percussion instruments have lowpass filter (2-5kHz cutoff)
 - [x] **AUDIO-05**: String instruments include subtle vibrato (4-5Hz frequency, 5-10 cent depth)
-- [ ] **AUDIO-06**: Percussion instruments (channel 9) have no vibrato or filtering
+- [x] **AUDIO-06**: Percussion instruments (channel 9) have no vibrato or filtering
 - [ ] **AUDIO-07**: Instrument sounds are noticeably better than v1.0 (subjective: "good enough to compose with")
 
 ### AI Composition Mode
@@ -165,7 +165,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AUDIO-03 | Phase 10 | Complete |
 | AUDIO-04 | Phase 10 | Complete |
 | AUDIO-05 | Phase 10 | Complete |
-| AUDIO-06 | Phase 10 | Pending |
+| AUDIO-06 | Phase 10 | Complete |
 | AUDIO-07 | Phase 10 | Pending |
 | AI-01 | Phase 11 | Pending |
 | AI-02 | Phase 11 | Pending |
