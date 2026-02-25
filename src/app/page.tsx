@@ -189,7 +189,7 @@ export default function Home() {
                     <div className="w-full border-t border-white/5"></div>
                   </div>
                   <div className="relative flex justify-center text-sm">
-                    <span className="px-6 bg-[#0B0F1A] text-tertiary font-medium">OR</span>
+                    <span className="px-6 bg-primary text-tertiary font-medium">OR</span>
                   </div>
                 </div>
 

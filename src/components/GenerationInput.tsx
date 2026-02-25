@@ -49,38 +49,21 @@ export function GenerationInput() {
       <form onSubmit={handleSubmit}>
         {/* Input row */}
         <div className="flex items-center gap-3">
-          {/* Text input with left icon */}
-          <div className="relative flex-1">
-            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none">
-              <SparkleIcon />
-            </div>
-            <input
-              type="text"
-              value={localPrompt}
-              onChange={(e) => setLocalPrompt(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="Describe what you want to create..."
-              disabled={isLoading}
-              maxLength={500}
-              className="w-full pl-10 pr-4 py-3 bg-[#131824] border border-white/10 rounded-xl text-sm text-primary placeholder:text-gray-500 focus:outline-none focus:border-white/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            />
-          </div>
-
-          {/* Example prompts tooltip trigger */}
-          <div className="relative">
+          {/* Info icon — outside input, left side */}
+          <div className="relative flex-shrink-0">
             <button
               type="button"
-              className="p-3 rounded-xl border border-white/10 text-gray-500 hover:text-gray-300 hover:border-white/20 transition-colors bg-[#131824]"
+              className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-gray-500 hover:text-gray-300 hover:border-white/20 transition-colors"
               onMouseEnter={() => setShowTooltip(true)}
               onMouseLeave={() => setShowTooltip(false)}
               aria-label="Show example prompts"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
               </svg>
             </button>
             {showTooltip && (
-              <div className="absolute right-0 bottom-full mb-2 w-72 p-3 bg-[#1A2030] border border-white/10 rounded-xl shadow-xl z-50">
+              <div className="absolute left-0 bottom-full mb-2 w-72 p-3 bg-[#1A2030] border border-white/10 rounded-xl shadow-xl z-50">
                 <p className="text-xs font-medium text-gray-300 mb-2">Example prompts:</p>
                 <ul className="text-xs text-gray-400 space-y-1">
                   {examplePrompts.map((p, i) => (
@@ -93,11 +76,23 @@ export function GenerationInput() {
             )}
           </div>
 
+          {/* Text input */}
+          <input
+            type="text"
+            value={localPrompt}
+            onChange={(e) => setLocalPrompt(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Describe what you want to create... (e.g., 'lofi beat in C minor')"
+            disabled={isLoading}
+            maxLength={500}
+            className="flex-1 px-4 py-3 bg-[#131824] border border-white/10 rounded-xl text-sm text-primary placeholder:text-gray-500 focus:outline-none focus:border-white/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          />
+
           {/* Generate button */}
           <button
             type="submit"
             disabled={isLoading || !localPrompt.trim()}
-            className="px-5 py-3 bg-gradient-to-r from-purple-500/40 to-pink-500/40 hover:from-purple-500/60 hover:to-pink-500/60 border border-purple-500/30 text-white rounded-xl font-medium text-sm flex items-center gap-2 min-w-[120px] justify-center disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+            className="px-5 py-3 bg-gradient-to-r from-purple-500/40 to-pink-500/40 hover:from-purple-500/60 hover:to-pink-500/60 border border-purple-500/30 text-white rounded-xl font-medium text-sm flex items-center gap-2 min-w-[110px] justify-center disabled:opacity-40 disabled:cursor-not-allowed transition-all"
           >
             {isLoading ? <SpinnerIcon /> : null}
             {isLoading ? 'Generating...' : lastError ? 'Retry' : 'Generate'}
