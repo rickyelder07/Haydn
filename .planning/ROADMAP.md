@@ -86,22 +86,19 @@ Plans:
 - [x] 09-03-PLAN.md — Timeline ruler with hierarchical ticks and transport strip (UI-06, UI-09)
 - [x] 09-04-PLAN.md — Playhead interaction (drag and click) (UI-04, UI-05)
 
-#### Phase 10: Synthesis Enhancement
-**Goal**: Audio quality reaches "good enough to compose with" standard via per-instrument envelopes and filtering
+#### Phase 10: Real Instrument Samples
+**Goal**: Audio quality reaches "good enough to compose with" standard via real GM instrument samples loaded from CDN
 **Depends on**: Phase 9
 **Requirements**: AUDIO-01, AUDIO-02, AUDIO-03, AUDIO-04, AUDIO-05, AUDIO-06, AUDIO-07
 **Success Criteria** (what must be TRUE):
-  1. Piano sounds percussive (short attack, medium decay) not sustained
-  2. Strings sound sustained and alive with subtle vibrato (not robotic)
-  3. Brass sounds punchy with appropriate envelope
-  4. All instruments lack harsh high frequencies (filtered 2-5kHz)
+  1. All 128 GM instruments play using real recorded samples (not PolySynth)
+  2. Instruments pre-load on project import — playback blocked until ready
+  3. Loading progress is visible in transport area (spinner/progress bar)
+  4. Percussion (program 999) continues to work (may stay PolySynth)
   5. Audio quality is noticeably better than v1.0 (subjective improvement confirmed by user)
-**Plans**: 3 plans
+**Plans**: TBD
 
 Plans:
-- [ ] 10-01-PLAN.md — SynthInstrument + PianoSampler core audio refactor (AUDIO-01 through AUDIO-06)
-- [ ] 10-02-PLAN.md — SynthDebugPanel for real-time tuning and page.tsx integration (AUDIO-07)
-- [ ] 10-03-PLAN.md — Subjective audio quality checkpoint (AUDIO-07 human verification)
 
 #### Phase 11: AI Composition Mode
 **Goal**: Users can generate unique MIDI compositions via conversational AI with GPT-4o direct synthesis
