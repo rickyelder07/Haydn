@@ -45,29 +45,41 @@ export async function scheduleNotes(project: HaydnProject): Promise<void> {
     Transport.bpm.value = 120; // Default
   }
 
-  // Create instruments and schedule notes for each track
+  // --- Parallel pre-load phase ---
+  // Collect unique instrument keys that need loading (skip empty tracks)
+  const toLoad: Array<{ key: number | string; gmProgram: number; channel: number }> = [];
+  for (const track of project.tracks) {
+    if (track.notes.length === 0) continue;
+    const isPercussion = isPercussionChannel(track.channel);
+    // Each unique GM program is its own key; percussion all share 'percussion'
+    const instrumentKey = isPercussion ? 'percussion' : track.instrumentNumber;
+    if (!loadedInstruments.has(instrumentKey) && !toLoad.some(x => x.key === instrumentKey)) {
+      toLoad.push({ key: instrumentKey, gmProgram: track.instrumentNumber, channel: track.channel });
+    }
+  }
+
+  // Load all new instruments in parallel — soundfontLoader cache deduplicates network fetches
+  await Promise.all(
+    toLoad.map(async ({ key, gmProgram, channel }) => {
+      const instrument = await createInstrument(gmProgram, channel);
+      loadedInstruments.set(key, instrument);
+    })
+  );
+
+  // --- Scheduling loop (instruments already loaded above) ---
   for (let trackIndex = 0; trackIndex < project.tracks.length; trackIndex++) {
     const track = project.tracks[trackIndex];
 
     // Skip empty tracks
     if (track.notes.length === 0) continue;
 
-    // Determine instrument key for reuse/sharing
+    // Determine instrument key (must match pre-load phase)
     const isPercussion = isPercussionChannel(track.channel);
-    const isPiano = !isPercussion && (track.instrumentNumber >= 0 && track.instrumentNumber <= 7);
+    const instrumentKey = isPercussion ? 'percussion' : track.instrumentNumber;
 
-    // Use unique keys:
-    // - Percussion: 'percussion' (channel 9, any program)
-    // - Piano: 0 (programs 0-7 share)
-    // - Others: their program number
-    const instrumentKey = isPercussion ? 'percussion' : (isPiano ? 0 : track.instrumentNumber);
-
-    // Create or reuse instrument for this GM program
-    let instrument = loadedInstruments.get(instrumentKey);
-    if (!instrument) {
-      instrument = await createInstrument(track.instrumentNumber, track.channel);
-      loadedInstruments.set(instrumentKey, instrument);
-    }
+    // Retrieve pre-loaded instrument
+    const instrument = loadedInstruments.get(instrumentKey);
+    if (!instrument) continue;
 
     // Convert notes to scheduled events
     const scheduledNotes: ScheduledNote[] = track.notes.map((note) => {
@@ -86,7 +98,7 @@ export async function scheduleNotes(project: HaydnProject): Promise<void> {
     const part = new Part((time, event) => {
       if (typeof event === 'object' && event !== null) {
         const note = event as ScheduledNote;
-        instrument!.triggerAttackRelease(
+        instrument.triggerAttackRelease(
           note.note,
           note.duration,
           time,
