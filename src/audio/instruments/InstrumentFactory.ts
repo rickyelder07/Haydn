@@ -1,15 +1,14 @@
-import { PianoSampler, type InstrumentInstance } from './PianoSampler';
+import { SamplerInstrument } from './SamplerInstrument';
 import { SynthInstrument } from './SynthInstrument';
 import { isPercussionChannel } from '@/lib/instruments/gm-mapping';
-
-// Piano GM programs (0-7: Acoustic Grand Piano through Clavinet)
-const PIANO_PROGRAMS = [0, 1, 2, 3, 4, 5, 6, 7];
+import { loadSoundfontNotes } from './soundfontLoader';
+import type { InstrumentInstance } from './PianoSampler';
 
 export async function createInstrument(
   gmProgram: number,
   channel?: number
 ): Promise<InstrumentInstance> {
-  // Check if percussion (channel 9)
+  // Check if percussion (channel 9) FIRST — no CDN loading for percussion
   const isPercussion = channel !== undefined && isPercussionChannel(channel);
 
   if (isPercussion) {
@@ -19,14 +18,18 @@ export async function createInstrument(
     return instrument;
   }
 
-  const isPiano = PIANO_PROGRAMS.includes(gmProgram);
-
-  const instrument = isPiano
-    ? new PianoSampler()
-    : new SynthInstrument(gmProgram);
-
-  await instrument.load();
-  return instrument;
+  // All non-percussion GM programs use CDN soundfont samples
+  try {
+    const urls = await loadSoundfontNotes(gmProgram);
+    const instrument = new SamplerInstrument(urls);
+    await instrument.load();
+    return instrument;
+  } catch (err) {
+    console.warn(`Soundfont load failed for program ${gmProgram}, using synth fallback:`, err);
+    const instrument = new SynthInstrument(gmProgram);
+    await instrument.load();
+    return instrument;
+  }
 }
 
 export type { InstrumentInstance };
