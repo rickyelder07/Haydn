@@ -194,19 +194,22 @@ export default function Home() {
                 </div>
 
                 {/* Upload Section */}
-                <div className="text-center">
-                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/20 mb-4">
-                    <svg className="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                    </svg>
-                    <span className="text-xs font-medium text-amber-300 mono">IMPORT EXISTING</span>
+                <div>
+                  <div className="text-center mb-6">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/20 mb-4">
+                      <svg className="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                      </svg>
+                      <span className="text-xs font-medium text-amber-300 mono">IMPORT EXISTING</span>
+                    </div>
+                    <h2 className="text-2xl font-bold text-primary mb-2">
+                      Upload Your Files
+                    </h2>
+                    <p className="text-secondary text-sm">
+                      Import MIDI or MusicXML files to edit with AI
+                    </p>
                   </div>
-                  <h2 className="text-2xl font-bold text-primary mb-2">
-                    Upload Your Files
-                  </h2>
-                  <p className="text-secondary text-sm mb-4">
-                    Import MIDI or MusicXML files to edit with AI
-                  </p>
+                  <FileUpload />
                 </div>
               </div>
             </div>

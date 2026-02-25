@@ -109,25 +109,25 @@ export function FileUpload() {
     <div className="w-full">
       {/* Confirmation Dialog */}
       {showConfirm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md mx-4 shadow-xl">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+          <div className="glass-panel border border-white/10 rounded-2xl p-6 max-w-md mx-4 shadow-2xl">
+            <h3 className="text-base font-semibold text-primary mb-2">
               Replace current project?
             </h3>
-            <p className="text-gray-600 mb-4">
-              You have unsaved changes. Importing a new file will replace your current project.
+            <p className="text-secondary text-sm mb-5">
+              Importing a new file will replace your current project.
               Export your current work first if you want to keep it.
             </p>
             <div className="flex gap-3 justify-end">
               <button
                 onClick={cancelReimport}
-                className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
+                className="px-4 py-2 text-sm text-secondary hover:text-primary border border-white/10 hover:border-white/20 rounded-xl transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={confirmReimport}
-                className="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-md transition-colors"
+                className="px-4 py-2 text-sm text-white bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/30 rounded-xl transition-colors"
               >
                 Replace
               </button>
@@ -143,11 +143,11 @@ export function FileUpload() {
         onDragLeave={handleDragLeave}
         onClick={handleClick}
         className={`
-          border-2 border-dashed rounded-lg p-8 text-center cursor-pointer
-          transition-colors duration-200
+          border-2 border-dashed rounded-xl p-12 text-center cursor-pointer
+          transition-all duration-200
           ${isDragging
-            ? 'border-blue-500 bg-blue-50'
-            : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
+            ? 'border-cyan-500/50 bg-cyan-500/5'
+            : 'border-white/10 bg-[#131824] hover:border-white/20 hover:bg-[#161d2e]'
           }
           ${isLoading ? 'opacity-50 pointer-events-none' : ''}
         `}
@@ -161,26 +161,26 @@ export function FileUpload() {
         />
 
         {isLoading ? (
-          <div className="text-gray-500">
-            <div className="animate-spin inline-block w-6 h-6 border-2 border-gray-300 border-t-blue-600 rounded-full mb-2" />
-            <p>Processing file...</p>
+          <div className="text-secondary">
+            <div className="animate-spin inline-block w-6 h-6 border-2 border-white/10 border-t-cyan-500 rounded-full mb-3" />
+            <p className="text-sm">Processing file...</p>
           </div>
         ) : (
           <>
-            <div className="text-gray-400 mb-2">
-              <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className={`mb-4 transition-colors ${isDragging ? 'text-cyan-400' : 'text-white/25'}`}>
+              <svg className="w-10 h-10 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-                  d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
                 />
               </svg>
             </div>
-            <p className="text-gray-700 font-medium">
+            <p className="text-primary font-medium text-sm mb-1">
               Drop a MIDI or MusicXML file here
             </p>
-            <p className="text-gray-500 text-sm mt-1">
+            <p className="text-secondary text-sm">
               or click to browse
             </p>
-            <p className="text-gray-400 text-xs mt-2">
+            <p className="text-tertiary text-xs mt-3">
               Supports .mid, .midi, .musicxml, .xml
             </p>
           </>
