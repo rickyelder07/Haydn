@@ -43,9 +43,11 @@ export function PianoRollEditor() {
   const [scrollY, setScrollY] = useState(0);
   const [zoomX, setZoomX] = useState(1.0);
   const [zoomY, setZoomY] = useState(1.0);
+  const [editorWidth, setEditorWidth] = useState(800);
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const outerRef = useRef<HTMLDivElement>(null);
 
   // Get selected track data
   const selectedTrack = project && selectedTrackIndex !== null
@@ -95,8 +97,23 @@ export function PianoRollEditor() {
         })()
       : { note: null, index: null };
 
+  // Track outer container width and derive canvas width
+  const NOTE_INSPECTOR_WIDTH = 192; // w-48 = 12rem = 192px
+  useEffect(() => {
+    const el = outerRef.current;
+    if (!el) return;
+    const observer = new ResizeObserver((entries) => {
+      const width = entries[0].contentRect.width;
+      setEditorWidth(Math.max(200, width - PIANO_KEY_WIDTH - NOTE_INSPECTOR_WIDTH));
+    });
+    observer.observe(el);
+    // Set immediately on mount
+    setEditorWidth(Math.max(200, el.clientWidth - PIANO_KEY_WIDTH - NOTE_INSPECTOR_WIDTH));
+    return () => observer.disconnect();
+  }, []);
+
   // Canvas dimensions
-  const canvasWidth = 800; // Fixed width for now
+  const canvasWidth = editorWidth;
   const canvasHeight = EDITOR_HEIGHT - 80; // Account for toolbar and scrollbar
 
   // Initialize scroll position to center on C4 (MIDI 60)
@@ -206,7 +223,7 @@ export function PianoRollEditor() {
   }
 
   return (
-    <div className="w-full overflow-hidden" style={{ isolation: 'isolate', backgroundColor: '#0D1117' }}>
+    <div ref={outerRef} className="w-full overflow-hidden" style={{ isolation: 'isolate', backgroundColor: '#0D1117' }}>
       {/* Toolbar */}
       <div className="flex items-center gap-2 px-3 py-2 bg-[#131824] border-b border-white/10">
         {/* Undo button */}

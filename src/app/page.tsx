@@ -19,7 +19,7 @@ import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { Toaster } from 'sonner';
 
 export default function Home() {
-  const { project, updateProjectName } = useProjectStore();
+  const { project, updateProjectName, error, projectLoadId } = useProjectStore();
   const { loadProject } = usePlaybackStore();
   const { selectedTrackIndex, selectTrack } = useEditStore();
   const [showAiEditor, setShowAiEditor] = useState(true);
@@ -27,12 +27,15 @@ export default function Home() {
   // Add keyboard shortcuts
   useKeyboardShortcuts();
 
-  // Load project into playback engine when project changes
+  // Load project into playback engine only when a new project is loaded.
+  // Depends on projectLoadId (bumped by loadNewProject) rather than the project
+  // object itself, so note edits don't reinitialize the audio engine.
   useEffect(() => {
     if (project) {
       loadProject(project);
     }
-  }, [project, loadProject]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectLoadId, loadProject]);
 
   // Auto-select first track with notes when project loads
   useEffect(() => {
@@ -96,13 +99,22 @@ export default function Home() {
               </div>
             )}
             {project && (
-              <div className="hidden sm:block">
+              <div className="hidden sm:flex items-center gap-1.5 group">
                 <InlineEdit
                   value={project.originalFileName || 'Untitled Project'}
                   onSave={(name) => updateProjectName(name)}
                   className="text-sm text-secondary mono"
                   inputClassName="text-sm mono"
                 />
+                <svg
+                  className="w-3 h-3 text-tertiary group-hover:text-cyan-400/60 transition-colors pointer-events-none flex-shrink-0"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  title="Double-click to rename"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>
               </div>
             )}
           </div>
@@ -128,10 +140,12 @@ export default function Home() {
         <main className="flex-1 overflow-y-auto flex flex-col">
           {project ? (
             <>
-              {/* Error Display */}
-              <div className="px-4 pt-2">
-                <ErrorDisplay />
-              </div>
+              {/* Error Display — only rendered when there is an error */}
+              {error && (
+                <div className="px-4 pt-2">
+                  <ErrorDisplay />
+                </div>
+              )}
 
               {/* Piano Roll Editor — edge-to-edge */}
               {selectedTrackIndex !== null && (
@@ -196,31 +210,21 @@ export default function Home() {
           {/* Footer */}
           <footer className="border-t border-white/5 mt-auto shrink-0">
             {project ? (
-              <div className="px-6 py-3 flex items-center justify-between">
-                <div className="flex items-center gap-2 text-tertiary text-xs">
-                  <span className="mono font-medium">HAYDN</span>
-                  <span>•</span>
-                  <span>AI-Powered MIDI Editing</span>
-                </div>
+              <div className="px-4 py-1 flex items-center justify-between">
+                <span className="text-[10px] text-white/20 mono tracking-widest">HAYDN</span>
                 <button
                   onClick={() => setShowAiEditor((v) => !v)}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-colors text-sm ${
+                  className={`flex items-center gap-1.5 px-2 py-0.5 rounded border transition-colors text-xs ${
                     showAiEditor
                       ? 'bg-cyan-500/10 border-cyan-500/20 text-cyan-400 hover:bg-cyan-500/15'
-                      : 'bg-white/5 border-white/10 text-secondary hover:bg-white/10 hover:text-primary'
+                      : 'bg-white/5 border-white/10 text-tertiary hover:bg-white/10 hover:text-secondary'
                   }`}
                   title={showAiEditor ? 'Hide AI Editor' : 'Show AI Editor'}
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                   </svg>
                   <span>AI Editor</span>
-                  <svg
-                    className={`w-3.5 h-3.5 transition-transform ${showAiEditor ? 'rotate-180' : ''}`}
-                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-                  </svg>
                 </button>
               </div>
             ) : (

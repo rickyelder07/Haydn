@@ -36,6 +36,30 @@ export function getTrackColor(trackIndex: number): string {
 }
 
 /**
+ * Derive the HSL hue (0-360) from a track's palette color.
+ * Used by the piano roll canvas to apply velocity-based lightness
+ * variation while still matching the track's identity color.
+ */
+export function getTrackHue(trackIndex: number): number {
+  const hex = getTrackColor(trackIndex);
+  const r = parseInt(hex.slice(1, 3), 16) / 255;
+  const g = parseInt(hex.slice(3, 5), 16) / 255;
+  const b = parseInt(hex.slice(5, 7), 16) / 255;
+
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  if (max === min) return 0;
+
+  const d = max - min;
+  let h: number;
+  if (max === r) h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
+  else if (max === g) h = ((b - r) / d + 2) / 6;
+  else h = ((r - g) / d + 4) / 6;
+
+  return Math.round(h * 360);
+}
+
+/**
  * Opacity for ghost notes (non-selected track notes in piano roll)
  */
 export const GHOST_NOTE_OPACITY = 0.3;

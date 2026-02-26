@@ -14,7 +14,7 @@ export function FloatingEditPanel() {
   const selectedTrackIndex = useEditStore((state) => state.selectedTrackIndex);
   const [editMode, setEditMode] = useState<'single-shot' | 'conversation'>('single-shot');
   const [minimized, setMinimized] = useState(false);
-  const [snapped, setSnapped] = useState(false);
+  const [snapped, setSnapped] = useState(true);
   const [position, setPosition] = useState({ x: 16, y: 200 });
   const [size, setSize] = useState({ width: 420, height: 420 });
 

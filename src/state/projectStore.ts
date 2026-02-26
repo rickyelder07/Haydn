@@ -10,11 +10,18 @@ interface ProjectState {
   isLoading: boolean;
   error: string | null;
 
+  // Bumped only when a brand-new project is loaded (file upload / AI generation).
+  // Note edits via syncToProjectStore do NOT bump this, so loadProject in the
+  // playback engine only reinitializes when truly needed.
+  projectLoadId: number;
+
   // Computed display info
   trackDisplayInfo: TrackDisplayInfo[];
 
   // Actions
   setProject: (project: HaydnProject) => void;
+  /** Load a brand-new project — bumps projectLoadId so playback engine reinitializes. */
+  loadNewProject: (project: HaydnProject) => void;
   clearProject: () => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
@@ -67,17 +74,30 @@ function findNextAvailableChannel(project: HaydnProject): number {
   return usedChannels.has(9) ? 0 : 9;
 }
 
-export const useProjectStore = create<ProjectState>((set) => ({
+export const useProjectStore = create<ProjectState>((set, get) => ({
   project: null,
   isLoading: false,
   error: null,
+  projectLoadId: 0,
   trackDisplayInfo: [],
 
+  // Used by note-editing paths (editStore, editExecutor) — does NOT bump projectLoadId
+  // so the playback engine is not reinitialized on every note change.
   setProject: (project) =>
     set({
       project,
       trackDisplayInfo: computeTrackDisplayInfo(project),
       error: null,
+    }),
+
+  // Used when a genuinely new project is loaded — bumps projectLoadId so
+  // page.tsx's useEffect triggers loadProject on the playback engine.
+  loadNewProject: (project) =>
+    set({
+      project,
+      trackDisplayInfo: computeTrackDisplayInfo(project),
+      error: null,
+      projectLoadId: get().projectLoadId + 1,
     }),
 
   clearProject: () =>

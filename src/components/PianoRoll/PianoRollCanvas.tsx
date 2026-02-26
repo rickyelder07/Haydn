@@ -12,7 +12,7 @@ import {
   getSnapTicks,
   snapToGrid,
 } from './gridUtils';
-import { getTrackColor, GHOST_NOTE_OPACITY } from '@/lib/constants/trackColors';
+import { getTrackColor, getTrackHue, GHOST_NOTE_OPACITY } from '@/lib/constants/trackColors';
 
 interface PianoRollCanvasProps {
   notes: HaydnNote[];
@@ -277,8 +277,10 @@ export function PianoRollCanvas({
         if (x + noteWidth < 0 || x > width) return;
         if (y + NOTE_HEIGHT < 0 || y > height) return;
 
-        // Color based on velocity and selection
-        const hue = isSelected ? 120 : 210; // GREEN for selected, blue for normal
+        // Color based on velocity and selection.
+        // Normal notes use the track's identity hue from the shared palette so
+        // the piano roll color matches the sidebar dot. Selected notes stay green.
+        const hue = isSelected ? 120 : getTrackHue(trackIndex);
         const baseLightness = 40 + note.velocity * 20; // Brighter = louder (40-60%)
         const lightness = isSelected ? 60 : baseLightness; // Selected notes bright green
         const saturation = isSelected ? 95 : 70; // Selected notes very saturated

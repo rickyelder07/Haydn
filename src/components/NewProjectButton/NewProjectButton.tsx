@@ -9,7 +9,7 @@ import { convertMusicXmlFile } from '@/lib/musicxml/converter';
 const ACCEPT_STRING = '.mid,.midi,.musicxml,.xml';
 
 export function NewProjectButton() {
-  const { project, setProject, setLoading, setError } = useProjectStore();
+  const { project, loadNewProject, setLoading, setError } = useProjectStore();
   const [showConfirm, setShowConfirm] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -33,7 +33,7 @@ export function NewProjectButton() {
         : await convertMusicXmlFile(file);
 
       if (result.success && result.data) {
-        setProject(result.data);
+        loadNewProject(result.data);
       } else {
         setError(result.error || 'Failed to process file');
       }
@@ -42,7 +42,7 @@ export function NewProjectButton() {
     }
 
     setLoading(false);
-  }, [setProject, setLoading, setError]);
+  }, [loadNewProject, setLoading, setError]);
 
   const handleClick = () => {
     if (project) {

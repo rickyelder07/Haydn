@@ -34,9 +34,16 @@ export function TrackList() {
     }
   }, [project, trackOrder.length]);
 
-  // Set up sensors for drag and drop
+  // Set up sensors for drag and drop.
+  // PointerSensor needs a minimum distance before activating a drag so that
+  // a plain click on a track card always fires onClick without dnd-kit
+  // capturing the pointer first.
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // px — pointer must move 8px before drag starts
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })

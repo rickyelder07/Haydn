@@ -154,8 +154,8 @@ export const useNLGenerationStore = create<NLGenerationState>((set, get) => ({
       }
 
       // Step 3: Load project into app
-      const { setProject } = useProjectStore.getState();
-      setProject(project);
+      const { loadNewProject } = useProjectStore.getState();
+      loadNewProject(project);
 
       // Update state with success
       set({

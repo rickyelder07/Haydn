@@ -9,7 +9,7 @@ const ACCEPTED_EXTENSIONS = ['.mid', '.midi', '.musicxml', '.xml'];
 const ACCEPT_STRING = ACCEPTED_EXTENSIONS.join(',');
 
 export function FileUpload() {
-  const { project, setProject, setLoading, setError, isLoading } = useProjectStore();
+  const { project, loadNewProject, setLoading, setError, isLoading } = useProjectStore();
   const [isDragging, setIsDragging] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
@@ -38,7 +38,7 @@ export function FileUpload() {
       }
 
       if (result.success && result.data) {
-        setProject(result.data);
+        loadNewProject(result.data);
       } else {
         setError(result.error || 'Failed to process file');
       }
@@ -47,7 +47,7 @@ export function FileUpload() {
     }
 
     setLoading(false);
-  }, [setProject, setLoading, setError]);
+  }, [loadNewProject, setLoading, setError]);
 
   const handleFile = useCallback((file: File) => {
     // If project exists, show confirmation
