@@ -87,6 +87,13 @@ export function TransportStrip({ width = 180 }: TransportStripProps) {
         <StopIcon />
       </button>
 
+      {/* Loading label — visible only during CDN sample fetch */}
+      {isLoading && (
+        <span className="text-[10px] text-cyan-400/70 mono whitespace-nowrap">
+          Loading samples...
+        </span>
+      )}
+
       {/* Loop toggle (visual placeholder — loop state TBD in future phase) */}
       <button
         className="p-1 rounded hover:bg-white/10 text-gray-600 cursor-not-allowed opacity-50"
