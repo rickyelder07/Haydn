@@ -114,12 +114,13 @@ Plans:
   3. User can skip questions and generate with defaults if desired
   4. AI-generated MIDI passes through ValidationPipeline (fails cause retry, fallback after 3 attempts)
   5. Conversation history visible during question flow and token usage displayed after generation
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] 11-01: TBD
-- [ ] 11-02: TBD
-- [ ] 11-03: TBD
+- [ ] 11-01-PLAN.md — MidiCompositionSchema + aiCompositionStore state machine (AI-05, AI-06, AI-07, AI-08)
+- [ ] 11-02-PLAN.md — Unified /api/ai-compose route (clarify + generate) (AI-03, AI-04, AI-05)
+- [ ] 11-03-PLAN.md — GenerationInput mode toggle + AI Compose UI (AI-01, AI-02, AI-04, AI-09, AI-10)
+- [ ] 11-04-PLAN.md — Production build gate + human verification (AI-01 through AI-10)
 
 #### Phase 12: Template Variations
 **Goal**: Template generation produces varied, unpredictable results through pattern randomization
@@ -188,11 +189,11 @@ Phases execute in numeric order: 1-8 (complete) → 9 → 10 → 11 → 12 → 1
 | 8. Conversational Editing Mode | v1.0 | 5/5 | Complete | 2026-02-11 |
 | 9. Professional Layout | v1.1 | 4/4 | Complete | 2026-02-17 |
 | 10. Synthesis Enhancement | 4/4 | Complete    | 2026-02-27 | - |
-| 11. AI Composition Mode | v1.1 | 0/TBD | Not started | - |
+| 11. AI Composition Mode | v1.1 | 0/4 | Not started | - |
 | 12. Template Variations | v1.1 | 0/TBD | Not started | - |
 | 13. Advanced Piano Roll Editing | v1.1 | 0/TBD | Not started | - |
 | 14. MIDI Hardware Integration | v1.1 | 0/TBD | Not started | - |
 
 ---
 
-*Last updated: 2026-02-27 after Phase 10 gap closure planning (10-04)*
+*Last updated: 2026-02-27 after Phase 11 planning (4 plans)*
