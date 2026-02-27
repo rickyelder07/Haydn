@@ -22,12 +22,12 @@ See: .planning/PROJECT.md (updated 2026-02-12)
 
 ## Current Position
 
-Phase: 10 of 14 (Synthesis Enhancement) — COMPLETE
-Plan: All plans complete (10-01 through 10-04)
-Status: Phase 10 complete, ready for Phase 11
-Last activity: 2026-02-27 — Completed Plan 10-03 (Audio quality verification — AUDIO-07 confirmed via user approval, clean production build)
+Phase: 11 of 14 (AI Composition Mode) — IN PROGRESS
+Plan: 11-01 complete (Schema + State Machine)
+Status: Plan 11-01 complete, ready for Plan 11-02
+Last activity: 2026-02-27 — Completed Plan 11-01 (MidiCompositionSchema Zod contracts + useAiCompositionStore 8-phase state machine)
 
-Progress: [█████████░░░░░] 64% (v1.0 complete: 42/42 plans, v1.1: 7/TBD plans, Phase 10 complete)
+Progress: [█████████░░░░░] 66% (v1.0 complete: 42/42 plans, v1.1: 8/TBD plans, Phase 11 plan 1 complete)
 
 ## Performance Metrics
 
@@ -62,6 +62,7 @@ Progress: [█████████░░░░░] 64% (v1.0 complete: 42/42
 | 10-02 | 1 min | 2 | 3 |
 | 10-03 | 5 min | 2 | 0 |
 | 10-04 | 1 min | 1 | 1 |
+| 11-01 | 1 min | 2 | 2 |
 
 **Recent Trend:**
 - v1.0 maintained consistent velocity
@@ -104,6 +105,10 @@ Recent decisions affecting v1.1 work:
 - [Phase 10]: 10-04: whitespace-nowrap acceptable for loading label since it disappears once CDN fetch completes
 - [Phase 10-synthesis-enhancement]: AUDIO-07 is a subjective requirement — only the user can confirm audio quality meets the bar; automated tests cannot substitute
 - [Phase 10-synthesis-enhancement]: 10-03: Production build (npm run build) run as explicit gate before human verification — catches import issues not caught by tsc --noEmit alone
+- [11-01]: fixOverlappingNotes called inside compositionToHaydnProject() — guarantees all callers get overlap-free projects
+- [11-01]: _runGenerate is a plain async function (not Zustand action) — avoids stale closure issues with the retry loop
+- [11-01]: Validation blocks only on error severity (not warnings) and deduplicates via Set before passing to retry
+- [11-01]: buildHistory returns [] for null turn — clean interface, API callers never need to null-check
 
 ### Pending Todos
 
@@ -122,11 +127,11 @@ All pitfalls documented in research/v1.1/SUMMARY.md with prevention strategies.
 ## Session Continuity
 
 Last session: 2026-02-27
-Stopped at: Completed 10-03-PLAN.md (Audio quality verification — AUDIO-07 confirmed via user approval, clean production build; Phase 10 complete)
+Stopped at: Completed 11-01-PLAN.md (MidiCompositionSchema Zod contracts + useAiCompositionStore 8-phase state machine)
 Resume file: None
 
-**Next step:** Begin Phase 11 planning/execution.
+**Next step:** Execute Plan 11-02 (/api/ai-compose API route).
 
 ---
 
-*Last updated: 2026-02-27 after Plan 10-03 execution (Audio quality verification — AUDIO-07 closed, Phase 10 synthesis enhancement complete)*
+*Last updated: 2026-02-27 after Plan 11-01 execution (MidiCompositionSchema + useAiCompositionStore — schema contracts and state machine for AI composition mode)*
