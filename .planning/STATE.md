@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: Polish & Enhancement
 status: unknown
-last_updated: "2026-02-27T22:33:20.838Z"
+last_updated: "2026-02-27T23:21:01.987Z"
 progress:
   total_phases: 16
   completed_phases: 10
   total_plans: 54
-  completed_plans: 52
+  completed_plans: 53
 ---
 
 # Project State
@@ -23,11 +23,11 @@ See: .planning/PROJECT.md (updated 2026-02-12)
 ## Current Position
 
 Phase: 11 of 14 (AI Composition Mode) — IN PROGRESS
-Plan: 11-02 complete (/api/ai-compose unified clarify+generate route)
-Status: Plan 11-02 complete, ready for Plan 11-03
-Last activity: 2026-02-27 — Completed Plan 11-02 (/api/ai-compose API route — unified clarify+generate with zodResponseFormat and PPQ system prompt)
+Plan: 11-03 complete (GenerationInput mode toggle and AI Compose UI)
+Status: Plan 11-03 complete, Phase 11 core trio complete (store + API + UI)
+Last activity: 2026-02-27 — Completed Plan 11-03 (GenerationInput.tsx — Template|AI Compose mode toggle, Q&A flow, token usage banner)
 
-Progress: [█████████░░░░░] 67% (v1.0 complete: 42/42 plans, v1.1: 9/TBD plans, Phase 11 plan 2 complete)
+Progress: [█████████░░░░░] 67% (v1.0 complete: 42/42 plans, v1.1: 10/TBD plans, Phase 11 plan 3 complete)
 
 ## Performance Metrics
 
@@ -64,6 +64,7 @@ Progress: [█████████░░░░░] 67% (v1.0 complete: 42/42
 | 10-04 | 1 min | 1 | 1 |
 | 11-01 | 1 min | 2 | 2 |
 | 11-02 | 4 min | 1 | 1 |
+| 11-03 | 23 min | 1 | 1 |
 
 **Recent Trend:**
 - v1.0 maintained consistent velocity
@@ -112,6 +113,8 @@ Recent decisions affecting v1.1 work:
 - [11-01]: buildHistory returns [] for null turn — clean interface, API callers never need to null-check
 - [Phase 11]: Single endpoint dispatches on generateAttempt field presence — keeps client state machine simple (no separate /clarify and /generate routes)
 - [Phase 11]: buildClarifySystemPrompt and buildGenerateSystemPrompt as separate functions — clean separation, easy to tune prompts independently
+- [Phase 11]: Mode toggle in GenerationInput uses local useState — template form wrapped unchanged in mode === 'template' conditional
+- [Phase 11]: useEffect([mode]) calls reset() on switch to AI mode — guarantees clean aiCompositionStore state without stale Q&A
 
 ### Pending Todos
 
@@ -130,11 +133,11 @@ All pitfalls documented in research/v1.1/SUMMARY.md with prevention strategies.
 ## Session Continuity
 
 Last session: 2026-02-27
-Stopped at: Completed 11-02-PLAN.md (/api/ai-compose unified clarify+generate route)
+Stopped at: Completed 11-03-PLAN.md (GenerationInput mode toggle and AI Compose UI)
 Resume file: None
 
-**Next step:** Execute Plan 11-03 (GenerationInput UI component).
+**Next step:** Execute Plan 11-04 (if it exists) or begin Phase 12.
 
 ---
 
-*Last updated: 2026-02-27 after Plan 11-02 execution (/api/ai-compose — unified clarify+generate API route with zodResponseFormat and PPQ tick math system prompt)*
+*Last updated: 2026-02-27 after Plan 11-03 execution (GenerationInput.tsx — Template|AI Compose mode toggle, Q&A clarification flow, progress spinner, success/fallback/error banners, cumulative token/cost display)*

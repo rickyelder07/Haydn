@@ -33,16 +33,16 @@ Requirements for v1.1 Polish & Enhancement milestone. Each maps to roadmap phase
 
 ### AI Composition Mode
 
-- [ ] **AI-01**: User can toggle between Template and AI composition modes
-- [ ] **AI-02**: AI mode displays token cost estimate before generation
+- [x] **AI-01**: User can toggle between Template and AI composition modes
+- [x] **AI-02**: AI mode displays token cost estimate before generation
 - [x] **AI-03**: GPT-4o asks up to 3 clarifying questions about desired composition
 - [x] **AI-04**: User can skip questions and generate with defaults
 - [x] **AI-05**: GPT-4o generates MIDI JSON directly (not template parameters)
 - [x] **AI-06**: AI-generated MIDI passes through ValidationPipeline (scale, genre, transition validation)
 - [x] **AI-07**: System retries generation if validation fails (up to 3 attempts)
 - [x] **AI-08**: System falls back to template mode after 3 failed AI attempts
-- [ ] **AI-09**: Conversation history visible during question flow
-- [ ] **AI-10**: Total token usage and estimated cost displayed after generation
+- [x] **AI-09**: Conversation history visible during question flow
+- [x] **AI-10**: Total token usage and estimated cost displayed after generation
 
 ### Template Generation Enhancement
 
@@ -167,16 +167,16 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AUDIO-05 | Phase 10 | Complete |
 | AUDIO-06 | Phase 10 | Complete |
 | AUDIO-07 | Phase 10 | Complete |
-| AI-01 | Phase 11 | Pending |
-| AI-02 | Phase 11 | Pending |
+| AI-01 | Phase 11 | Complete |
+| AI-02 | Phase 11 | Complete |
 | AI-03 | Phase 11 | Complete |
 | AI-04 | Phase 11 | Complete |
 | AI-05 | Phase 11 | Complete |
 | AI-06 | Phase 11 | Complete |
 | AI-07 | Phase 11 | Complete |
 | AI-08 | Phase 11 | Complete |
-| AI-09 | Phase 11 | Pending |
-| AI-10 | Phase 11 | Pending |
+| AI-09 | Phase 11 | Complete |
+| AI-10 | Phase 11 | Complete |
 | TMPL-01 | Phase 12 | Pending |
 | TMPL-02 | Phase 12 | Pending |
 | TMPL-03 | Phase 12 | Pending |
