@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNLGenerationStore } from '@/state/nlGenerationStore';
+import { useAiCompositionStore } from '@/state/aiCompositionStore';
 
 const SparkleIcon = () => (
   <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
@@ -28,7 +29,40 @@ export function GenerationInput() {
   const [localPrompt, setLocalPrompt] = useState('');
   const [showTooltip, setShowTooltip] = useState(false);
 
+  // Mode toggle
+  const [mode, setMode] = useState<'template' | 'ai'>('template');
+  const [aiPrompt, setAiPrompt] = useState('');
+  const [answers, setAnswers] = useState<string[]>([]);
+
+  // Template mode store
   const { isLoading, lastError, tokenUsage, submitGeneration, clearError } = useNLGenerationStore();
+
+  // AI Compose mode store
+  const {
+    phase,
+    clarifyingTurn,
+    tokenUsage: aiTokenUsage,
+    costEstimate,
+    lastError: aiError,
+    generateAttempt,
+    startClarification,
+    submitAnswers,
+    skipQuestions,
+    reset,
+  } = useAiCompositionStore();
+
+  // Reset AI store when switching TO ai mode
+  useEffect(() => {
+    if (mode === 'ai') reset();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode]);
+
+  // When questions arrive, initialize answer fields
+  useEffect(() => {
+    if (clarifyingTurn?.questions) {
+      setAnswers(new Array(clarifyingTurn.questions.length).fill(''));
+    }
+  }, [clarifyingTurn?.questions?.length]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,79 +80,224 @@ export function GenerationInput() {
 
   return (
     <div className="w-full">
-      <form onSubmit={handleSubmit}>
-        {/* Input row */}
-        <div className="flex items-center gap-3">
-          {/* Info icon — outside input, left side */}
-          <div className="relative flex-shrink-0">
+      {/* Mode toggle */}
+      <div className="flex rounded-lg border border-white/10 bg-[#131824] p-1 gap-1 mb-4">
+        {(['template', 'ai'] as const).map((m) => (
+          <button
+            key={m}
+            type="button"
+            onClick={() => setMode(m)}
+            className={`flex-1 py-1.5 text-xs font-medium rounded-md transition-colors ${
+              mode === m
+                ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/20'
+                : 'text-gray-500 hover:text-gray-300'
+            }`}
+          >
+            {m === 'template' ? 'Template' : 'AI Compose'}
+          </button>
+        ))}
+      </div>
+
+      {/* Template mode — original form unchanged */}
+      {mode === 'template' && (
+        <form onSubmit={handleSubmit}>
+          {/* Input row */}
+          <div className="flex items-center gap-3">
+            {/* Info icon — outside input, left side */}
+            <div className="relative flex-shrink-0">
+              <button
+                type="button"
+                className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-gray-500 hover:text-gray-300 hover:border-white/20 transition-colors"
+                onMouseEnter={() => setShowTooltip(true)}
+                onMouseLeave={() => setShowTooltip(false)}
+                aria-label="Show example prompts"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                </svg>
+              </button>
+              {showTooltip && (
+                <div className="absolute left-0 bottom-full mb-2 w-72 p-3 bg-[#1A2030] border border-white/10 rounded-xl shadow-xl z-50">
+                  <p className="text-xs font-medium text-gray-300 mb-2">Example prompts:</p>
+                  <ul className="text-xs text-gray-400 space-y-1">
+                    {examplePrompts.map((p, i) => (
+                      <li key={i} className="cursor-pointer hover:text-gray-200 transition-colors" onClick={() => setLocalPrompt(p)}>
+                        • {p}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+
+            {/* Text input */}
+            <input
+              type="text"
+              value={localPrompt}
+              onChange={(e) => setLocalPrompt(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Describe what you want to create... (e.g., 'lofi beat in C minor')"
+              disabled={isLoading}
+              maxLength={500}
+              className="flex-1 px-4 py-3 bg-[#131824] border border-white/10 rounded-xl text-sm text-primary placeholder:text-gray-500 focus:outline-none focus:border-white/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            />
+
+            {/* Generate button */}
+            <button
+              type="submit"
+              disabled={isLoading || !localPrompt.trim()}
+              className="px-5 py-3 bg-gradient-to-r from-purple-500/40 to-pink-500/40 hover:from-purple-500/60 hover:to-pink-500/60 border border-purple-500/30 text-white rounded-xl font-medium text-sm flex items-center gap-2 min-w-[110px] justify-center disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+            >
+              {isLoading ? <SpinnerIcon /> : null}
+              {isLoading ? 'Generating...' : lastError ? 'Retry' : 'Generate'}
+            </button>
+          </div>
+
+          {/* Error state */}
+          {lastError && (
+            <div className="mt-3 flex items-start gap-2 px-4 py-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm">
+              <div className="flex-1"><strong className="font-medium">Error:</strong> {lastError}</div>
+              <button type="button" onClick={clearError} className="text-red-400/60 hover:text-red-400 transition-colors mt-0.5">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                </svg>
+              </button>
+            </div>
+          )}
+
+          {/* Success state */}
+          {!lastError && tokenUsage && (
+            <div className="mt-3 px-4 py-3 bg-cyan-500/10 border border-cyan-500/20 rounded-xl text-cyan-400 text-sm">
+              <div className="font-medium">Project generated successfully!</div>
+              <div className="text-cyan-400/60 text-xs mt-0.5">{tokenUsage.totalTokens} tokens (~${tokenUsage.estimatedCost.toFixed(4)})</div>
+            </div>
+          )}
+        </form>
+      )}
+
+      {/* AI Compose mode */}
+      {mode === 'ai' && (
+        <div className="space-y-3">
+          {/* Prompt input row — shown when idle or questioning */}
+          {(phase === 'idle' || phase === 'questioning') && (
+            <div className="flex gap-3">
+              <input
+                type="text"
+                value={aiPrompt}
+                onChange={e => setAiPrompt(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey && aiPrompt.trim()) { e.preventDefault(); startClarification(aiPrompt.trim()); } }}
+                placeholder="Describe the music you want to compose..."
+                disabled={phase === 'questioning'}
+                maxLength={500}
+                className="flex-1 px-4 py-3 bg-[#131824] border border-white/10 rounded-xl text-sm text-primary placeholder:text-gray-500 focus:outline-none focus:border-white/20 disabled:opacity-50 transition-colors"
+              />
+              <button
+                type="button"
+                disabled={!aiPrompt.trim() || phase === 'questioning'}
+                onClick={() => startClarification(aiPrompt.trim())}
+                className="px-5 py-3 bg-gradient-to-r from-cyan-500/40 to-blue-500/40 hover:from-cyan-500/60 hover:to-blue-500/60 border border-cyan-500/30 text-white rounded-xl font-medium text-sm flex items-center gap-2 min-w-[120px] justify-center disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+              >
+                {phase === 'questioning' ? <SpinnerIcon /> : null}
+                {phase === 'questioning' ? 'Analyzing...' : 'Compose'}
+              </button>
+            </div>
+          )}
+
+          {/* Cost estimate — shown when costEstimate is set and not yet generating */}
+          {costEstimate && phase !== 'generating' && phase !== 'retrying' && phase !== 'success' && phase !== 'fallback' && (
+            <div className="text-xs text-cyan-400/60 px-1">
+              Estimated cost: ~${costEstimate.estimatedCost.toFixed(3)} ({costEstimate.totalTokens} tokens)
+            </div>
+          )}
+
+          {/* Q&A turn — shown in 'answering' phase */}
+          {phase === 'answering' && clarifyingTurn && (
+            <div className="space-y-3 p-4 bg-[#1A2030] border border-white/10 rounded-xl">
+              <div className="text-xs font-medium text-gray-400 mb-2">A few questions to help me compose better:</div>
+              {clarifyingTurn.questions.map((q, i) => (
+                <div key={i} className="space-y-1">
+                  <div className="text-sm text-gray-300">{q}</div>
+                  <input
+                    type="text"
+                    value={answers[i] || ''}
+                    onChange={e => { const next = [...answers]; next[i] = e.target.value; setAnswers(next); }}
+                    placeholder="Your answer..."
+                    className="w-full px-3 py-2 bg-[#131824] border border-white/10 rounded-lg text-sm text-primary placeholder:text-gray-500 focus:outline-none focus:border-white/20 transition-colors"
+                  />
+                </div>
+              ))}
+              <div className="flex gap-2 mt-3">
+                <button
+                  type="button"
+                  onClick={() => submitAnswers(answers)}
+                  disabled={answers.some(a => !a.trim())}
+                  className="flex-1 px-4 py-2 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/20 text-cyan-300 rounded-lg text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                >
+                  Generate with Answers
+                </button>
+                <button
+                  type="button"
+                  onClick={skipQuestions}
+                  className="px-4 py-2 border border-white/10 text-gray-400 hover:text-gray-200 rounded-lg text-sm transition-colors"
+                >
+                  Skip
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Generation progress */}
+          {(phase === 'generating' || phase === 'retrying') && (
+            <div className="flex items-center gap-3 px-4 py-3 bg-[#1A2030] border border-white/10 rounded-xl text-sm text-gray-400">
+              <SpinnerIcon />
+              <span>
+                {phase === 'retrying'
+                  ? `Attempt ${generateAttempt + 1}/3 — refining composition...`
+                  : 'Composing your music...'}
+              </span>
+            </div>
+          )}
+
+          {/* Success */}
+          {phase === 'success' && aiTokenUsage && (
+            <div className="px-4 py-3 bg-cyan-500/10 border border-cyan-500/20 rounded-xl text-cyan-400 text-sm">
+              <div className="font-medium">AI composition complete!</div>
+              <div className="text-cyan-400/60 text-xs mt-0.5">
+                {aiTokenUsage.totalTokens} tokens (clarify: {aiTokenUsage.clarifyTokens}, generate: {aiTokenUsage.generateTokens}) · ~${aiTokenUsage.totalCost.toFixed(4)}
+              </div>
+            </div>
+          )}
+
+          {/* Fallback notice */}
+          {phase === 'fallback' && (
+            <div className="px-4 py-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-amber-400 text-sm">
+              <div className="font-medium">Generated with template (AI validation failed)</div>
+              <div className="text-amber-400/60 text-xs mt-0.5">The AI composition didn&apos;t pass music theory checks. A template-based composition was used instead.</div>
+            </div>
+          )}
+
+          {/* Error */}
+          {phase === 'error' && aiError && (
+            <div className="flex items-start gap-2 px-4 py-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm">
+              <div className="flex-1"><strong className="font-medium">Error:</strong> {aiError}</div>
+              <button type="button" onClick={reset} className="text-red-400/60 hover:text-red-400 transition-colors mt-0.5">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg>
+              </button>
+            </div>
+          )}
+
+          {/* New composition button after success/fallback */}
+          {(phase === 'success' || phase === 'fallback') && (
             <button
               type="button"
-              className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-gray-500 hover:text-gray-300 hover:border-white/20 transition-colors"
-              onMouseEnter={() => setShowTooltip(true)}
-              onMouseLeave={() => setShowTooltip(false)}
-              aria-label="Show example prompts"
+              onClick={() => { reset(); setAiPrompt(''); setAnswers([]); }}
+              className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
-              </svg>
+              Compose something else
             </button>
-            {showTooltip && (
-              <div className="absolute left-0 bottom-full mb-2 w-72 p-3 bg-[#1A2030] border border-white/10 rounded-xl shadow-xl z-50">
-                <p className="text-xs font-medium text-gray-300 mb-2">Example prompts:</p>
-                <ul className="text-xs text-gray-400 space-y-1">
-                  {examplePrompts.map((p, i) => (
-                    <li key={i} className="cursor-pointer hover:text-gray-200 transition-colors" onClick={() => setLocalPrompt(p)}>
-                      • {p}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-
-          {/* Text input */}
-          <input
-            type="text"
-            value={localPrompt}
-            onChange={(e) => setLocalPrompt(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Describe what you want to create... (e.g., 'lofi beat in C minor')"
-            disabled={isLoading}
-            maxLength={500}
-            className="flex-1 px-4 py-3 bg-[#131824] border border-white/10 rounded-xl text-sm text-primary placeholder:text-gray-500 focus:outline-none focus:border-white/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          />
-
-          {/* Generate button */}
-          <button
-            type="submit"
-            disabled={isLoading || !localPrompt.trim()}
-            className="px-5 py-3 bg-gradient-to-r from-purple-500/40 to-pink-500/40 hover:from-purple-500/60 hover:to-pink-500/60 border border-purple-500/30 text-white rounded-xl font-medium text-sm flex items-center gap-2 min-w-[110px] justify-center disabled:opacity-40 disabled:cursor-not-allowed transition-all"
-          >
-            {isLoading ? <SpinnerIcon /> : null}
-            {isLoading ? 'Generating...' : lastError ? 'Retry' : 'Generate'}
-          </button>
+          )}
         </div>
-
-        {/* Error state */}
-        {lastError && (
-          <div className="mt-3 flex items-start gap-2 px-4 py-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm">
-            <div className="flex-1"><strong className="font-medium">Error:</strong> {lastError}</div>
-            <button type="button" onClick={clearError} className="text-red-400/60 hover:text-red-400 transition-colors mt-0.5">
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
-              </svg>
-            </button>
-          </div>
-        )}
-
-        {/* Success state */}
-        {!lastError && tokenUsage && (
-          <div className="mt-3 px-4 py-3 bg-cyan-500/10 border border-cyan-500/20 rounded-xl text-cyan-400 text-sm">
-            <div className="font-medium">Project generated successfully!</div>
-            <div className="text-cyan-400/60 text-xs mt-0.5">{tokenUsage.totalTokens} tokens (~${tokenUsage.estimatedCost.toFixed(4)})</div>
-          </div>
-        )}
-      </form>
+      )}
     </div>
   );
 }
