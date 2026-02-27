@@ -35,8 +35,8 @@ Requirements for v1.1 Polish & Enhancement milestone. Each maps to roadmap phase
 
 - [ ] **AI-01**: User can toggle between Template and AI composition modes
 - [ ] **AI-02**: AI mode displays token cost estimate before generation
-- [ ] **AI-03**: GPT-4o asks up to 3 clarifying questions about desired composition
-- [ ] **AI-04**: User can skip questions and generate with defaults
+- [x] **AI-03**: GPT-4o asks up to 3 clarifying questions about desired composition
+- [x] **AI-04**: User can skip questions and generate with defaults
 - [x] **AI-05**: GPT-4o generates MIDI JSON directly (not template parameters)
 - [x] **AI-06**: AI-generated MIDI passes through ValidationPipeline (scale, genre, transition validation)
 - [x] **AI-07**: System retries generation if validation fails (up to 3 attempts)
@@ -169,8 +169,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AUDIO-07 | Phase 10 | Complete |
 | AI-01 | Phase 11 | Pending |
 | AI-02 | Phase 11 | Pending |
-| AI-03 | Phase 11 | Pending |
-| AI-04 | Phase 11 | Pending |
+| AI-03 | Phase 11 | Complete |
+| AI-04 | Phase 11 | Complete |
 | AI-05 | Phase 11 | Complete |
 | AI-06 | Phase 11 | Complete |
 | AI-07 | Phase 11 | Complete |

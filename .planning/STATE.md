@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: Polish & Enhancement
 status: unknown
-last_updated: "2026-02-27T20:13:28.875Z"
+last_updated: "2026-02-27T22:33:20.838Z"
 progress:
-  total_phases: 15
+  total_phases: 16
   completed_phases: 10
-  total_plans: 50
-  completed_plans: 50
+  total_plans: 54
+  completed_plans: 52
 ---
 
 # Project State
@@ -23,11 +23,11 @@ See: .planning/PROJECT.md (updated 2026-02-12)
 ## Current Position
 
 Phase: 11 of 14 (AI Composition Mode) — IN PROGRESS
-Plan: 11-01 complete (Schema + State Machine)
-Status: Plan 11-01 complete, ready for Plan 11-02
-Last activity: 2026-02-27 — Completed Plan 11-01 (MidiCompositionSchema Zod contracts + useAiCompositionStore 8-phase state machine)
+Plan: 11-02 complete (/api/ai-compose unified clarify+generate route)
+Status: Plan 11-02 complete, ready for Plan 11-03
+Last activity: 2026-02-27 — Completed Plan 11-02 (/api/ai-compose API route — unified clarify+generate with zodResponseFormat and PPQ system prompt)
 
-Progress: [█████████░░░░░] 66% (v1.0 complete: 42/42 plans, v1.1: 8/TBD plans, Phase 11 plan 1 complete)
+Progress: [█████████░░░░░] 67% (v1.0 complete: 42/42 plans, v1.1: 9/TBD plans, Phase 11 plan 2 complete)
 
 ## Performance Metrics
 
@@ -63,6 +63,7 @@ Progress: [█████████░░░░░] 66% (v1.0 complete: 42/42
 | 10-03 | 5 min | 2 | 0 |
 | 10-04 | 1 min | 1 | 1 |
 | 11-01 | 1 min | 2 | 2 |
+| 11-02 | 4 min | 1 | 1 |
 
 **Recent Trend:**
 - v1.0 maintained consistent velocity
@@ -109,6 +110,8 @@ Recent decisions affecting v1.1 work:
 - [11-01]: _runGenerate is a plain async function (not Zustand action) — avoids stale closure issues with the retry loop
 - [11-01]: Validation blocks only on error severity (not warnings) and deduplicates via Set before passing to retry
 - [11-01]: buildHistory returns [] for null turn — clean interface, API callers never need to null-check
+- [Phase 11]: Single endpoint dispatches on generateAttempt field presence — keeps client state machine simple (no separate /clarify and /generate routes)
+- [Phase 11]: buildClarifySystemPrompt and buildGenerateSystemPrompt as separate functions — clean separation, easy to tune prompts independently
 
 ### Pending Todos
 
@@ -127,11 +130,11 @@ All pitfalls documented in research/v1.1/SUMMARY.md with prevention strategies.
 ## Session Continuity
 
 Last session: 2026-02-27
-Stopped at: Completed 11-01-PLAN.md (MidiCompositionSchema Zod contracts + useAiCompositionStore 8-phase state machine)
+Stopped at: Completed 11-02-PLAN.md (/api/ai-compose unified clarify+generate route)
 Resume file: None
 
-**Next step:** Execute Plan 11-02 (/api/ai-compose API route).
+**Next step:** Execute Plan 11-03 (GenerationInput UI component).
 
 ---
 
-*Last updated: 2026-02-27 after Plan 11-01 execution (MidiCompositionSchema + useAiCompositionStore — schema contracts and state machine for AI composition mode)*
+*Last updated: 2026-02-27 after Plan 11-02 execution (/api/ai-compose — unified clarify+generate API route with zodResponseFormat and PPQ tick math system prompt)*
