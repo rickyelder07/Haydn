@@ -45,6 +45,17 @@ Rules:
 function buildGenerateSystemPrompt(): string {
   return `You are a MIDI composer. Generate a complete, original MIDI composition as structured JSON.
 
+## Clarifying Answers (HIGHEST PRIORITY)
+If the user's prompt contains a "Clarifying answers" section, those answers are hard constraints.
+Apply every stated answer directly to the composition:
+- Stated mood/emotion → shape velocity, note density, melodic contour, and harmonic choices
+- Stated length in bars → target exactly that number of bars
+- Stated instruments or sounds → use those as the track roles
+- Stated key or scale → use that key and scale throughout
+- Stated tempo → use that BPM
+- Stated style or genre → reflect it in rhythm, harmony, and instrumentation
+Answers override all defaults. Do not ignore them.
+
 ## Timing Rules (CRITICAL)
 PPQ (Pulses Per Quarter Note) = 480
 - Beat 1 of bar 1 = tick 0
@@ -119,6 +130,25 @@ async function handleClarify(
 // Generate handler
 // ---------------------------------------------------------------------------
 
+/**
+ * Merges the original prompt and Q&A history into a single enriched user message
+ * so the model cannot miss the answers when generating under Structured Outputs.
+ */
+function buildEnrichedPrompt(prompt: string, history: ChatMessage[]): string {
+  const questionsMsg = history.find(m => m.role === 'assistant');
+  const answersMsg = history.findLast(m => m.role === 'user');
+  if (!questionsMsg || !answersMsg) return prompt;
+
+  const questions = questionsMsg.content.split('\n').filter(Boolean);
+  const answers = answersMsg.content.split('\n').filter(Boolean);
+
+  const qaLines = questions
+    .map((q, i) => `Q: ${q}\nA: ${answers[i] ?? '(no answer)'}`)
+    .join('\n\n');
+
+  return `${prompt}\n\nClarifying answers:\n${qaLines}`;
+}
+
 async function handleGenerate(
   prompt: string,
   history: ChatMessage[],
@@ -126,10 +156,11 @@ async function handleGenerate(
   validationErrors?: string[]
 ): Promise<NextResponse> {
   try {
+    const enrichedPrompt = buildEnrichedPrompt(prompt, history);
+
     const messages: ChatMessage[] = [
       { role: 'system', content: buildGenerateSystemPrompt() },
-      { role: 'user', content: prompt },
-      ...history,
+      { role: 'user', content: enrichedPrompt },
     ];
 
     // On retry attempts, append correction context
