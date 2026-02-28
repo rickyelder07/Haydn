@@ -33,6 +33,7 @@ export function GenerationInput() {
   const [mode, setMode] = useState<'template' | 'ai'>('template');
   const [aiPrompt, setAiPrompt] = useState('');
   const [answers, setAnswers] = useState<string[]>([]);
+  const [barCount, setBarCount] = useState(8);
 
   // Template mode store
   const { isLoading, lastError, tokenUsage, submitGeneration, clearError } = useNLGenerationStore();
@@ -180,26 +181,57 @@ export function GenerationInput() {
         <div className="space-y-3">
           {/* Prompt input row — shown when idle or questioning */}
           {(phase === 'idle' || phase === 'questioning') && (
-            <div className="flex gap-3">
-              <input
-                type="text"
-                value={aiPrompt}
-                onChange={e => setAiPrompt(e.target.value)}
-                onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey && aiPrompt.trim()) { e.preventDefault(); startClarification(aiPrompt.trim()); } }}
-                placeholder="Describe the music you want to compose..."
-                disabled={phase === 'questioning'}
-                maxLength={500}
-                className="flex-1 px-4 py-3 bg-[#131824] border border-white/10 rounded-xl text-sm text-primary placeholder:text-gray-500 focus:outline-none focus:border-white/20 disabled:opacity-50 transition-colors"
-              />
-              <button
-                type="button"
-                disabled={!aiPrompt.trim() || phase === 'questioning'}
-                onClick={() => startClarification(aiPrompt.trim())}
-                className="px-5 py-3 bg-gradient-to-r from-cyan-500/40 to-blue-500/40 hover:from-cyan-500/60 hover:to-blue-500/60 border border-cyan-500/30 text-white rounded-xl font-medium text-sm flex items-center gap-2 min-w-[120px] justify-center disabled:opacity-40 disabled:cursor-not-allowed transition-all"
-              >
-                {phase === 'questioning' ? <SpinnerIcon /> : null}
-                {phase === 'questioning' ? 'Analyzing...' : 'Compose'}
-              </button>
+            <div className="space-y-2">
+              <div className="flex gap-3">
+                <input
+                  type="text"
+                  value={aiPrompt}
+                  onChange={e => setAiPrompt(e.target.value)}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter' && !e.shiftKey && aiPrompt.trim()) {
+                      e.preventDefault();
+                      startClarification(`${aiPrompt.trim()}, ${barCount} bars`);
+                    }
+                  }}
+                  placeholder="Describe the music you want to compose..."
+                  disabled={phase === 'questioning'}
+                  maxLength={500}
+                  className="flex-1 px-4 py-3 bg-[#131824] border border-white/10 rounded-xl text-sm text-primary placeholder:text-gray-500 focus:outline-none focus:border-white/20 disabled:opacity-50 transition-colors"
+                />
+                <button
+                  type="button"
+                  disabled={!aiPrompt.trim() || phase === 'questioning'}
+                  onClick={() => startClarification(`${aiPrompt.trim()}, ${barCount} bars`)}
+                  className="px-5 py-3 bg-gradient-to-r from-cyan-500/40 to-blue-500/40 hover:from-cyan-500/60 hover:to-blue-500/60 border border-cyan-500/30 text-white rounded-xl font-medium text-sm flex items-center gap-2 min-w-[120px] justify-center disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                >
+                  {phase === 'questioning' ? <SpinnerIcon /> : null}
+                  {phase === 'questioning' ? 'Analyzing...' : 'Compose'}
+                </button>
+              </div>
+
+              {/* Duration control */}
+              {phase === 'idle' && (
+                <div className="flex items-center gap-2 px-1">
+                  <span className="text-xs text-gray-500">Duration</span>
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => setBarCount(b => Math.max(4, b - 4))}
+                      className="w-6 h-6 flex items-center justify-center rounded border border-white/10 text-gray-400 hover:text-gray-200 hover:border-white/20 transition-colors text-sm leading-none"
+                    >
+                      −
+                    </button>
+                    <span className="text-xs text-gray-300 w-14 text-center">{barCount} bars</span>
+                    <button
+                      type="button"
+                      onClick={() => setBarCount(b => Math.min(32, b + 4))}
+                      className="w-6 h-6 flex items-center justify-center rounded border border-white/10 text-gray-400 hover:text-gray-200 hover:border-white/20 transition-colors text-sm leading-none"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -290,7 +322,7 @@ export function GenerationInput() {
           {(phase === 'success' || phase === 'fallback') && (
             <button
               type="button"
-              onClick={() => { reset(); setAiPrompt(''); setAnswers([]); }}
+              onClick={() => { reset(); setAiPrompt(''); setAnswers([]); setBarCount(8); }}
               className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
             >
               Compose something else

@@ -65,7 +65,8 @@ PPQ (Pulses Per Quarter Note) = 480
 - Align ALL note start times to beat grid (multiples of 480)
 
 ## Composition Rules
-- Generate 16-32 bars maximum
+- If the user specified a bar count (e.g. "8 bars", "16 bars"), target exactly that length. Never exceed 32 bars.
+- If no bar count is specified, default to 8 bars.
 - Use multiple tracks: drums on channel 9, melodic tracks on channels 0-3
 - Velocity: 0.0-1.0 range (typical notes: 0.6-0.85, accents: 0.9)
 - Do NOT overlap notes on the same pitch in the same track
