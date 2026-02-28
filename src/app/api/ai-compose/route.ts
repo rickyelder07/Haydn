@@ -81,6 +81,10 @@ Do NOT stop writing notes at bar 4 when more bars are requested.
 - Do NOT overlap notes on the same pitch in the same track
 - Drums use channel 9 (GM standard percussion map: kick=36, snare=38, hihat=42/44/46)
 
+## Track Role Defaults
+- **Melody tracks**: Do NOT include a melody track unless the user explicitly asks for one (e.g., "with a melody", "melodic lead", "lead synth"). Most compositions work better without a dedicated melody — let drums, bass, and chords/pads carry the arrangement.
+- **Guitar**: Guitar is a rhythm and harmony instrument by default. If the user mentions "guitar", write it as a chord-strumming or scale-based rhythm part that adds flavor and layering — NOT a single-note lead melody line. Use arpeggios, chord voicings, or scale runs on the guitar track. Only write guitar as a single-note melody if the user explicitly requests "lead guitar", "guitar solo", or "guitar melody".
+
 ## Quality Standards
 - Produce musical, rhythmically coherent output
 - Bass notes should mostly align with chord root notes

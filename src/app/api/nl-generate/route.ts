@@ -86,7 +86,7 @@ If the user doesn't specify structure, use:
 2. **CRITICAL: User requirements ALWAYS override genre defaults**
    - If user says "with a bass part" or "with bass" → { role: "bass", instrument: <genre-bass-number> } MUST be in instrumentation
    - If user says "with piano" or "piano chords" → { role: "chords", instrument: 0 } MUST be in instrumentation
-   - If user says "with melody" or "melodic" → { role: "melody", instrument: <genre-melody-number> } MUST be in instrumentation
+   - If user says "with melody" or "lead melody" or "melodic lead" → { role: "melody", instrument: <genre-melody-number> } MUST be in instrumentation
    - If user says "with drums" or "beat" → { role: "drums", instrument: 0 } MUST be in instrumentation
 3. **Validate completeness**: Before returning, verify that EVERY instrument/part mentioned in the user's prompt appears in the instrumentation array
 4. **Fill in genre-appropriate defaults** ONLY for unspecified values (don't remove user-requested parts)
@@ -99,7 +99,8 @@ If the user doesn't specify structure, use:
 - If user mentions specific instruments (e.g., "with bass", "add piano", "include strings"), those MUST appear in the instrumentation array
 - Genre defaults provide baseline instrumentation, but user requests override and extend
 - Each role (drums, bass, melody, chords) can only appear once in the instrumentation array
-- If user doesn't mention instrumentation at all, use the full genre default (all 4 roles)
+- **MELODY DEFAULT: Do NOT include a melody track by default.** Only include melody if the user explicitly asks for a melody, melodic lead, or solo instrument. Genre defaults for drums + bass + chords are fine on their own.
+- **GUITAR RULE: Guitar is a rhythm and harmony instrument, not a melody instrument.** When the user mentions "guitar" (acoustic, electric, rhythm guitar), assign it to the "chords" role for harmonic/rhythmic support. Use GM program 27 (Electric Guitar clean) for electric guitar, or 25 (Acoustic Guitar steel) for acoustic guitar. Exception: if the user explicitly asks for "lead guitar", "guitar melody", or "guitar solo", then assign guitar to the "melody" role instead.
 
 ## Examples
 
@@ -108,12 +109,20 @@ If the user doesn't specify structure, use:
 → User explicitly requested bass, so it's included even if they didn't mention other parts
 
 **Prompt:** "create a lo-fi beat"
-→ instrumentation: Use all 4 default lofi roles (drums, bass, chords, melody)
-→ No specific requests, so use complete genre defaults
+→ instrumentation: [{ role: "drums", instrument: 0 }, { role: "bass", instrument: 33 }, { role: "chords", instrument: 4 }]
+→ No melody requested, so omit it
 
 **Prompt:** "trap beat with piano chords and heavy bass"
 → instrumentation MUST include: [{ role: "drums", instrument: 0 }, { role: "bass", instrument: 38 }, { role: "chords", instrument: 0 }]
 → User mentioned "piano chords" (instrument 0 for chords role) and "bass"
+
+**Prompt:** "rock song with guitar"
+→ instrumentation: [{ role: "drums", instrument: 0 }, { role: "bass", instrument: 33 }, { role: "chords", instrument: 27 }]
+→ Guitar goes to chords role for rhythm support; no melody unless requested
+
+**Prompt:** "song with a lead guitar melody"
+→ instrumentation MUST include: { role: "melody", instrument: 27 }
+→ User explicitly requested lead guitar as melody
 
 If the user doesn't specify a genre, infer it from their description or default to "pop".`;
 }
@@ -224,9 +233,15 @@ export async function POST(request: NextRequest) {
       parsed.instrumentation.push({ role: 'bass', instrument: defaults.bass });
     }
 
-    // Check for melody mentions
-    if ((promptLower.includes('melody') || promptLower.includes('melodic') || promptLower.includes('lead')) && !hasRoleInInstrumentation('melody')) {
-      console.warn('[nl-generate] User mentioned melody but GPT-4o did not include it. Adding melody.');
+    // Check for explicit melody mentions (not just "melodic" or vague "lead" — must be clearly a melody request)
+    const explicitMelodyRequest =
+      promptLower.includes('melody') ||
+      promptLower.includes('melodic lead') ||
+      promptLower.includes('lead melody') ||
+      promptLower.includes('lead synth') ||
+      promptLower.includes('lead piano');
+    if (explicitMelodyRequest && !hasRoleInInstrumentation('melody')) {
+      console.warn('[nl-generate] User explicitly requested melody but GPT-4o did not include it. Adding melody.');
       parsed.instrumentation.push({ role: 'melody', instrument: defaults.melody });
     }
 
@@ -236,10 +251,42 @@ export async function POST(request: NextRequest) {
       parsed.instrumentation.push({ role: 'chords', instrument: defaults.chords });
     }
 
-    // Check for drum mentions (beat, drums, rhythm)
-    if ((promptLower.includes('beat') || promptLower.includes('drum') || promptLower.includes('rhythm')) && !hasRoleInInstrumentation('drums')) {
+    // Check for drum mentions (beat, drums)
+    if ((promptLower.includes('beat') || promptLower.includes('drum')) && !hasRoleInInstrumentation('drums')) {
       console.warn('[nl-generate] User mentioned drums but GPT-4o did not include it. Adding drums.');
       parsed.instrumentation.push({ role: 'drums', instrument: defaults.drums });
+    }
+
+    // Guitar handling: rhythm support by default, melody only if explicitly requested as lead
+    const guitarKeywords = ['guitar', 'acoustic guitar', 'electric guitar', 'rhythm guitar'];
+    const leadGuitarKeywords = ['lead guitar', 'guitar solo', 'guitar melody', 'guitar lead'];
+    const userMentionsGuitar = guitarKeywords.some(k => promptLower.includes(k));
+    const userWantsLeadGuitar = leadGuitarKeywords.some(k => promptLower.includes(k));
+
+    if (userMentionsGuitar) {
+      const isAcoustic = promptLower.includes('acoustic guitar');
+      const guitarProgram = isAcoustic ? 25 : 27; // 25 = Acoustic Guitar steel, 27 = Electric Guitar clean
+
+      if (userWantsLeadGuitar) {
+        // Lead guitar → melody role
+        if (!hasRoleInInstrumentation('melody')) {
+          console.warn('[nl-generate] User requested lead guitar. Adding guitar as melody.');
+          parsed.instrumentation.push({ role: 'melody', instrument: guitarProgram });
+        }
+      } else {
+        // Rhythm/default guitar → chords role for harmonic support
+        if (!hasRoleInInstrumentation('chords')) {
+          console.warn('[nl-generate] User requested guitar. Adding guitar as chords (rhythm support).');
+          parsed.instrumentation.push({ role: 'chords', instrument: guitarProgram });
+        } else {
+          // If chords role already exists with a non-guitar instrument, override with guitar
+          const chordsEntry = parsed.instrumentation.find(i => i.role === 'chords');
+          if (chordsEntry) {
+            console.warn('[nl-generate] Overriding chords instrument with guitar program.');
+            chordsEntry.instrument = guitarProgram;
+          }
+        }
+      }
     }
 
     console.log('[nl-generate] Final instrumentation after validation:', parsed.instrumentation);
