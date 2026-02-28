@@ -49,6 +49,22 @@ export interface CumulativeTokenUsage {
   totalCost: number; // USD
 }
 
+export type DebugLogType =
+  | 'clarify-request'
+  | 'clarify-response'
+  | 'generate-request'
+  | 'generate-response'
+  | 'validation-pass'
+  | 'validation-fail'
+  | 'fallback';
+
+export interface DebugLogEntry {
+  type: DebugLogType;
+  label: string;
+  detail: string;
+  timestamp: number; // ms since session epoch
+}
+
 // ---------------------------------------------------------------------------
 // Store state interface
 // ---------------------------------------------------------------------------
@@ -61,6 +77,8 @@ interface AiCompositionState {
   tokenUsage: CumulativeTokenUsage | null;
   costEstimate: TokenEstimate | null;    // Pre-generation estimate
   lastError: string | null;
+  debugLogs: DebugLogEntry[];
+  debugEpoch: number;                    // ms wall time when current session started
 
   // Actions
   startClarification: (prompt: string) => Promise<void>;
@@ -107,21 +125,22 @@ async function _runGenerate(
   prompt: string,
   turn: ClarifyingTurn | null,
   set: (partial: Partial<AiCompositionState>) => void,
-  get: () => AiCompositionState
+  get: () => AiCompositionState,
+  epoch: number
 ): Promise<void> {
   const pipeline = createDefaultPipeline(); // Scale + Transition only, no GenreValidator
   let previousErrors: string[] = [];
 
-  // Accumulate clarify tokens carried in from before the generate phase
-  const existingUsage = get().tokenUsage;
-  const clarifyTokens = existingUsage?.clarifyTokens ?? 0;
-  const clarifyTokensCost = existingUsage
-    ? existingUsage.totalCost - existingUsage.generateTokens * 0 // keep clarify cost
-    : 0;
+  const addLog = (entry: Omit<DebugLogEntry, 'timestamp'>) => {
+    set({ debugLogs: [...get().debugLogs, { ...entry, timestamp: Date.now() - epoch }] });
+  };
 
   // We'll track clarify cost separately so we can accumulate correctly
+  const existingUsage = get().tokenUsage;
   const clarifyBaseCost = existingUsage?.totalCost ?? 0;
   const clarifyBaseTokens = existingUsage?.clarifyTokens ?? 0;
+
+  const history = buildHistory(turn);
 
   for (let attempt = 0; attempt < 3; attempt++) {
     // Update phase
@@ -130,13 +149,30 @@ async function _runGenerate(
       generateAttempt: attempt,
     });
 
+    const historyDesc = turn
+      ? `${turn.questions.length} Q&A pair(s) included`
+      : 'No clarifying Q&A (skipped or not asked)';
+    const errorsDesc = previousErrors.length > 0
+      ? `Correction errors from attempt ${attempt}: ${previousErrors.join(' | ')}`
+      : '';
+
+    addLog({
+      type: 'generate-request',
+      label: `Generate — attempt ${attempt + 1}/3`,
+      detail: [
+        `Prompt: "${prompt}"`,
+        historyDesc,
+        errorsDesc,
+      ].filter(Boolean).join('\n'),
+    });
+
     try {
       const response = await fetch('/api/ai-compose', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           prompt,
-          clarifyingHistory: buildHistory(turn),
+          clarifyingHistory: history,
           generateAttempt: attempt,
           validationErrors: previousErrors.length > 0 ? previousErrors : undefined,
         }),
@@ -145,15 +181,34 @@ async function _runGenerate(
       if (!response.ok) {
         const errBody = await response.json().catch(() => ({ error: response.statusText }));
         const errMsg = errBody?.error ?? `HTTP ${response.status}`;
-        // On non-OK response, record error and retry next iteration
         previousErrors = [errMsg];
+        addLog({ type: 'validation-fail', label: `HTTP error on attempt ${attempt + 1}`, detail: errMsg });
         continue;
       }
 
       const data = await response.json();
+      const comp = data.data;
+
+      // Log what GPT-4o returned
+      const totalNotes = comp.tracks?.reduce((sum: number, t: { notes: unknown[] }) => sum + (t.notes?.length ?? 0), 0) ?? 0;
+      const maxTick = comp.tracks?.flatMap((t: { notes: { ticks: number; durationTicks: number }[] }) => t.notes.map((n) => n.ticks + n.durationTicks)).reduce((a: number, b: number) => Math.max(a, b), 0) ?? 0;
+      const approxBars = Math.round(maxTick / 1920);
+      const trackList = comp.tracks?.map((t: { name: string; channel: number }) => `${t.name} (ch${t.channel})`).join(', ') ?? '';
+      addLog({
+        type: 'generate-response',
+        label: `GPT-4o response — ${comp.tempo} BPM, ${comp.key} ${comp.scale}, ~${approxBars} bars`,
+        detail: [
+          `Tempo: ${comp.tempo} BPM`,
+          `Key: ${comp.key} ${comp.scale}`,
+          `Genre label: ${comp.genre}`,
+          `Tracks (${comp.tracks?.length ?? 0}): ${trackList}`,
+          `Total notes: ${totalNotes}`,
+          `Approximate length: ${approxBars} bars`,
+        ].join('\n'),
+      });
 
       // Convert to HaydnProject
-      const project = compositionToHaydnProject(data.data);
+      const project = compositionToHaydnProject(comp);
 
       // Validate — only error severity, skip drums (channel 9)
       const allErrors: string[] = [];
@@ -198,6 +253,13 @@ async function _runGenerate(
           totalCost: clarifyBaseCost + generateCost,
         };
 
+        const noteCount = project.tracks.reduce((s, t) => s + t.notes.length, 0);
+        addLog({
+          type: 'validation-pass',
+          label: `Validation passed — ${noteCount} notes checked`,
+          detail: `All non-drum notes conform to ${comp.key} ${comp.scale}. Loaded into piano roll.`,
+        });
+
         // Load project into app
         useProjectStore.getState().loadNewProject(project);
 
@@ -215,14 +277,25 @@ async function _runGenerate(
       }
 
       // Validation failed — pass errors to next attempt
+      addLog({
+        type: 'validation-fail',
+        label: `Validation failed — ${uniqueErrors.length} error(s)`,
+        detail: uniqueErrors.map(e => `• ${e}`).join('\n'),
+      });
       previousErrors = uniqueErrors;
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : String(err);
       previousErrors = [errMsg];
+      addLog({ type: 'validation-fail', label: `Exception on attempt ${attempt + 1}`, detail: errMsg });
     }
   }
 
   // All 3 attempts failed — fall back to assembleProject()
+  addLog({
+    type: 'fallback',
+    label: 'Fallback triggered — all 3 attempts failed',
+    detail: `Last errors:\n${previousErrors.map(e => `• ${e}`).join('\n')}\n\nUsing template assembler (assembleProject).`,
+  });
   set({ phase: 'fallback' });
 
   const genre = extractGenreFromPrompt(prompt);
@@ -264,6 +337,8 @@ const INITIAL_STATE: Pick<
   | 'tokenUsage'
   | 'costEstimate'
   | 'lastError'
+  | 'debugLogs'
+  | 'debugEpoch'
 > = {
   phase: 'idle',
   originalPrompt: '',
@@ -272,6 +347,8 @@ const INITIAL_STATE: Pick<
   tokenUsage: null,
   costEstimate: null,
   lastError: null,
+  debugLogs: [],
+  debugEpoch: 0,
 };
 
 export const useAiCompositionStore = create<AiCompositionState>((set, get) => ({
@@ -281,6 +358,12 @@ export const useAiCompositionStore = create<AiCompositionState>((set, get) => ({
   // startClarification
   // -------------------------------------------------------------------------
   startClarification: async (prompt: string) => {
+    const epoch = Date.now();
+
+    const addLog = (entry: Omit<DebugLogEntry, 'timestamp'>) => {
+      set({ debugLogs: [...get().debugLogs, { ...entry, timestamp: Date.now() - epoch }] });
+    };
+
     set({
       phase: 'questioning',
       originalPrompt: prompt,
@@ -289,6 +372,8 @@ export const useAiCompositionStore = create<AiCompositionState>((set, get) => ({
       tokenUsage: null,
       costEstimate: null,
       lastError: null,
+      debugEpoch: epoch,
+      debugLogs: [{ type: 'clarify-request', label: 'Clarify request sent', detail: `Prompt: "${prompt}"`, timestamp: 0 }],
     });
 
     try {
@@ -324,15 +409,25 @@ export const useAiCompositionStore = create<AiCompositionState>((set, get) => ({
       }
 
       if (questions.length > 0) {
+        addLog({
+          type: 'clarify-response',
+          label: `${questions.length} clarifying question(s) received`,
+          detail: questions.map((q, i) => `${i + 1}. ${q}`).join('\n'),
+        });
         set({
           phase: 'answering',
           clarifyingTurn: { questions, answers: [] },
           tokenUsage: clarifyUsage,
         });
       } else {
+        addLog({
+          type: 'clarify-response',
+          label: 'No questions — prompt detailed enough, skipping to generate',
+          detail: 'GPT-4o returned an empty questions array.',
+        });
         // Prompt was detailed enough — skip directly to generate
         set({ tokenUsage: clarifyUsage });
-        await _runGenerate(prompt, null, set, get);
+        await _runGenerate(prompt, null, set, get, epoch);
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : String(err);
@@ -362,14 +457,14 @@ export const useAiCompositionStore = create<AiCompositionState>((set, get) => ({
     const estimate = estimateTokensAndCost(systemPromptApprox, conversationText, 3000);
     set({ costEstimate: estimate });
 
-    await _runGenerate(originalPrompt, updatedTurn, set, get);
+    await _runGenerate(originalPrompt, updatedTurn, set, get, get().debugEpoch);
   },
 
   // -------------------------------------------------------------------------
   // skipQuestions
   // -------------------------------------------------------------------------
   skipQuestions: async () => {
-    const { originalPrompt } = get();
+    const { originalPrompt, debugEpoch } = get();
     set({ clarifyingTurn: null });
 
     // Estimate cost with just the prompt
@@ -378,7 +473,7 @@ export const useAiCompositionStore = create<AiCompositionState>((set, get) => ({
     const estimate = estimateTokensAndCost(systemPromptApprox, originalPrompt, 3000);
     set({ costEstimate: estimate });
 
-    await _runGenerate(originalPrompt, null, set, get);
+    await _runGenerate(originalPrompt, null, set, get, debugEpoch);
   },
 
   // -------------------------------------------------------------------------
