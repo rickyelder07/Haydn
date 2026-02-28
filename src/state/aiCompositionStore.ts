@@ -14,6 +14,7 @@
  */
 
 import { create } from 'zustand';
+import { toast } from 'sonner';
 import type { TokenEstimate } from '@/lib/openai/tokenCounter';
 import { estimateTokensAndCost, calculateActualCost } from '@/lib/openai/tokenCounter';
 import { compositionToHaydnProject } from '@/lib/openai/aiComposeSchema';
@@ -201,6 +202,15 @@ async function _runGenerate(
         useProjectStore.getState().loadNewProject(project);
 
         set({ phase: 'success', tokenUsage: cumulative });
+
+        // Show persistent toast — GenerationInput unmounts when project loads,
+        // so the in-panel success banner is invisible. The Toaster in page.tsx
+        // survives the transition and shows the token/cost summary.
+        toast.success('AI composition complete!', {
+          description: `${cumulative.totalTokens} tokens (clarify: ${cumulative.clarifyTokens}, generate: ${cumulative.generateTokens}) · ~$${cumulative.totalCost.toFixed(4)}`,
+          duration: 8000,
+        });
+
         return;
       }
 
@@ -294,7 +304,8 @@ export const useAiCompositionStore = create<AiCompositionState>((set, get) => ({
       }
 
       const data = await response.json();
-      const questions: string[] = data.questions ?? [];
+      // API returns { type: 'questions', data: { questions: string[] }, usage }
+      const questions: string[] = data.data?.questions ?? [];
 
       // Accumulate clarify token usage
       const usage = data.usage as
