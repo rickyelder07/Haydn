@@ -207,15 +207,39 @@ async function _runGenerate(
         ].join('\n'),
       });
 
+      // Bar count check — reject early if composition is significantly too short
+      const barMatch = prompt.match(/(\d+)\s*bars?/i);
+      if (barMatch) {
+        const requestedBars = parseInt(barMatch[1], 10);
+        const targetTicks = requestedBars * 1920;
+        if (approxBars < Math.floor(requestedBars * 0.6)) {
+          addLog({
+            type: 'validation-fail',
+            label: `Too short: ~${approxBars} bars generated, ${requestedBars} requested`,
+            detail: `Composition spans ~${maxTick} ticks (~${approxBars} bars). Target: ${requestedBars} bars = ${targetTicks} ticks.`,
+          });
+          previousErrors = [
+            `Composition is only ~${approxBars} bars but ${requestedBars} bars were requested. ` +
+            `Target end tick is ${targetTicks} (${requestedBars} × 1920 ticks/bar). ` +
+            `Extend all tracks so notes continue through tick ${targetTicks}. Repeat and develop your patterns to fill the full length.`,
+          ];
+          continue;
+        }
+      }
+
       // Convert to HaydnProject
       const project = compositionToHaydnProject(comp);
 
-      // Validate — only error severity, skip drums (channel 9)
+      // Validate — threshold-based scale check + other validators
       const allErrors: string[] = [];
+      let melodicNoteCount = 0;
+      let scaleViolationCount = 0;
+
       for (const track of project.tracks) {
         if (track.channel === 9) continue; // skip percussion
 
         for (const note of track.notes) {
+          melodicNoteCount++;
           const context = {
             note,
             track,
@@ -225,10 +249,27 @@ async function _runGenerate(
           const result = pipeline.validate(context);
           if (!result.valid) {
             for (const err of result.errors) {
-              allErrors.push(err.message);
+              if (err.type === 'scale') {
+                scaleViolationCount++;
+              } else {
+                allErrors.push(err.message);
+              }
             }
           }
         }
+      }
+
+      // Only fail on scale violations if >25% of melodic notes are out of scale.
+      // Below this threshold, violations are likely intentional chromatic notes.
+      const SCALE_THRESHOLD = 0.25;
+      if (melodicNoteCount > 0 && scaleViolationCount / melodicNoteCount > SCALE_THRESHOLD) {
+        const rate = Math.round((scaleViolationCount / melodicNoteCount) * 100);
+        const ks = project.metadata.keySignatures[0];
+        const keyDesc = ks ? `${ks.key} ${ks.scale}` : 'the declared key';
+        allErrors.push(
+          `${rate}% of melodic notes fall outside ${keyDesc} — the declared key likely doesn't match the notes written. ` +
+          `Either use a more appropriate key/scale declaration, or adjust the notes to fit ${keyDesc}.`
+        );
       }
 
       const uniqueErrors = [...new Set(allErrors)];

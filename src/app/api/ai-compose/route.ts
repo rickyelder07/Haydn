@@ -64,9 +64,18 @@ PPQ (Pulses Per Quarter Note) = 480
 - Bar 2 beat 1 = 1920, bar 3 beat 1 = 3840, bar 3 beat 2 = 3840 + 480 = 4320
 - Align ALL note start times to beat grid (multiples of 480)
 
+## Bar Count (CRITICAL)
+If the user specifies a number of bars, you MUST fill the entire length. Short compositions will be rejected.
+- 4 bars  = last note ends near tick 7680
+- 8 bars  = last note ends near tick 15360
+- 12 bars = last note ends near tick 23040
+- 16 bars = last note ends near tick 30720
+- 32 bars = last note ends near tick 61440
+Rules: start at tick 0, continue through the target tick, repeat and develop patterns across ALL bars.
+Do NOT stop writing notes at bar 4 when more bars are requested.
+
 ## Composition Rules
-- If the user specified a bar count (e.g. "8 bars", "16 bars"), target exactly that length. Never exceed 32 bars.
-- If no bar count is specified, default to 8 bars.
+- If no bar count is specified, default to 8 bars. Never exceed 32 bars.
 - Use multiple tracks: drums on channel 9, melodic tracks on channels 0-3
 - Velocity: 0.0-1.0 range (typical notes: 0.6-0.85, accents: 0.9)
 - Do NOT overlap notes on the same pitch in the same track
