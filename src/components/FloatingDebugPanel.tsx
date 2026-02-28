@@ -8,13 +8,11 @@ import { useAiCompositionStore, type DebugLogEntry, type DebugLogType } from '@/
 // ---------------------------------------------------------------------------
 
 const TYPE_STYLES: Record<DebugLogType, { bar: string; badge: string; label: string }> = {
-  'clarify-request':   { bar: 'bg-blue-500/60',    badge: 'bg-blue-500/15 text-blue-300',      label: 'CLARIFY →'  },
-  'clarify-response':  { bar: 'bg-cyan-500/60',    badge: 'bg-cyan-500/15 text-cyan-300',      label: 'CLARIFY ←'  },
-  'generate-request':  { bar: 'bg-purple-500/60',  badge: 'bg-purple-500/15 text-purple-300',  label: 'GEN →'      },
-  'generate-response': { bar: 'bg-emerald-500/60', badge: 'bg-emerald-500/15 text-emerald-300',label: 'GEN ←'      },
-  'validation-pass':   { bar: 'bg-green-500/60',   badge: 'bg-green-500/15 text-green-300',    label: 'VALID ✓'    },
-  'validation-fail':   { bar: 'bg-red-500/60',     badge: 'bg-red-500/15 text-red-300',        label: 'INVALID ✗'  },
+  'scaffold-request':  { bar: 'bg-blue-500/60',    badge: 'bg-blue-500/15 text-blue-300',      label: 'SCAFFOLD →' },
+  'scaffold-response': { bar: 'bg-cyan-500/60',    badge: 'bg-cyan-500/15 text-cyan-300',      label: 'SCAFFOLD ←' },
+  'scaffold-summary':  { bar: 'bg-purple-500/60',  badge: 'bg-purple-500/15 text-purple-300',  label: 'ANALYSIS'   },
   'fallback':          { bar: 'bg-amber-500/60',   badge: 'bg-amber-500/15 text-amber-300',    label: 'FALLBACK'   },
+  'error':             { bar: 'bg-red-500/60',     badge: 'bg-red-500/15 text-red-300',        label: 'ERROR'      },
 };
 
 function formatMs(ms: number): string {
@@ -67,6 +65,7 @@ const TITLE_HEIGHT = 40;
 
 export function FloatingDebugPanel() {
   const logs = useAiCompositionStore(s => s.debugLogs);
+  const tokenUsage = useAiCompositionStore(s => s.tokenUsage);
 
   const [visible, setVisible] = useState(false);
   const [minimized, setMinimized] = useState(false);
@@ -146,6 +145,11 @@ export function FloatingDebugPanel() {
             </svg>
             <span className="text-xs font-medium text-gray-400">Generation log</span>
             <span className="text-[10px] text-gray-600 font-mono">{logs.length} events</span>
+            {tokenUsage && (
+              <span className="text-[10px] font-mono text-cyan-500/70">
+                {tokenUsage.totalTokens} tok · ${tokenUsage.totalCost.toFixed(4)}
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-1">
             <button

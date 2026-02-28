@@ -4,13 +4,11 @@ import { useState } from 'react';
 import type { DebugLogEntry, DebugLogType } from '@/state/aiCompositionStore';
 
 const TYPE_STYLES: Record<DebugLogType, { bar: string; badge: string; label: string }> = {
-  'clarify-request':   { bar: 'bg-blue-500/60',    badge: 'bg-blue-500/15 text-blue-300',    label: 'CLARIFY →' },
-  'clarify-response':  { bar: 'bg-cyan-500/60',    badge: 'bg-cyan-500/15 text-cyan-300',    label: 'CLARIFY ←' },
-  'generate-request':  { bar: 'bg-purple-500/60',  badge: 'bg-purple-500/15 text-purple-300', label: 'GENERATE →' },
-  'generate-response': { bar: 'bg-emerald-500/60', badge: 'bg-emerald-500/15 text-emerald-300', label: 'GENERATE ←' },
-  'validation-pass':   { bar: 'bg-green-500/60',   badge: 'bg-green-500/15 text-green-300',  label: 'VALID ✓' },
-  'validation-fail':   { bar: 'bg-red-500/60',     badge: 'bg-red-500/15 text-red-300',      label: 'INVALID ✗' },
-  'fallback':          { bar: 'bg-amber-500/60',   badge: 'bg-amber-500/15 text-amber-300',  label: 'FALLBACK' },
+  'scaffold-request':  { bar: 'bg-blue-500/60',    badge: 'bg-blue-500/15 text-blue-300',    label: 'SCAFFOLD →' },
+  'scaffold-response': { bar: 'bg-cyan-500/60',    badge: 'bg-cyan-500/15 text-cyan-300',    label: 'SCAFFOLD ←' },
+  'scaffold-summary':  { bar: 'bg-purple-500/60',  badge: 'bg-purple-500/15 text-purple-300', label: 'ANALYSIS'  },
+  'fallback':          { bar: 'bg-amber-500/60',   badge: 'bg-amber-500/15 text-amber-300',  label: 'FALLBACK'   },
+  'error':             { bar: 'bg-red-500/60',     badge: 'bg-red-500/15 text-red-300',      label: 'ERROR'      },
 };
 
 function formatMs(ms: number): string {

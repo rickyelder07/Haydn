@@ -1,221 +1,80 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { openai } from '@/lib/openai/client';
-import { QuestionsSchema, MidiCompositionSchema } from '@/lib/openai/aiComposeSchema';
-import { zodResponseFormat } from 'openai/helpers/zod';
-import { withExponentialBackoff } from '@/lib/openai/retry';
+import { anthropic } from '@/lib/anthropic/client';
+import { pickSeeds } from '@/lib/scaffold/seeds';
+import { resolveAllSections } from '@/lib/scaffold/resolveProgression';
+import { assembleFromScaffold } from '@/lib/scaffold/assembleFromScaffold';
+import type { MusicSpec, DisplayOutput, DisplaySection } from '@/lib/scaffold/types';
 
 /**
  * POST /api/ai-compose
  *
- * Unified clarify + generate endpoint for AI composition mode.
+ * Scaffold-based AI composition: single Claude call → MusicSpec JSON
+ * → Tonal.js resolution → assembleFromScaffold() → HaydnProject.
  *
- * Clarify call (no generateAttempt):
- *   Body: { prompt, clarifyingHistory? }
- *   Response: { type: 'questions', data: { questions: string[] }, usage }
- *
- * Generate call (generateAttempt present):
- *   Body: { prompt, clarifyingHistory?, generateAttempt, validationErrors? }
- *   Response: { type: 'composition', data: MidiComposition, usage }
- *
- * Error responses:
- * - 400: Invalid request (missing/invalid prompt, prompt too long)
- * - 500: OpenAI API error or parse failure
+ * Body: { prompt: string, barCount?: number }
+ * Response: { type: 'scaffold', data: { project, displayOutput }, usage }
  */
 
 // ---------------------------------------------------------------------------
-// System prompt builders
+// System prompt
 // ---------------------------------------------------------------------------
 
-function buildClarifySystemPrompt(): string {
-  return `You are a music composition assistant. A user wants you to compose original MIDI music.
-Ask up to 3 clarifying questions to better understand their musical vision.
+function buildSystemPrompt(stylisticSeeds: string[], barCount: number): string {
+  return `You are a professional music composer and arranger. Your task is to generate a complete harmonic scaffold for a MIDI composition as structured JSON.
 
-Ask ONLY questions that will meaningfully change the composition:
-- Mood or emotion (e.g., melancholic, energetic, peaceful)
-- Length (e.g., 16 bars, 32 bars)
-- Specific instruments or style elements
+## Your Role
+You produce a HIGH-LEVEL musical blueprint — key, mode, tempo, song sections with Roman numeral chord progressions, and rationale. You do NOT write individual MIDI notes. The system's code handles note generation from your blueprint.
 
-Rules:
-- Ask at most 3 questions
-- Ask all questions at once (not one at a time)
-- If the user's prompt is already detailed, return an empty questions array
-- Keep questions concise and non-technical`;
-}
+## Output Format
+Return ONLY a valid JSON object matching this exact schema (no markdown, no explanation):
 
-function buildGenerateSystemPrompt(): string {
-  return `You are a MIDI composer. Generate a complete, original MIDI composition as structured JSON.
-
-## Clarifying Answers (HIGHEST PRIORITY)
-If the user's prompt contains a "Clarifying answers" section, those answers are hard constraints.
-Apply every stated answer directly to the composition:
-- Stated mood/emotion → shape velocity, note density, melodic contour, and harmonic choices
-- Stated length in bars → target exactly that number of bars
-- Stated instruments or sounds → use those as the track roles
-- Stated key or scale → use that key and scale throughout
-- Stated tempo → use that BPM
-- Stated style or genre → reflect it in rhythm, harmony, and instrumentation
-Answers override all defaults. Do not ignore them.
-
-## Timing Rules (CRITICAL)
-PPQ (Pulses Per Quarter Note) = 480
-- Beat 1 of bar 1 = tick 0
-- Each beat = 480 ticks
-- Bar length (4/4) = 4 beats × 480 = 1920 ticks
-- Bar 2 beat 1 = 1920, bar 3 beat 1 = 3840, bar 3 beat 2 = 3840 + 480 = 4320
-- Align ALL note start times to beat grid (multiples of 480)
-
-## Bar Count (CRITICAL)
-If the user specifies a number of bars, you MUST fill the entire length. Short compositions will be rejected.
-- 4 bars  = last note ends near tick 7680
-- 8 bars  = last note ends near tick 15360
-- 12 bars = last note ends near tick 23040
-- 16 bars = last note ends near tick 30720
-- 32 bars = last note ends near tick 61440
-Rules: start at tick 0, continue through the target tick, repeat and develop patterns across ALL bars.
-Do NOT stop writing notes at bar 4 when more bars are requested.
-
-## Composition Rules
-- If no bar count is specified, default to 8 bars. Never exceed 32 bars.
-- Use multiple tracks: drums on channel 9, melodic tracks on channels 0-3
-- Velocity: 0.0-1.0 range (typical notes: 0.6-0.85, accents: 0.9)
-- Do NOT overlap notes on the same pitch in the same track
-- Drums use channel 9 (GM standard percussion map: kick=36, snare=38, hihat=42/44/46)
-
-## Track Role Defaults
-- **Melody tracks**: Do NOT include a melody track unless the user explicitly asks for one (e.g., "with a melody", "melodic lead", "lead synth"). Most compositions work better without a dedicated melody — let drums, bass, and chords/pads carry the arrangement.
-- **Guitar**: Guitar is a rhythm and harmony instrument by default. If the user mentions "guitar", write it as a chord-strumming or scale-based rhythm part that adds flavor and layering — NOT a single-note lead melody line. Use arpeggios, chord voicings, or scale runs on the guitar track. Only write guitar as a single-note melody if the user explicitly requests "lead guitar", "guitar solo", or "guitar melody".
-
-## Quality Standards
-- Produce musical, rhythmically coherent output
-- Bass notes should mostly align with chord root notes
-- Melodies should move mostly by steps with occasional leaps
-- Include dynamics: vary velocity across notes (not all identical)`;
-}
-
-// ---------------------------------------------------------------------------
-// Clarify handler
-// ---------------------------------------------------------------------------
-
-type ChatMessage = { role: 'user' | 'assistant' | 'system'; content: string };
-
-async function handleClarify(
-  prompt: string,
-  history: ChatMessage[]
-): Promise<NextResponse> {
-  try {
-    const completion = await withExponentialBackoff(() =>
-      openai.chat.completions.parse({
-        model: 'gpt-4o-2024-08-06',
-        messages: [
-          { role: 'system', content: buildClarifySystemPrompt() },
-          { role: 'user', content: prompt },
-          ...history,
-        ],
-        response_format: zodResponseFormat(QuestionsSchema, 'questions'),
-      })
-    );
-
-    const parsed = completion.choices[0]?.message?.parsed;
-
-    if (!parsed) {
-      return NextResponse.json(
-        { error: 'Failed to parse GPT-4o clarify response' },
-        { status: 500 }
-      );
+{
+  "key": "C",                          // Root note: C, C#, Db, D, D#, Eb, E, F, F#, Gb, G, G#, Ab, A, A#, Bb, B
+  "mode": "minor",                      // major | minor | dorian | mixolydian | harmonic minor
+  "tempo_bpm": 90,                      // Integer 40–240
+  "time_signature": "4/4",             // Always "4/4" for now
+  "feel": "melancholic late-night jazz", // Free-form descriptive string
+  "stylistic_seeds": ["walking bass", "tritone substitution"], // Subset of provided seeds you used
+  "tension_arc": "Builds from sparse intro through mounting verse tension, peaks at chorus, releases to reflective outro",
+  "genre_hint": "jazz",                // lofi | trap | boom-bap | jazz | classical | pop
+  "sections": [
+    {
+      "name": "Intro",
+      "bars": 4,
+      "role": "intro",                 // intro | verse | chorus | bridge | outro
+      "progression": ["i", "VI", "III", "VII"], // Roman numerals, 1 per bar (cycle if section.bars > progression.length)
+      "rhythm_density": 0.4,           // 0.0 (sparse) to 1.0 (dense)
+      "rationale": "Opens with a restrained i–VI–III–VII to establish key without revealing full energy"
     }
-
-    const usage = {
-      promptTokens: completion.usage?.prompt_tokens || 0,
-      completionTokens: completion.usage?.completion_tokens || 0,
-      totalTokens: completion.usage?.total_tokens || 0,
-    };
-
-    return NextResponse.json({ type: 'questions', data: parsed, usage });
-  } catch (error) {
-    console.error('[ai-compose] handleClarify error:', error);
-    return NextResponse.json(
-      { error: 'Clarify phase failed', message: String(error) },
-      { status: 500 }
-    );
-  }
+  ]
 }
 
-// ---------------------------------------------------------------------------
-// Generate handler
-// ---------------------------------------------------------------------------
+## Bar Count Requirement (CRITICAL)
+Target total bars: **${barCount}**
+The sum of all section.bars MUST equal exactly ${barCount}.
+Distribute bars naturally across sections (intro: 2–4, verse: 4–8, chorus: 4–8, bridge: 4, outro: 2–4).
 
-/**
- * Merges the original prompt and Q&A history into a single enriched user message
- * so the model cannot miss the answers when generating under Structured Outputs.
- */
-function buildEnrichedPrompt(prompt: string, history: ChatMessage[]): string {
-  const questionsMsg = history.find(m => m.role === 'assistant');
-  const answersMsg = history.findLast(m => m.role === 'user');
-  if (!questionsMsg || !answersMsg) return prompt;
+## Roman Numeral Rules
+- Use standard uppercase for major chords: I, II, III, IV, V, VI, VII
+- Use lowercase for minor chords: i, ii, iii, iv, v, vi, vii
+- Add quality modifiers: maj7, 7, m7, °, °7, ø7 (e.g., "Imaj7", "V7", "ii°")
+- Secondary dominants: V/V, V7/IV, viio7/vi (slash notation)
+- Borrowed chords: bVII, bVI, bIII (flat prefix)
+- Each progression array entry = 1 bar; cycle if section has more bars than progression entries
+- Minimum 2 different chords per section
 
-  const questions = questionsMsg.content.split('\n').filter(Boolean);
-  const answers = answersMsg.content.split('\n').filter(Boolean);
+## Stylistic Seeds (inject harmonic interest using some of these)
+The following seeds were randomly selected for this composition:
+${stylisticSeeds.map((s, i) => `  ${i + 1}. ${s}`).join('\n')}
 
-  const qaLines = questions
-    .map((q, i) => `Q: ${q}\nA: ${answers[i] ?? '(no answer)'}`)
-    .join('\n\n');
+Use at least 1–2 of these seeds somewhere in the piece. Note which seeds you used in the stylistic_seeds field.
 
-  return `${prompt}\n\nClarifying answers:\n${qaLines}`;
-}
-
-async function handleGenerate(
-  prompt: string,
-  history: ChatMessage[],
-  attempt: number,
-  validationErrors?: string[]
-): Promise<NextResponse> {
-  try {
-    const enrichedPrompt = buildEnrichedPrompt(prompt, history);
-
-    const messages: ChatMessage[] = [
-      { role: 'system', content: buildGenerateSystemPrompt() },
-      { role: 'user', content: enrichedPrompt },
-    ];
-
-    // On retry attempts, append correction context
-    if (attempt > 0 && validationErrors?.length) {
-      messages.push({
-        role: 'user',
-        content: `Previous attempt failed music theory validation:\n${validationErrors.join('\n')}\nPlease fix these issues in the new composition.`,
-      });
-    }
-
-    const completion = await withExponentialBackoff(() =>
-      openai.chat.completions.parse({
-        model: 'gpt-4o-2024-08-06',
-        messages,
-        response_format: zodResponseFormat(MidiCompositionSchema, 'midi_composition'),
-      })
-    );
-
-    const parsed = completion.choices[0]?.message?.parsed;
-
-    if (!parsed) {
-      return NextResponse.json(
-        { error: 'Failed to parse GPT-4o composition response' },
-        { status: 500 }
-      );
-    }
-
-    const usage = {
-      promptTokens: completion.usage?.prompt_tokens || 0,
-      completionTokens: completion.usage?.completion_tokens || 0,
-      totalTokens: completion.usage?.total_tokens || 0,
-    };
-
-    return NextResponse.json({ type: 'composition', data: parsed, usage });
-  } catch (error) {
-    console.error('[ai-compose] handleGenerate error:', error);
-    return NextResponse.json(
-      { error: 'Generate phase failed', message: String(error) },
-      { status: 500 }
-    );
-  }
+## Composition Guidelines
+- Key should fit the mood (minor for dark/melancholic, major for bright/uplifting, dorian for funky/modal)
+- Tempo: lofi 70–90, jazz 100–160, pop 110–130, trap 130–160, boom-bap 85–95, classical 60–120
+- Avoid generic I–IV–V–I everywhere; create harmonic interest and motion
+- Tension arc should be reflected in the chord choices (denser/more dissonant in climax sections)
+- Each section's rationale should explain the harmonic logic concisely (1–2 sentences)`;
 }
 
 // ---------------------------------------------------------------------------
@@ -223,44 +82,119 @@ async function handleGenerate(
 // ---------------------------------------------------------------------------
 
 export async function POST(request: NextRequest) {
-  // Parse request body
   const body = await request.json().catch(() => null);
 
   if (!body || typeof body !== 'object') {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
   }
 
-  const {
-    prompt,
-    clarifyingHistory = [],
-    generateAttempt,
-    validationErrors,
-  } = body as {
-    prompt?: unknown;
-    clarifyingHistory?: ChatMessage[];
-    generateAttempt?: number;
-    validationErrors?: string[];
-  };
+  const { prompt, barCount = 8 } = body as { prompt?: unknown; barCount?: number };
 
-  // Validate prompt
   if (!prompt || typeof prompt !== 'string' || prompt.length === 0) {
-    return NextResponse.json(
-      { error: 'Missing or invalid prompt' },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: 'Missing or invalid prompt' }, { status: 400 });
   }
 
   if (prompt.length > 500) {
-    return NextResponse.json(
-      { error: 'Prompt exceeds 500 character limit' },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: 'Prompt exceeds 500 character limit' }, { status: 400 });
   }
 
-  // Dispatch to correct handler based on generateAttempt presence
-  if (generateAttempt !== undefined) {
-    return handleGenerate(prompt, clarifyingHistory, generateAttempt, validationErrors);
-  } else {
-    return handleClarify(prompt, clarifyingHistory);
+  const targetBars = Math.max(4, Math.min(32, Number(barCount) || 8));
+  const seeds = pickSeeds(3);
+
+  try {
+    // --- 1. Call Claude to generate MusicSpec ---
+    const systemPrompt = buildSystemPrompt(seeds, targetBars);
+    const userMessage = `Compose: ${prompt}\n\nTarget length: ${targetBars} bars total.`;
+
+    const response = await anthropic.messages.create({
+      model: 'claude-opus-4-6',
+      max_tokens: 2000,
+      temperature: 1.0,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userMessage }],
+    });
+
+    const rawText = response.content
+      .filter(block => block.type === 'text')
+      .map(block => block.text)
+      .join('');
+
+    // Extract JSON from response (handle potential markdown code fences)
+    const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      console.error('[ai-compose] No JSON found in Claude response:', rawText.slice(0, 500));
+      return NextResponse.json(
+        { error: 'Claude did not return valid JSON', rawText: rawText.slice(0, 200) },
+        { status: 500 }
+      );
+    }
+
+    let spec: MusicSpec;
+    try {
+      spec = JSON.parse(jsonMatch[0]) as MusicSpec;
+    } catch (parseErr) {
+      console.error('[ai-compose] JSON parse error:', parseErr);
+      return NextResponse.json(
+        { error: 'Failed to parse MusicSpec JSON', detail: String(parseErr) },
+        { status: 500 }
+      );
+    }
+
+    // Validate required fields
+    if (!spec.key || !spec.mode || !spec.tempo_bpm || !Array.isArray(spec.sections) || spec.sections.length === 0) {
+      console.error('[ai-compose] Invalid MusicSpec structure:', JSON.stringify(spec).slice(0, 300));
+      return NextResponse.json(
+        { error: 'MusicSpec missing required fields (key, mode, tempo_bpm, sections)' },
+        { status: 500 }
+      );
+    }
+
+    // --- 2. Resolve progressions via Tonal.js ---
+    const resolvedSections = resolveAllSections(spec.sections, spec.key, spec.mode);
+
+    // --- 3. Assemble HaydnProject ---
+    const project = assembleFromScaffold(spec, resolvedSections);
+
+    // --- 4. Build DisplayOutput ---
+    const displaySections: DisplaySection[] = resolvedSections.map((rs, i) => {
+      const specSection = spec.sections[i];
+      return {
+        name: rs.name,
+        role: rs.role,
+        bars: rs.bars,
+        progressionRoman: specSection?.progression ?? [],
+        progressionNamed: rs.chords.map(c => c.chordName),
+        rationale: rs.rationale,
+      };
+    });
+
+    const displayOutput: DisplayOutput = {
+      title: `${spec.feel} — ${spec.key} ${spec.mode}`,
+      key: `${spec.key} ${spec.mode}`,
+      tempo: spec.tempo_bpm,
+      feel: spec.feel,
+      tensionArc: spec.tension_arc,
+      stylisticSeedsUsed: spec.stylistic_seeds ?? seeds,
+      sections: displaySections,
+    };
+
+    // --- 5. Token usage ---
+    const usage = {
+      inputTokens: response.usage.input_tokens,
+      outputTokens: response.usage.output_tokens,
+      totalTokens: response.usage.input_tokens + response.usage.output_tokens,
+    };
+
+    return NextResponse.json({
+      type: 'scaffold',
+      data: { project, displayOutput },
+      usage,
+    });
+  } catch (error) {
+    console.error('[ai-compose] Scaffold generation failed:', error);
+    return NextResponse.json(
+      { error: 'Scaffold generation failed', message: String(error) },
+      { status: 500 }
+    );
   }
 }
