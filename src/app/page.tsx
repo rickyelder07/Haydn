@@ -12,6 +12,7 @@ import { ErrorDisplay } from '@/components/ErrorDisplay';
 import { PianoRollEditor } from '@/components/PianoRoll';
 import { GenerationInput } from '@/components/GenerationInput';
 import { FloatingEditPanel } from '@/components/FloatingEditPanel';
+import { FloatingDebugPanel } from '@/components/FloatingDebugPanel';
 import { Sidebar } from '@/components/Sidebar';
 import { NewProjectButton } from '@/components/NewProjectButton';
 import { InlineEdit } from '@/components/InlineEdit';
@@ -249,6 +250,9 @@ export default function Home() {
 
       {/* Floating AI Editor — toggled via the footer AI Editor button */}
       {project && showAiEditor && <FloatingEditPanel />}
+
+      {/* Floating generation log — persists through project load */}
+      <FloatingDebugPanel />
 
       {/* Toast notifications for theory violations and other alerts */}
       <Toaster position="bottom-right" richColors />

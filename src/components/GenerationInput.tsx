@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { useNLGenerationStore } from '@/state/nlGenerationStore';
 import { useAiCompositionStore } from '@/state/aiCompositionStore';
-import { AiDebugPanel } from '@/components/AiDebugPanel';
 
 const SparkleIcon = () => (
   <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
@@ -47,7 +46,6 @@ export function GenerationInput() {
     costEstimate,
     lastError: aiError,
     generateAttempt,
-    debugLogs,
     startClarification,
     submitAnswers,
     skipQuestions,
@@ -331,8 +329,7 @@ export function GenerationInput() {
             </button>
           )}
 
-          {/* Generation log */}
-          <AiDebugPanel logs={debugLogs} />
+
         </div>
       )}
     </div>
