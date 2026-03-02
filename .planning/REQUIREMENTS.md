@@ -46,12 +46,12 @@ Requirements for v1.1 Polish & Enhancement milestone. Each maps to roadmap phase
 
 ### Template Generation Enhancement
 
-- [ ] **TMPL-01**: Each genre has 3-5 verse pattern variations
-- [ ] **TMPL-02**: Each genre has 3-5 chorus pattern variations
-- [ ] **TMPL-03**: Each genre has 8 drum fill variations
+- [x] **TMPL-01**: Each genre has 3-5 verse pattern variations
+- [x] **TMPL-02**: Each genre has 3-5 chorus pattern variations
+- [x] **TMPL-03**: Each genre has 8 drum fill variations
 - [ ] **TMPL-04**: Pattern variations selected randomly per generation
 - [ ] **TMPL-05**: Drum fills selected randomly at section boundaries
-- [ ] **TMPL-06**: Generated MIDI maintains genre consistency across all pattern variations
+- [x] **TMPL-06**: Generated MIDI maintains genre consistency across all pattern variations
 
 ### Velocity Editing
 
@@ -177,12 +177,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AI-08 | Phase 11 | Complete |
 | AI-09 | Phase 11 | Complete |
 | AI-10 | Phase 11 | Complete |
-| TMPL-01 | Phase 12 | Pending |
-| TMPL-02 | Phase 12 | Pending |
-| TMPL-03 | Phase 12 | Pending |
+| TMPL-01 | Phase 12 | Complete |
+| TMPL-02 | Phase 12 | Complete |
+| TMPL-03 | Phase 12 | Complete |
 | TMPL-04 | Phase 12 | Pending |
 | TMPL-05 | Phase 12 | Pending |
-| TMPL-06 | Phase 12 | Pending |
+| TMPL-06 | Phase 12 | Complete |
 | VEL-01 | Phase 13 | Pending |
 | VEL-02 | Phase 13 | Pending |
 | VEL-03 | Phase 13 | Pending |
