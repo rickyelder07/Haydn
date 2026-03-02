@@ -24,6 +24,7 @@ interface EditState {
   deleteNote: (noteIndex: number) => void;
   moveNote: (noteIndex: number, newMidi: number, newTicks: number) => void;
   updateNote: (noteIndex: number, updates: Partial<HaydnNote>) => void;
+  updateNoteDirectly: (noteIndex: number, updates: Partial<HaydnNote>) => void;
   applyBatchEdit: (notes: HaydnNote[]) => void;
   undo: () => void;
   redo: () => void;
@@ -275,6 +276,25 @@ export const useEditStore = create<EditState>((set, get) => ({
       canUndo: state._history.canUndo(),
       canRedo: state._history.canRedo(),
     });
+  },
+
+  // Update note WITHOUT pushing to history — for real-time drag operations (velocity lane)
+  // Call editStore.updateNote() on mouseup to record one undo-able history entry
+  updateNoteDirectly: (noteIndex, updates) => {
+    const state = get();
+    if (state.selectedTrackIndex === null) return;
+
+    const project = useProjectStore.getState().project;
+    if (!project) return;
+
+    const currentNotes = [...project.tracks[state.selectedTrackIndex].notes];
+    if (noteIndex < 0 || noteIndex >= currentNotes.length) return;
+
+    currentNotes[noteIndex] = { ...currentNotes[noteIndex], ...updates };
+
+    // Write directly to project store — do NOT call state._history.push()
+    syncToProjectStore(state.selectedTrackIndex, currentNotes);
+    // Note: canUndo/canRedo flags intentionally unchanged
   },
 
   // Apply batch edit (for NL edits - single undo/redo step)
