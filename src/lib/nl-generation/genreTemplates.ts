@@ -36,6 +36,8 @@ export interface GenreTemplate {
   name: string;
   chordProgressions: Record<SectionType, string[][]>; // Roman numerals
   drumPatterns: Record<SectionType, DrumPattern>;
+  // 8 single-bar fill patterns, selected randomly at section boundaries (empty array for genres with no drums)
+  drumFills: DrumPattern[];
   defaultInstrumentation: {
     drums: number;   // GM program number (0 for standard kit)
     bass: number;    // GM program number
