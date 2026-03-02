@@ -22,10 +22,10 @@ See: .planning/PROJECT.md (updated 2026-02-12)
 
 ## Current Position
 
-Phase: 12 of 14 — IN PROGRESS
-Plan: 12-01 complete, 12-02 is next
-Status: Phase 12 Plan 01 complete — GenreTemplate interface + expanded progressions + 8 drum fills per genre
-Last activity: 2026-03-02 — Plan 12-01 complete: drumFills interface + 3-5 chord progressions + 8 fills per genre, tsc --noEmit clean
+Phase: 12 of 14 — COMPLETE
+Plan: 12-02 complete (all 2 plans done)
+Status: Phase 12 complete — random chord progression selection + drum fill injection wired end-to-end
+Last activity: 2026-03-02 — Plan 12-02 complete: per-section random progressionIndex in chordGenerator + activePattern fill injection in rhythmGenerator; human verified audible variation
 
 Progress: [█████████░░░░░] 71% (v1.0 complete: 42/42 plans, v1.1: 11/TBD plans, Phase 11 all 4 plans complete)
 
@@ -68,6 +68,7 @@ Progress: [█████████░░░░░] 71% (v1.0 complete: 42/42
 
 | 11-04 | 20 min | 2 | 1 |
 | 12-01 | 3 min | 2 | 1 |
+| 12-02 | ~5 min | 3 | 2 |
 
 **Recent Trend:**
 - v1.0 maintained consistent velocity
@@ -122,6 +123,9 @@ Recent decisions affecting v1.1 work:
 - [Phase 11]: Success banner in GenerationInput unmounts on project load — fire toast.success() from store action directly (not component effect) to survive component teardown
 - [Phase 12-template-variations]: drumFills placed after drumPatterns in interface — logical grouping of all drum data
 - [Phase 12-template-variations]: Classical drumFills: [] (empty) — generateDrumTrack returns early for classical, fills never accessed
+- [12-02]: Replace entire progressionIndex if/else-if block with single Math.random() line — simpler code, uniform behavior across all section types
+- [12-02]: activePattern declared per-bar inside bar loop (not per-section) — correctly scoped since fills are per-bar boundary decisions
+- [12-02]: section.bars >= 2 guard prevents fills on single-bar sections — musically correct
 
 ### Pending Todos
 
@@ -140,11 +144,11 @@ All pitfalls documented in research/v1.1/SUMMARY.md with prevention strategies.
 ## Session Continuity
 
 Last session: 2026-03-02
-Stopped at: Completed 12-01-PLAN.md — GenreTemplate interface + expanded progressions + 8 drum fills per genre
+Stopped at: Completed 12-02-PLAN.md — random chord progression selection + drum fill injection; human verified audible variation
 Resume file: None
 
-**Next step:** Phase 12 Plan 02 (randomization logic — reads drumFills array and expanded chordProgressions from Plan 01).
+**Next step:** Phase 13 (timeline scrubber / UX improvements).
 
 ---
 
-*Last updated: 2026-03-02 after Plan 12-01 complete (drumFills interface field + 3-5 chord progressions per section + 8 drum fills per genre; tsc --noEmit clean; SUMMARY.md created)*
+*Last updated: 2026-03-02 after Plan 12-02 complete (random chord progression selection per section + drum fill injection at last bar of multi-bar sections; human verified audible variation; Phase 12 complete)*
