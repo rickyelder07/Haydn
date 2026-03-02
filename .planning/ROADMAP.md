@@ -147,12 +147,13 @@ Plans:
   4. Quantization applies to selected notes (or all if none selected) and is undoable
   5. Chord symbols display above note grid, detect from notes in each bar (3+ notes), and highlight notes when clicked
   6. User can toggle chord symbol visibility on/off
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] 13-01: TBD
-- [ ] 13-02: TBD
-- [ ] 13-03: TBD
+- [ ] 13-01-PLAN.md — Utility layer: quantizeUtils.ts + chordDetection.ts + editStore.updateNoteDirectly (QUANT-02, QUANT-03, QUANT-04, QUANT-05, QUANT-07, CHORD-02, VEL-05)
+- [ ] 13-02-PLAN.md — VelocityLane canvas component with drag editing and multi-select delta (VEL-01, VEL-02, VEL-03, VEL-04, VEL-05, VEL-06)
+- [ ] 13-03-PLAN.md — QuantizePopover + ChordStrip standalone components (QUANT-01, QUANT-02, QUANT-03, QUANT-04, QUANT-05, CHORD-01, CHORD-02, CHORD-04, CHORD-05)
+- [ ] 13-04-PLAN.md — PianoRollEditor wiring + dynamic height math + human verification (all requirements)
 
 #### Phase 14: MIDI Hardware Integration
 **Goal**: Users can play and record MIDI using hardware keyboards via Web MIDI API
@@ -191,9 +192,9 @@ Phases execute in numeric order: 1-8 (complete) → 9 → 10 → 11 → 12 → 1
 | 10. Synthesis Enhancement | 4/4 | Complete    | 2026-02-27 | - |
 | 11. AI Composition Mode | 4/4 | Complete    | 2026-02-28 | - |
 | 12. Template Variations | v1.1 | Complete    | 2026-03-02 | 2026-03-02 |
-| 13. Advanced Piano Roll Editing | v1.1 | 0/TBD | Not started | - |
+| 13. Advanced Piano Roll Editing | v1.1 | 0/4 | In planning | - |
 | 14. MIDI Hardware Integration | v1.1 | 0/TBD | Not started | - |
 
 ---
 
-*Last updated: 2026-03-02 after Phase 12 complete (2/2 plans done — random progression selection + drum fill injection)*
+*Last updated: 2026-03-02 after Phase 13 planning complete (4 plans: utility layer + VelocityLane + QuantizePopover/ChordStrip + wiring)*
