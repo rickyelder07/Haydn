@@ -3,6 +3,8 @@
 import { useRef, useEffect } from 'react';
 import type { HaydnNote } from '@/lib/midi/types';
 import { ticksToX } from './gridUtils';
+import { useEditStore } from '@/state/editStore';
+import { useProjectStore } from '@/state/projectStore';
 
 export interface VelocityLaneProps {
   notes: HaydnNote[];
@@ -26,6 +28,14 @@ export function VelocityLane({
   height,
 }: VelocityLaneProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  // Drag state stored in a ref to avoid re-renders during drag
+  const dragRef = useRef<{
+    noteIndex: number;
+    isMultiSelect: boolean;
+    velocitySnapshot: number[]; // velocities of all notes at drag start
+    startY: number;
+  } | null>(null);
 
   // Render stalks on canvas whenever display state changes
   useEffect(() => {
@@ -84,12 +94,94 @@ export function VelocityLane({
     }
   }, [notes, scrollX, zoomX, selectedNoteIds, width, height, trackIndex]);
 
+  // Hit-test helper: find note index closest to x within 8px hit radius
+  function hitTest(x: number): number | null {
+    const pixelsPerTick = 0.1 * zoomX;
+    for (let i = 0; i < notes.length; i++) {
+      const stalkX = ticksToX(notes[i].ticks, pixelsPerTick, scrollX);
+      if (Math.abs(x - stalkX) < 8) return i;
+    }
+    return null;
+  }
+
+  const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const noteIndex = hitTest(x);
+    if (noteIndex === null || trackIndex === null) return;
+
+    const noteId = `${trackIndex}-${noteIndex}`;
+    const isMultiSelect = selectedNoteIds.size > 1 && selectedNoteIds.has(noteId);
+
+    // Snapshot all note velocities at drag start
+    const velocitySnapshot = notes.map(n => n.velocity);
+
+    dragRef.current = { noteIndex, isMultiSelect, velocitySnapshot, startY: e.clientY };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!dragRef.current) return;
+      const { noteIndex, isMultiSelect, velocitySnapshot, startY } = dragRef.current;
+      const deltaY = startY - e.clientY; // drag up = higher velocity
+      const deltaVelocity = deltaY / height;
+
+      const updateNoteDirectly = useEditStore.getState().updateNoteDirectly;
+
+      if (isMultiSelect) {
+        selectedNoteIds.forEach(id => {
+          const parts = id.split('-');
+          if (parts.length === 2) {
+            const idx = parseInt(parts[1]);
+            if (idx >= 0 && idx < notes.length) {
+              const newVel = Math.max(0, Math.min(1, velocitySnapshot[idx] + deltaVelocity));
+              updateNoteDirectly(idx, { velocity: newVel });
+            }
+          }
+        });
+      } else {
+        const newVel = Math.max(0, Math.min(1, velocitySnapshot[noteIndex] + deltaVelocity));
+        updateNoteDirectly(noteIndex, { velocity: newVel });
+      }
+    };
+
+    const handleMouseUp = () => {
+      if (!dragRef.current) return;
+      const { noteIndex, isMultiSelect } = dragRef.current;
+
+      // Push final state to history via updateNote (one undo entry)
+      const updateNote = useEditStore.getState().updateNote;
+      const project = useProjectStore.getState().project;
+      const finalNotes = project?.tracks[trackIndex]?.notes;
+
+      if (finalNotes && isMultiSelect) {
+        selectedNoteIds.forEach(id => {
+          const parts = id.split('-');
+          if (parts.length === 2) {
+            const idx = parseInt(parts[1]);
+            if (idx >= 0 && idx < finalNotes.length) {
+              updateNote(idx, { velocity: finalNotes[idx].velocity });
+            }
+          }
+        });
+      } else if (finalNotes) {
+        updateNote(noteIndex, { velocity: finalNotes[noteIndex].velocity });
+      }
+
+      dragRef.current = null;
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+  };
+
   return (
     <canvas
       ref={canvasRef}
       width={width}
       height={height}
-      style={{ width: width + 'px', height: height + 'px', display: 'block' }}
+      style={{ width: width + 'px', height: height + 'px', display: 'block', cursor: 'ns-resize' }}
+      onMouseDown={handleMouseDown}
     />
   );
 }
