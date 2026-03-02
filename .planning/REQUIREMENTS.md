@@ -59,23 +59,23 @@ Requirements for v1.1 Polish & Enhancement milestone. Each maps to roadmap phase
 - [ ] **VEL-02**: User can click and drag velocity stalks to edit individual note velocities
 - [ ] **VEL-03**: Velocity lane scrolls horizontally in sync with piano roll
 - [ ] **VEL-04**: Selected note in piano roll highlights corresponding velocity stalk
-- [ ] **VEL-05**: Velocity changes update in real-time during drag
+- [x] **VEL-05**: Velocity changes update in real-time during drag
 - [ ] **VEL-06**: Multi-select velocity editing (adjust all selected notes simultaneously)
 
 ### Quantization
 
 - [ ] **QUANT-01**: User can access quantization controls in piano roll toolbar
-- [ ] **QUANT-02**: User can set quantization strength (0-100%, default 80%)
-- [ ] **QUANT-03**: User can select quantization grid (1/4, 1/8, 1/16, 1/32 notes)
-- [ ] **QUANT-04**: User can set "exclude within" threshold (notes already close to grid remain untouched)
-- [ ] **QUANT-05**: User can set swing parameter (50-75%, shifts offbeat notes)
+- [x] **QUANT-02**: User can set quantization strength (0-100%, default 80%)
+- [x] **QUANT-03**: User can select quantization grid (1/4, 1/8, 1/16, 1/32 notes)
+- [x] **QUANT-04**: User can set "exclude within" threshold (notes already close to grid remain untouched)
+- [x] **QUANT-05**: User can set swing parameter (50-75%, shifts offbeat notes)
 - [ ] **QUANT-06**: Quantization applies to selected notes (or all notes if none selected)
-- [ ] **QUANT-07**: Quantization is undoable (single undo step)
+- [x] **QUANT-07**: Quantization is undoable (single undo step)
 
 ### Chord Symbol Display
 
 - [ ] **CHORD-01**: Piano roll displays chord symbols above note grid
-- [ ] **CHORD-02**: Chord symbols detect from notes in each bar (minimum 3 notes required)
+- [x] **CHORD-02**: Chord symbols detect from notes in each bar (minimum 3 notes required)
 - [ ] **CHORD-03**: Chord symbols update dynamically as notes change
 - [ ] **CHORD-04**: User can toggle chord symbol visibility on/off
 - [ ] **CHORD-05**: Clicking chord symbol highlights corresponding notes in piano roll
@@ -187,17 +187,17 @@ Which phases cover which requirements. Updated during roadmap creation.
 | VEL-02 | Phase 13 | Pending |
 | VEL-03 | Phase 13 | Pending |
 | VEL-04 | Phase 13 | Pending |
-| VEL-05 | Phase 13 | Pending |
+| VEL-05 | Phase 13 | Complete |
 | VEL-06 | Phase 13 | Pending |
 | QUANT-01 | Phase 13 | Pending |
-| QUANT-02 | Phase 13 | Pending |
-| QUANT-03 | Phase 13 | Pending |
-| QUANT-04 | Phase 13 | Pending |
-| QUANT-05 | Phase 13 | Pending |
+| QUANT-02 | Phase 13 | Complete |
+| QUANT-03 | Phase 13 | Complete |
+| QUANT-04 | Phase 13 | Complete |
+| QUANT-05 | Phase 13 | Complete |
 | QUANT-06 | Phase 13 | Pending |
-| QUANT-07 | Phase 13 | Pending |
+| QUANT-07 | Phase 13 | Complete |
 | CHORD-01 | Phase 13 | Pending |
-| CHORD-02 | Phase 13 | Pending |
+| CHORD-02 | Phase 13 | Complete |
 | CHORD-03 | Phase 13 | Pending |
 | CHORD-04 | Phase 13 | Pending |
 | CHORD-05 | Phase 13 | Pending |
