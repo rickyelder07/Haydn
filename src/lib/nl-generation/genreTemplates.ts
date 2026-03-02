@@ -50,16 +50,22 @@ export interface GenreTemplate {
 
 // Genre template database
 export const GENRE_TEMPLATES: Record<string, GenreTemplate> = {
+
+  // lofi: 4 verse progressions, 4 chorus progressions, 8 drum fills
   lofi: {
     name: 'lofi',
     chordProgressions: {
       verse: [
         ['ii7', 'V7', 'Imaj7', 'vi7'],
-        ['Imaj7', 'IVmaj7', 'vi7', 'V7']
+        ['Imaj7', 'IVmaj7', 'vi7', 'V7'],
+        ['vi7', 'IVmaj7', 'ii7', 'V7'],
+        ['Imaj7', 'iii7', 'vi7', 'IVmaj7']
       ],
       chorus: [
         ['IVmaj7', 'V7', 'iii7', 'vi7'],
-        ['Imaj7', 'vi7', 'IVmaj7', 'V7']
+        ['Imaj7', 'vi7', 'IVmaj7', 'V7'],
+        ['vi7', 'IVmaj7', 'Imaj7', 'V7'],
+        ['iii7', 'vi7', 'IVmaj7', 'V7']
       ],
       bridge: [
         ['iii7', 'vi7', 'ii7', 'V7']
@@ -108,6 +114,72 @@ export const GENRE_TEMPLATES: Record<string, GenreTemplate> = {
         velocityVariation: 0.15
       }
     },
+    drumFills: [
+      // Fill 1: simple quarter-note kick roll into snare
+      {
+        kick: [0, 480, 960],
+        snare: [1440],
+        hihat: [0, 480, 960],
+        openHihat: [],
+        velocityVariation: 0.15
+      },
+      // Fill 2: snare on all quarters with open hihat accent
+      {
+        kick: [0],
+        snare: [480, 960, 1440],
+        hihat: [0, 480, 960],
+        openHihat: [1440],
+        velocityVariation: 0.15
+      },
+      // Fill 3: 8th-note hihat with kick-snare alternation
+      {
+        kick: [0, 720],
+        snare: [480, 1200],
+        hihat: [0, 240, 480, 720, 960, 1200],
+        openHihat: [],
+        velocityVariation: 0.15
+      },
+      // Fill 4: sparse kick with open hihat sweep
+      {
+        kick: [0, 960],
+        snare: [1200, 1440],
+        hihat: [0, 480],
+        openHihat: [720, 1200],
+        velocityVariation: 0.15
+      },
+      // Fill 5: double snare ending
+      {
+        kick: [0, 480],
+        snare: [960, 1200, 1440],
+        hihat: [0, 480, 960],
+        openHihat: [],
+        velocityVariation: 0.15
+      },
+      // Fill 6: kick triplet feel
+      {
+        kick: [0, 640, 1280],
+        snare: [480, 1440],
+        hihat: [0, 480, 960, 1440],
+        openHihat: [],
+        velocityVariation: 0.15
+      },
+      // Fill 7: open hihat every beat
+      {
+        kick: [0, 960],
+        snare: [480, 1440],
+        hihat: [],
+        openHihat: [0, 480, 960, 1440],
+        velocityVariation: 0.15
+      },
+      // Fill 8: ending snare-only roll
+      {
+        kick: [0],
+        snare: [720, 960, 1200, 1440],
+        hihat: [0, 480],
+        openHihat: [],
+        velocityVariation: 0.15
+      }
+    ],
     defaultInstrumentation: {
       drums: 0,
       bass: 33,  // Electric bass (finger)
@@ -125,16 +197,21 @@ export const GENRE_TEMPLATES: Record<string, GenreTemplate> = {
     }
   },
 
+  // trap: 4 verse progressions, 4 chorus progressions, 8 drum fills
   trap: {
     name: 'trap',
     chordProgressions: {
       verse: [
         ['i', 'VI', 'III', 'VII'],
-        ['i', 'iv', 'VI', 'VII']
+        ['i', 'iv', 'VI', 'VII'],
+        ['i', 'VII', 'i', 'VI'],
+        ['i', 'III', 'VII', 'VI']
       ],
       chorus: [
         ['i', 'VII', 'VI', 'V'],
-        ['i', 'iv', 'VII', 'III']
+        ['i', 'iv', 'VII', 'III'],
+        ['i', 'VI', 'VII', 'III'],
+        ['VII', 'VI', 'i', 'i']
       ],
       bridge: [
         ['VI', 'VII', 'i', 'i']
@@ -183,6 +260,72 @@ export const GENRE_TEMPLATES: Record<string, GenreTemplate> = {
         velocityVariation: 0.2
       }
     },
+    drumFills: [
+      // Fill 1: dense 16th hi-hat roll with snare flam at end
+      {
+        kick: [0, 720],
+        snare: [1320, 1440],
+        hihat: [0, 120, 240, 360, 480, 600, 720, 840, 960, 1080, 1200, 1320],
+        openHihat: [],
+        velocityVariation: 0.25
+      },
+      // Fill 2: 808-style kick roll with snare
+      {
+        kick: [0, 240, 480, 960],
+        snare: [480, 1440],
+        hihat: [0, 120, 240, 360, 480, 600, 720, 840, 960, 1080, 1200, 1320, 1440, 1560, 1680, 1800],
+        openHihat: [],
+        velocityVariation: 0.3
+      },
+      // Fill 3: triplet snare ending
+      {
+        kick: [0, 960],
+        snare: [960, 1120, 1280, 1440],
+        hihat: [0, 120, 240, 360, 480, 600, 720, 840],
+        openHihat: [],
+        velocityVariation: 0.25
+      },
+      // Fill 4: open hihat cascade
+      {
+        kick: [0, 720, 1440],
+        snare: [480],
+        hihat: [0, 120, 240, 360, 480, 600, 720, 840],
+        openHihat: [960, 1080, 1200, 1320, 1440, 1560, 1680, 1800],
+        velocityVariation: 0.3
+      },
+      // Fill 5: kick-heavy 808 pattern
+      {
+        kick: [0, 360, 720, 1080, 1440, 1680],
+        snare: [480, 1440],
+        hihat: [0, 120, 240, 360, 480, 600, 720, 840, 960, 1080, 1200, 1320, 1440, 1560, 1680, 1800],
+        openHihat: [],
+        velocityVariation: 0.25
+      },
+      // Fill 6: snare flam buildup
+      {
+        kick: [0, 960],
+        snare: [480, 840, 1080, 1200, 1320, 1440],
+        hihat: [0, 120, 240, 360, 480, 600, 720, 840],
+        openHihat: [],
+        velocityVariation: 0.3
+      },
+      // Fill 7: minimal kick-snare with open hihat accent
+      {
+        kick: [0, 1440],
+        snare: [480, 960, 1440],
+        hihat: [0, 120, 240, 360, 480, 600, 720, 840, 960, 1080, 1200, 1320],
+        openHihat: [1560, 1680, 1800],
+        velocityVariation: 0.25
+      },
+      // Fill 8: double-time kick with snare crash
+      {
+        kick: [0, 240, 480, 720, 960, 1200],
+        snare: [1440],
+        hihat: [0, 120, 240, 360, 480, 600, 720, 840, 960, 1080, 1200, 1320, 1440, 1560, 1680, 1800],
+        openHihat: [1800],
+        velocityVariation: 0.3
+      }
+    ],
     defaultInstrumentation: {
       drums: 0,
       bass: 38,  // Synth bass 1
@@ -200,16 +343,21 @@ export const GENRE_TEMPLATES: Record<string, GenreTemplate> = {
     }
   },
 
+  // boom-bap: 4 verse progressions, 4 chorus progressions, 8 drum fills
   'boom-bap': {
     name: 'boom-bap',
     chordProgressions: {
       verse: [
         ['ii7', 'V7', 'Imaj7', 'Imaj7'],
-        ['i7', 'iv7', 'i7', 'V7']
+        ['i7', 'iv7', 'i7', 'V7'],
+        ['Imaj7', 'vi7', 'ii7', 'V7'],
+        ['i7', 'iv7', 'VII', 'III']
       ],
       chorus: [
         ['IVmaj7', 'iii7', 'vi7', 'V7'],
-        ['Imaj7', 'IVmaj7', 'V7', 'Imaj7']
+        ['Imaj7', 'IVmaj7', 'V7', 'Imaj7'],
+        ['ii7', 'V7', 'iii7', 'vi7'],
+        ['vi7', 'IVmaj7', 'V7', 'Imaj7']
       ],
       bridge: [
         ['ii7', 'V7', 'iii7', 'vi7']
@@ -258,6 +406,72 @@ export const GENRE_TEMPLATES: Record<string, GenreTemplate> = {
         velocityVariation: 0.1
       }
     },
+    drumFills: [
+      // Fill 1: swung 8th snare roll with kick accent
+      {
+        kick: [0, 720],
+        snare: [480, 960, 1200, 1440],
+        hihat: [0, 240, 480, 720, 960, 1200],
+        openHihat: [],
+        velocityVariation: 0.1
+      },
+      // Fill 2: boom-bap double kick with snare ending
+      {
+        kick: [0, 480, 720],
+        snare: [960, 1440],
+        hihat: [0, 240, 480, 720, 960, 1200, 1440, 1680],
+        openHihat: [],
+        velocityVariation: 0.15
+      },
+      // Fill 3: snare ghost note buildup
+      {
+        kick: [0, 960],
+        snare: [480, 720, 960, 1200, 1440],
+        hihat: [0, 240, 480, 720],
+        openHihat: [],
+        velocityVariation: 0.1
+      },
+      // Fill 4: open hihat accent with snare roll
+      {
+        kick: [0, 480],
+        snare: [960, 1200, 1440],
+        hihat: [0, 240, 480, 720, 960],
+        openHihat: [1200, 1440, 1680],
+        velocityVariation: 0.1
+      },
+      // Fill 5: classic boom-bap triplet feel
+      {
+        kick: [0, 640, 1280],
+        snare: [480, 1440],
+        hihat: [0, 240, 480, 720, 960, 1200, 1440, 1680],
+        openHihat: [],
+        velocityVariation: 0.15
+      },
+      // Fill 6: kick-snare interlock fill
+      {
+        kick: [0, 360, 720, 1080],
+        snare: [240, 600, 960, 1440],
+        hihat: [0, 240, 480, 720, 960, 1200, 1440, 1680],
+        openHihat: [],
+        velocityVariation: 0.1
+      },
+      // Fill 7: snare flam with open hihat sweep
+      {
+        kick: [0, 960],
+        snare: [480, 1320, 1440],
+        hihat: [0, 240, 480, 720, 960, 1200],
+        openHihat: [1440, 1680],
+        velocityVariation: 0.15
+      },
+      // Fill 8: 16th-note snare ending
+      {
+        kick: [0, 720],
+        snare: [480, 1080, 1200, 1320, 1440],
+        hihat: [0, 240, 480, 720, 960, 1200, 1440, 1680],
+        openHihat: [],
+        velocityVariation: 0.1
+      }
+    ],
     defaultInstrumentation: {
       drums: 0,
       bass: 33,  // Electric bass (finger)
@@ -275,16 +489,21 @@ export const GENRE_TEMPLATES: Record<string, GenreTemplate> = {
     }
   },
 
+  // jazz: 4 verse progressions, 4 chorus progressions, 8 drum fills
   jazz: {
     name: 'jazz',
     chordProgressions: {
       verse: [
         ['ii7', 'V7', 'Imaj7', 'vi7'],
-        ['iii7', 'VI7', 'ii7', 'V7']
+        ['iii7', 'VI7', 'ii7', 'V7'],
+        ['ii7', 'V7', 'iii7', 'VI7'],
+        ['Imaj7', 'IV7', 'iii7', 'vi7']
       ],
       chorus: [
         ['Imaj7', 'vi7', 'ii7', 'V7'],
-        ['IVmaj7', 'iv7', 'iii7', 'VI7']
+        ['IVmaj7', 'iv7', 'iii7', 'VI7'],
+        ['ii7', 'V7', 'Imaj7', 'vi7'],
+        ['iii7', 'VI7', 'ii7', 'V7']
       ],
       bridge: [
         ['bIIImaj7', 'bVImaj7', 'ii7', 'V7']
@@ -333,6 +552,72 @@ export const GENRE_TEMPLATES: Record<string, GenreTemplate> = {
         velocityVariation: 0.25
       }
     },
+    drumFills: [
+      // Fill 1: ghost note snare pattern with ride
+      {
+        kick: [0, 960],
+        snare: [480, 720, 1200, 1440],
+        hihat: [0, 480, 960, 1440],
+        openHihat: [],
+        velocityVariation: 0.25
+      },
+      // Fill 2: ride cymbal variation with open hihat
+      {
+        kick: [0, 720],
+        snare: [480, 1440],
+        hihat: [0, 240, 480, 720, 960, 1200],
+        openHihat: [1440, 1680],
+        velocityVariation: 0.25
+      },
+      // Fill 3: jazz brush feel with snare roll
+      {
+        kick: [0, 960],
+        snare: [480, 840, 1080, 1320, 1440],
+        hihat: [0, 480, 960, 1440],
+        openHihat: [],
+        velocityVariation: 0.25
+      },
+      // Fill 4: syncopated kick-snare with open hihat
+      {
+        kick: [0, 600, 1080],
+        snare: [480, 1200, 1440],
+        hihat: [0, 480, 960],
+        openHihat: [720, 1440],
+        velocityVariation: 0.25
+      },
+      // Fill 5: bebop-style triplet fill
+      {
+        kick: [0, 640, 1280],
+        snare: [480, 960, 1440],
+        hihat: [0, 480, 960, 1440],
+        openHihat: [],
+        velocityVariation: 0.25
+      },
+      // Fill 6: snare ghost note cascade
+      {
+        kick: [0, 960],
+        snare: [240, 480, 720, 960, 1200, 1440],
+        hihat: [0, 480, 960, 1440],
+        openHihat: [],
+        velocityVariation: 0.25
+      },
+      // Fill 7: open hihat every beat (swing feel)
+      {
+        kick: [0, 960],
+        snare: [480, 1440],
+        hihat: [],
+        openHihat: [0, 480, 960, 1440],
+        velocityVariation: 0.25
+      },
+      // Fill 8: ride with snare accent at end
+      {
+        kick: [0, 720, 1440],
+        snare: [1200, 1320, 1440],
+        hihat: [0, 480, 960, 1440],
+        openHihat: [1440],
+        velocityVariation: 0.25
+      }
+    ],
     defaultInstrumentation: {
       drums: 0,
       bass: 32,  // Acoustic bass
@@ -350,16 +635,19 @@ export const GENRE_TEMPLATES: Record<string, GenreTemplate> = {
     }
   },
 
+  // classical: 3 verse progressions, 3 chorus progressions, drumFills: []
   classical: {
     name: 'classical',
     chordProgressions: {
       verse: [
         ['I', 'IV', 'V', 'I'],
-        ['I', 'vi', 'IV', 'V']
+        ['I', 'vi', 'IV', 'V'],
+        ['I', 'ii', 'V', 'I']
       ],
       chorus: [
         ['IV', 'V', 'vi', 'IV'],
-        ['I', 'V', 'vi', 'IV']
+        ['I', 'V', 'vi', 'IV'],
+        ['I', 'vi', 'ii', 'V']
       ],
       bridge: [
         ['ii', 'V', 'I', 'I']
@@ -408,6 +696,8 @@ export const GENRE_TEMPLATES: Record<string, GenreTemplate> = {
         velocityVariation: 0
       }
     },
+    // Classical has no drums — fills never accessed (generateDrumTrack returns early)
+    drumFills: [],
     defaultInstrumentation: {
       drums: 0,
       bass: 42,  // Cello
@@ -425,16 +715,21 @@ export const GENRE_TEMPLATES: Record<string, GenreTemplate> = {
     }
   },
 
+  // pop: 4 verse progressions, 4 chorus progressions, 8 drum fills
   pop: {
     name: 'pop',
     chordProgressions: {
       verse: [
         ['I', 'V', 'vi', 'IV'],
-        ['I', 'IV', 'vi', 'V']
+        ['I', 'IV', 'vi', 'V'],
+        ['vi', 'IV', 'I', 'V'],
+        ['I', 'ii', 'IV', 'V']
       ],
       chorus: [
         ['IV', 'V', 'I', 'I'],
-        ['I', 'V', 'vi', 'IV']
+        ['I', 'V', 'vi', 'IV'],
+        ['vi', 'V', 'IV', 'I'],
+        ['IV', 'I', 'V', 'vi']
       ],
       bridge: [
         ['vi', 'IV', 'I', 'V']
@@ -483,6 +778,72 @@ export const GENRE_TEMPLATES: Record<string, GenreTemplate> = {
         velocityVariation: 0.1
       }
     },
+    drumFills: [
+      // Fill 1: standard rock fill — snare roll into kick
+      {
+        kick: [960, 1440],
+        snare: [0, 480, 720, 960, 1200],
+        hihat: [0, 240, 480, 720],
+        openHihat: [],
+        velocityVariation: 0.1
+      },
+      // Fill 2: kick accent with snare roll ending
+      {
+        kick: [0, 480, 1440],
+        snare: [960, 1200, 1440],
+        hihat: [0, 240, 480, 720, 960, 1200, 1440, 1680],
+        openHihat: [],
+        velocityVariation: 0.1
+      },
+      // Fill 3: open hihat with snare accent
+      {
+        kick: [0, 960],
+        snare: [480, 1200, 1440],
+        hihat: [0, 240, 480, 720],
+        openHihat: [960, 1200, 1440, 1680],
+        velocityVariation: 0.1
+      },
+      // Fill 4: classic 4-on-the-floor with snare buildup
+      {
+        kick: [0, 480, 960, 1440],
+        snare: [960, 1200, 1440],
+        hihat: [0, 240, 480, 720, 960, 1200, 1440, 1680],
+        openHihat: [],
+        velocityVariation: 0.15
+      },
+      // Fill 5: snare flam buildup
+      {
+        kick: [0, 960],
+        snare: [480, 840, 1080, 1320, 1440],
+        hihat: [0, 240, 480, 720, 960, 1200, 1440, 1680],
+        openHihat: [],
+        velocityVariation: 0.1
+      },
+      // Fill 6: kick-snare alternation ending
+      {
+        kick: [0, 480, 960, 1200],
+        snare: [240, 720, 1440],
+        hihat: [0, 240, 480, 720, 960, 1200, 1440, 1680],
+        openHihat: [],
+        velocityVariation: 0.1
+      },
+      // Fill 7: tom-tom feel (using snare variations)
+      {
+        kick: [0, 720, 1440],
+        snare: [360, 720, 1080, 1440],
+        hihat: [0, 240, 480, 720, 960, 1200],
+        openHihat: [1440, 1680],
+        velocityVariation: 0.15
+      },
+      // Fill 8: double-time feel with open hihat crash
+      {
+        kick: [0, 240, 480, 720, 960, 1200],
+        snare: [480, 1440],
+        hihat: [0, 240, 480, 720, 960, 1200, 1440, 1680],
+        openHihat: [1800],
+        velocityVariation: 0.1
+      }
+    ],
     defaultInstrumentation: {
       drums: 0,
       bass: 33,  // Electric bass (finger)
