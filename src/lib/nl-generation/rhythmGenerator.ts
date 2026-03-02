@@ -55,9 +55,16 @@ export function generateDrumTrack(
     for (let bar = 0; bar < section.bars; bar++) {
       const barStartTick = currentTick;
 
+      // Select fill pattern for last bar of multi-bar sections
+      const isLastBarOfSection = bar === section.bars - 1;
+      const useFill = isLastBarOfSection && section.bars >= 2 && template.drumFills.length > 0;
+      const activePattern = useFill
+        ? template.drumFills[Math.floor(Math.random() * template.drumFills.length)]
+        : pattern;
+
       // Kick drum
-      for (const offset of pattern.kick) {
-        const velocity = applyVelocityVariation(0.9, pattern.velocityVariation);
+      for (const offset of activePattern.kick) {
+        const velocity = applyVelocityVariation(0.9, activePattern.velocityVariation);
         notes.push({
           midi: GM_DRUMS.KICK,
           ticks: barStartTick + offset,
@@ -67,8 +74,8 @@ export function generateDrumTrack(
       }
 
       // Snare drum
-      for (const offset of pattern.snare) {
-        const velocity = applyVelocityVariation(0.85, pattern.velocityVariation);
+      for (const offset of activePattern.snare) {
+        const velocity = applyVelocityVariation(0.85, activePattern.velocityVariation);
         notes.push({
           midi: GM_DRUMS.SNARE,
           ticks: barStartTick + offset,
@@ -78,9 +85,9 @@ export function generateDrumTrack(
       }
 
       // Closed hi-hat
-      const hihatOffsets = getHihatOffsetsWithArousal(pattern.hihat, arousal, ppq);
+      const hihatOffsets = getHihatOffsetsWithArousal(activePattern.hihat, arousal, ppq);
       for (const offset of hihatOffsets) {
-        const velocity = applyVelocityVariation(0.6, pattern.velocityVariation);
+        const velocity = applyVelocityVariation(0.6, activePattern.velocityVariation);
         notes.push({
           midi: GM_DRUMS.HIHAT_CLOSED,
           ticks: barStartTick + offset,
@@ -90,8 +97,8 @@ export function generateDrumTrack(
       }
 
       // Open hi-hat (accents)
-      for (const offset of pattern.openHihat) {
-        const velocity = applyVelocityVariation(0.65, pattern.velocityVariation);
+      for (const offset of activePattern.openHihat) {
+        const velocity = applyVelocityVariation(0.65, activePattern.velocityVariation);
         notes.push({
           midi: GM_DRUMS.HIHAT_OPEN,
           ticks: barStartTick + offset,
@@ -105,7 +112,7 @@ export function generateDrumTrack(
         // Add kick on 8th note subdivisions (every ppq/2)
         const extraKickOffsets = [ppq, ppq * 2.5];
         for (const offset of extraKickOffsets) {
-          const velocity = applyVelocityVariation(0.75, pattern.velocityVariation);
+          const velocity = applyVelocityVariation(0.75, activePattern.velocityVariation);
           notes.push({
             midi: GM_DRUMS.KICK,
             ticks: barStartTick + offset,
