@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { useProjectStore } from '@/state/projectStore';
 import { useEditStore } from '@/state/editStore';
 import { usePlaybackStore } from '@/state/playbackStore';
@@ -16,8 +16,20 @@ import { TheoryControls } from './TheoryControls';
 import { NOTE_HEIGHT, PIANO_KEY_WIDTH } from './gridUtils';
 import { TimelineRuler } from '@/components/TimelineRuler';
 import { InlineEdit } from '@/components/InlineEdit';
+import { VelocityLane } from './VelocityLane';
+import { QuantizePopover } from './QuantizePopover';
+import { ChordStrip } from './ChordStrip';
+import { detectChordsPerBar } from './chordDetection';
+import type { DetectedChord } from './chordDetection';
+import { quantizeNote } from './quantizeUtils';
+import type { QuantizeParams } from './quantizeUtils';
 
 const EDITOR_HEIGHT = 700;
+
+// Fixed zone heights
+const TOOLBAR_HEIGHT = 40;    // toolbar div (py-2 rows)
+const TIMELINE_HEIGHT = 36;   // TimelineRuler fixed height
+const STATUS_BAR_HEIGHT = 40; // bottom status bar
 
 export function PianoRollEditor() {
   const project = useProjectStore((state) => state.project);
@@ -30,6 +42,7 @@ export function PianoRollEditor() {
   const redo = useEditStore((state) => state.redo);
   const updateNote = useEditStore((state) => state.updateNote);
   const deleteNote = useEditStore((state) => state.deleteNote);
+  const applyBatchEdit = useEditStore((state) => state.applyBatchEdit);
   const playheadTicks = usePlaybackStore((state) => state.position.ticks);
   const playbackState = usePlaybackStore((state) => state.playbackState);
   const tempo = usePlaybackStore((state) => state.tempo);
@@ -44,6 +57,13 @@ export function PianoRollEditor() {
   const [zoomX, setZoomX] = useState(1.0);
   const [zoomY, setZoomY] = useState(1.0);
   const [editorWidth, setEditorWidth] = useState(800);
+
+  // Feature toggle state
+  const [velocityLaneVisible, setVelocityLaneVisible] = useState(true);  // ON by default
+  const [chordStripVisible, setChordStripVisible] = useState(false);      // OFF by default
+  const [velocityLaneHeight, setVelocityLaneHeight] = useState(80);
+  const VELOCITY_LANE_MIN = 48;
+  const VELOCITY_LANE_MAX = 160;
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -114,7 +134,17 @@ export function PianoRollEditor() {
 
   // Canvas dimensions
   const canvasWidth = editorWidth;
-  const canvasHeight = EDITOR_HEIGHT - 80; // Account for toolbar and scrollbar
+
+  // Dynamic note grid height: total minus fixed zones minus optional features
+  const noteGridHeight = EDITOR_HEIGHT
+    - TOOLBAR_HEIGHT
+    - TIMELINE_HEIGHT
+    - (chordStripVisible ? 24 : 0)
+    - (velocityLaneVisible ? velocityLaneHeight + 6 : 0)  // +6 for divider
+    - STATUS_BAR_HEIGHT;
+
+  // canvasHeight = noteGridHeight (keeps existing references valid)
+  const canvasHeight = noteGridHeight;
 
   // Initialize scroll position to center on C4 (MIDI 60)
   useEffect(() => {
@@ -148,6 +178,57 @@ export function PianoRollEditor() {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [undo, redo]);
+
+  // Velocity lane divider drag handler
+  const handleDividerMouseDown = (e: React.MouseEvent) => {
+    const startY = e.clientY;
+    const startHeight = velocityLaneHeight;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const delta = startY - e.clientY; // drag up = taller lane
+      setVelocityLaneHeight(
+        Math.max(VELOCITY_LANE_MIN, Math.min(VELOCITY_LANE_MAX, startHeight + delta))
+      );
+    };
+    const handleMouseUp = () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+  };
+
+  // Quantization apply handler
+  const applyQuantization = useCallback((params: QuantizeParams) => {
+    if (!project || selectedTrackIndex === null) return;
+
+    const currentNotes = project.tracks[selectedTrackIndex].notes;
+    const noteIndices = selectedNoteIds.size > 0
+      ? Array.from(selectedNoteIds).map(id => parseInt(id.split('-')[1])).filter(i => !isNaN(i))
+      : currentNotes.map((_, i) => i);
+
+    const updatedNotes = currentNotes.map((note, idx) => {
+      if (!noteIndices.includes(idx)) return note;
+      return { ...note, ticks: quantizeNote(note.ticks, params) };
+    });
+
+    applyBatchEdit(updatedNotes); // single undo step
+  }, [project, selectedTrackIndex, selectedNoteIds, applyBatchEdit]);
+
+  // Chord detection with useMemo
+  const detectedChords = useMemo(
+    () => chordStripVisible
+      ? detectChordsPerBar(notes, ppq, timeSignature)
+      : [],
+    [notes, ppq, timeSignature, chordStripVisible]
+  );
+
+  // Chord click handler — select all notes in the clicked bar
+  const handleChordClick = useCallback((chord: DetectedChord) => {
+    useEditStore.setState({
+      selectedNoteIds: new Set(chord.noteIndices.map(idx => `${selectedTrackIndex}-${idx}`))
+    });
+  }, [selectedTrackIndex]);
 
   // Mouse interactions
   const { handleMouseDown, handleContextMenu, dragState } = usePianoRollInteractions({
@@ -287,6 +368,39 @@ export function PianoRollEditor() {
 
         <div className="h-5 w-px bg-white/10 mx-1"></div>
 
+        {/* Quantize popover */}
+        <QuantizePopover ppq={ppq} onApply={applyQuantization} />
+
+        <div className="h-5 w-px bg-white/10 mx-1"></div>
+
+        {/* Velocity lane toggle */}
+        <button
+          onClick={() => setVelocityLaneVisible(v => !v)}
+          className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg transition-colors ${
+            velocityLaneVisible
+              ? 'bg-cyan-500/10 border border-cyan-500/20 text-cyan-400'
+              : 'bg-white/5 text-secondary border border-white/10 hover:bg-white/10 hover:text-primary'
+          }`}
+          title={velocityLaneVisible ? 'Hide velocity lane' : 'Show velocity lane'}
+        >
+          Vel
+        </button>
+
+        {/* Chord strip toggle */}
+        <button
+          onClick={() => setChordStripVisible(c => !c)}
+          className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg transition-colors ${
+            chordStripVisible
+              ? 'bg-cyan-500/10 border border-cyan-500/20 text-cyan-400'
+              : 'bg-white/5 text-secondary border border-white/10 hover:bg-white/10 hover:text-primary'
+          }`}
+          title={chordStripVisible ? 'Hide chord symbols' : 'Show chord symbols'}
+        >
+          Chords
+        </button>
+
+        <div className="h-5 w-px bg-white/10 mx-1"></div>
+
         {/* Project metadata stats */}
         <div className="flex items-center gap-3 text-xs text-tertiary">
           <span className="font-medium text-secondary">{Math.round(firstTempo?.bpm || 120)} BPM</span>
@@ -316,6 +430,18 @@ export function PianoRollEditor() {
         durationTicks={durationTicks}
       />
 
+      {/* Chord strip — shown between timeline ruler and note grid when enabled */}
+      {chordStripVisible && (
+        <ChordStrip
+          chords={detectedChords}
+          scrollX={scrollX}
+          zoomX={zoomX}
+          ppq={ppq}
+          width={canvasWidth}
+          onChordClick={handleChordClick}
+        />
+      )}
+
       {/* Validation feedback */}
       <ValidationFeedback />
 
@@ -324,14 +450,14 @@ export function PianoRollEditor() {
         ref={containerRef}
         className="relative flex"
         style={{
-          height: `${EDITOR_HEIGHT - 40}px`,
+          height: `${noteGridHeight}px`,
           overflow: 'hidden', // Prevent scrolling from bubbling to page
           touchAction: 'none', // Prevent touch gestures from affecting page scroll
         }}
       >
         {/* Piano keys sidebar */}
         <div className="flex-shrink-0">
-          <PianoKeysSidebar scrollY={scrollY} height={canvasHeight} zoomY={zoomY} />
+          <PianoKeysSidebar scrollY={scrollY} height={noteGridHeight} zoomY={zoomY} />
         </div>
 
         {/* Canvas area */}
@@ -399,6 +525,27 @@ export function PianoRollEditor() {
           onDelete={deleteNote}
         />
       </div>
+
+      {/* Velocity lane — shown below note grid when enabled */}
+      {velocityLaneVisible && (
+        <>
+          <div
+            className="h-1.5 bg-[#131824] border-y border-white/10 hover:bg-cyan-500/10 transition-colors"
+            style={{ cursor: 'row-resize' }}
+            onMouseDown={handleDividerMouseDown}
+          />
+          <VelocityLane
+            notes={notes}
+            ppq={ppq}
+            scrollX={scrollX}
+            zoomX={zoomX}
+            selectedNoteIds={selectedNoteIds}
+            trackIndex={selectedTrackIndex}
+            width={canvasWidth}
+            height={velocityLaneHeight}
+          />
+        </>
+      )}
 
       {/* Zoom controls — bottom status bar */}
       <div className="flex items-center gap-3 px-4 py-2 bg-[#131824] border-t border-white/10 shrink-0">
