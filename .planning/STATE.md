@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: Polish & Enhancement
 status: unknown
-last_updated: "2026-03-02T17:24:50.791Z"
+last_updated: "2026-03-02T20:37:16.609Z"
 progress:
-  total_phases: 17
+  total_phases: 18
   completed_phases: 12
-  total_plans: 56
-  completed_plans: 56
+  total_plans: 60
+  completed_plans: 58
 ---
 
 # Project State
@@ -23,11 +23,11 @@ See: .planning/PROJECT.md (updated 2026-02-12)
 ## Current Position
 
 Phase: 13 of 14 — IN PROGRESS
-Plan: 13-01 complete (1 of TBD plans done)
-Status: Phase 13 in progress — utility layer (quantizeUtils, chordDetection, updateNoteDirectly) complete; Wave 2 component plans ready
-Last activity: 2026-03-02 — Plan 13-01 complete: pure quantization math + tonal chord detection + non-history velocity update action
+Plan: 13-02 complete (2 of TBD plans done)
+Status: Phase 13 in progress — VelocityLane canvas component complete; QuantizePopover and ChordStrip components remaining
+Last activity: 2026-03-02 — Plan 13-02 complete: VelocityLane canvas component with stalk rendering and drag-edit interaction
 
-Progress: [█████████░░░░░] 72% (v1.0 complete: 42/42 plans, v1.1: 12/TBD plans, Phase 13 plan 1 complete)
+Progress: [█████████░░░░░] 72% (v1.0 complete: 42/42 plans, v1.1: 13/TBD plans, Phase 13 plans 1-2 complete)
 
 ## Performance Metrics
 
@@ -74,6 +74,7 @@ Progress: [█████████░░░░░] 72% (v1.0 complete: 42/42
 **Recent Trend:**
 - v1.0 maintained consistent velocity
 - v1.1 starting fresh (TBD plans)
+| Phase 13 P02 | 2 | 2 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -131,6 +132,9 @@ Recent decisions affecting v1.1 work:
 - [13-01]: updateNoteDirectly bypasses _history.push entirely — consumers must call updateNote on mouseup for the single undo entry
 - [13-01]: formatChordSymbol returns null for slash chords (inversions) — ChordStrip only displays root-position chords
 - [13-01]: detectChordsPerBar requires 3+ notes per bar — prevents false positives on sparse bars
+- [Phase 13]: dragRef uses useRef for drag state — avoids React re-renders during mousemove, canvas redraws come from notes prop via projectStore
+- [Phase 13]: hitTest uses same 0.1 * zoomX formula as rendering — visual stalk position and interactive hit area never drift
+- [Phase 13]: velocitySnapshot captured once on mousedown, delta recomputed from snapshot each frame — avoids accumulated floating-point drift on fast drags
 
 ### Pending Todos
 
@@ -149,11 +153,11 @@ All pitfalls documented in research/v1.1/SUMMARY.md with prevention strategies.
 ## Session Continuity
 
 Last session: 2026-03-02
-Stopped at: Completed 13-01-PLAN.md — quantizeUtils.ts, chordDetection.ts, editStore.updateNoteDirectly
+Stopped at: Completed 13-02-PLAN.md — VelocityLane canvas component with stalk rendering and drag-edit interaction
 Resume file: None
 
-**Next step:** Phase 13 Wave 2 plans (VelocityLane, QuantizePopover, ChordStrip components).
+**Next step:** Phase 13 Wave 2 plans (QuantizePopover, ChordStrip components).
 
 ---
 
-*Last updated: 2026-03-02 after Plan 13-01 complete (pure quantization math + tonal chord detection per bar + updateNoteDirectly for real-time velocity drag; utility layer for Phase 13 Wave 2 components)*
+*Last updated: 2026-03-02 after Plan 13-02 complete (VelocityLane canvas component: stalk rendering + drag-edit with snapshot-delta pattern + multi-select velocity delta support)*
