@@ -130,11 +130,11 @@ Plans:
   1. Each genre has 3-5 verse and chorus pattern variations that select randomly
   2. Drum fills (8 variations per genre) insert randomly at section boundaries
   3. Generated MIDI sounds different across generations but maintains genre consistency
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 12-01: TBD
-- [ ] 12-02: TBD
+- [ ] 12-01-PLAN.md — genreTemplates.ts: interface extension + expanded chord progressions + 8 drum fills per genre (TMPL-01, TMPL-02, TMPL-03, TMPL-06)
+- [ ] 12-02-PLAN.md — chordGenerator + rhythmGenerator logic: random selection + fill injection + human verification (TMPL-04, TMPL-05)
 
 #### Phase 13: Advanced Piano Roll Editing
 **Goal**: Users can edit velocity, quantize timing, and view chord symbols in piano roll
@@ -190,10 +190,10 @@ Phases execute in numeric order: 1-8 (complete) → 9 → 10 → 11 → 12 → 1
 | 9. Professional Layout | v1.1 | 4/4 | Complete | 2026-02-17 |
 | 10. Synthesis Enhancement | 4/4 | Complete    | 2026-02-27 | - |
 | 11. AI Composition Mode | 4/4 | Complete    | 2026-02-28 | - |
-| 12. Template Variations | v1.1 | 0/TBD | Not started | - |
+| 12. Template Variations | v1.1 | 0/2 | Not started | - |
 | 13. Advanced Piano Roll Editing | v1.1 | 0/TBD | Not started | - |
 | 14. MIDI Hardware Integration | v1.1 | 0/TBD | Not started | - |
 
 ---
 
-*Last updated: 2026-02-27 after Phase 11 planning (4 plans)*
+*Last updated: 2026-03-01 after Phase 12 planning (2 plans)*
