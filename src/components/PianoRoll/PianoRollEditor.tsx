@@ -304,7 +304,7 @@ export function PianoRollEditor() {
   }
 
   return (
-    <div ref={outerRef} className="w-full overflow-hidden" style={{ isolation: 'isolate', backgroundColor: '#0D1117' }}>
+    <div ref={outerRef} className="w-full overflow-hidden shrink-0" style={{ isolation: 'isolate', backgroundColor: '#0D1117' }}>
       {/* Toolbar */}
       <div className="flex items-center gap-2 px-3 py-2 bg-[#131824] border-b border-white/10">
         {/* Undo button */}
@@ -529,21 +529,25 @@ export function PianoRollEditor() {
       {/* Velocity lane — shown below note grid when enabled */}
       {velocityLaneVisible && (
         <>
+          {/* Divider spans full width (piano keys + note grid) */}
           <div
             className="h-1.5 bg-[#131824] border-y border-white/10 hover:bg-cyan-500/10 transition-colors"
             style={{ cursor: 'row-resize' }}
             onMouseDown={handleDividerMouseDown}
           />
-          <VelocityLane
-            notes={notes}
-            ppq={ppq}
-            scrollX={scrollX}
-            zoomX={zoomX}
-            selectedNoteIds={selectedNoteIds}
-            trackIndex={selectedTrackIndex}
-            width={canvasWidth}
-            height={velocityLaneHeight}
-          />
+          {/* Offset canvas by PIANO_KEY_WIDTH so stalks align with notes above */}
+          <div style={{ marginLeft: PIANO_KEY_WIDTH }}>
+            <VelocityLane
+              notes={notes}
+              ppq={ppq}
+              scrollX={scrollX}
+              zoomX={zoomX}
+              selectedNoteIds={selectedNoteIds}
+              trackIndex={selectedTrackIndex}
+              width={canvasWidth}
+              height={velocityLaneHeight}
+            />
+          </div>
         </>
       )}
 
