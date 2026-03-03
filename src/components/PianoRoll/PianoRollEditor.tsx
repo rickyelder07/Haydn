@@ -23,6 +23,7 @@ import { detectChordsPerBar } from './chordDetection';
 import type { DetectedChord } from './chordDetection';
 import { quantizeNote } from './quantizeUtils';
 import type { QuantizeParams } from './quantizeUtils';
+import { HotkeyReference } from './HotkeyReference';
 
 const EDITOR_HEIGHT = 700;
 
@@ -43,6 +44,7 @@ export function PianoRollEditor() {
   const updateNote = useEditStore((state) => state.updateNote);
   const deleteNote = useEditStore((state) => state.deleteNote);
   const applyBatchEdit = useEditStore((state) => state.applyBatchEdit);
+  const selectAll = useEditStore((state) => state.selectAll);
   const playheadTicks = usePlaybackStore((state) => state.position.ticks);
   const playbackState = usePlaybackStore((state) => state.playbackState);
   const tempo = usePlaybackStore((state) => state.tempo);
@@ -172,12 +174,16 @@ export function PianoRollEditor() {
       } else if (modifier && e.key === 'z') {
         e.preventDefault();
         undo();
+      } else if (modifier && e.key === 'a') {
+        e.preventDefault();
+        const allIds = notes.map((_, i) => `${selectedTrackIndex}-${i}`);
+        selectAll(allIds);
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [undo, redo]);
+  }, [undo, redo, selectAll, notes, selectedTrackIndex]);
 
   // Velocity lane divider drag handler
   const handleDividerMouseDown = (e: React.MouseEvent) => {
@@ -401,11 +407,15 @@ export function PianoRollEditor() {
 
         <div className="h-5 w-px bg-white/10 mx-1"></div>
 
+        {/* Hotkey reference */}
+        <HotkeyReference />
+
+        <div className="h-5 w-px bg-white/10 mx-1"></div>
+
         {/* Project metadata stats */}
         <div className="flex items-center gap-3 text-xs text-tertiary">
           <span className="font-medium text-secondary">{Math.round(firstTempo?.bpm || 120)} BPM</span>
           <span>{firstTimeSig?.numerator ?? 4}/{firstTimeSig?.denominator ?? 4}</span>
-          {firstKeySig && <span>{firstKeySig.key} {firstKeySig.scale}</span>}
           <span>{durationLabel}</span>
         </div>
 

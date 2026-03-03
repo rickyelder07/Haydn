@@ -113,18 +113,23 @@ export function usePianoRollInteractions({
 
       if (hitNoteIndex !== null) {
         const hitNote = notes[hitNoteIndex];
+        const noteId = `${trackIndex}-${hitNoteIndex}`;
 
-        // Right-click or Shift+Left-click -> Delete note
-        if (e.button === 2 || (e.button === 0 && e.shiftKey)) {
+        // Right-click -> Delete note
+        if (e.button === 2) {
           e.preventDefault();
           editStore.deleteNote(hitNoteIndex);
           return;
         }
 
+        // Shift+Left-click -> Toggle multi-select (don't start drag)
+        if (e.button === 0 && e.shiftKey) {
+          editStore.toggleNoteSelection(noteId);
+          return;
+        }
+
         // Left-click -> Select and start drag
         if (e.button === 0) {
-          // Select note (future: multi-select with shift)
-          const noteId = `${trackIndex}-${hitNoteIndex}`;
           editStore.selectNote(noteId);
 
           // Start drag state

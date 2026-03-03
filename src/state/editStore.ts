@@ -29,6 +29,8 @@ interface EditState {
   undo: () => void;
   redo: () => void;
   selectNote: (noteId: string) => void;
+  toggleNoteSelection: (noteId: string) => void;
+  selectAll: (noteIds: string[]) => void;
   clearSelection: () => void;
   setEditing: (editing: boolean) => void;
 }
@@ -367,6 +369,21 @@ export const useEditStore = create<EditState>((set, get) => ({
   // Select a note by ID (replaces previous selection for single-select behavior)
   selectNote: (noteId) => {
     set({ selectedNoteIds: new Set([noteId]) });
+  },
+
+  toggleNoteSelection: (noteId) => {
+    const current = get().selectedNoteIds;
+    const next = new Set(current);
+    if (next.has(noteId)) {
+      next.delete(noteId);
+    } else {
+      next.add(noteId);
+    }
+    set({ selectedNoteIds: next });
+  },
+
+  selectAll: (noteIds) => {
+    set({ selectedNoteIds: new Set(noteIds) });
   },
 
   // Clear all note selections
