@@ -1,14 +1,14 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.0
+milestone: v1.1
 milestone_name: Polish & Enhancement
-status: unknown
-last_updated: "2026-03-02T20:37:16.609Z"
+status: in_progress
+last_updated: "2026-03-03T00:00:00Z"
 progress:
   total_phases: 18
   completed_phases: 12
   total_plans: 60
-  completed_plans: 58
+  completed_plans: 62
 ---
 
 # Project State
@@ -18,16 +18,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-02-12)
 
 **Core value:** Natural language edits must produce musically coherent results that follow music theory, respect genre conventions, and maintain context with the existing track.
-**Current focus:** Phase 12 (template variations)
+**Current focus:** Phase 13 complete — advanced piano roll editing (velocity lane, quantize, chord strip)
 
 ## Current Position
 
-Phase: 13 of 14 — IN PROGRESS
-Plan: 13-02 complete (2 of TBD plans done)
-Status: Phase 13 in progress — VelocityLane canvas component complete; QuantizePopover and ChordStrip components remaining
-Last activity: 2026-03-02 — Plan 13-02 complete: VelocityLane canvas component with stalk rendering and drag-edit interaction
+Phase: 13 of 14 — COMPLETE
+Plan: 13-04 complete (4 of 4 plans done)
+Status: Phase 13 complete — VelocityLane, QuantizePopover, ChordStrip all wired into PianoRollEditor
+Last activity: 2026-03-03 — Plan 13-04 complete: integration with bug fixes for stalk alignment and flex clipping
 
-Progress: [█████████░░░░░] 72% (v1.0 complete: 42/42 plans, v1.1: 13/TBD plans, Phase 13 plans 1-2 complete)
+Progress: [██████████░░░░] 80% (v1.0 complete: 42/42 plans, v1.1: 17/TBD plans, Phase 13 all 4 plans complete)
 
 ## Performance Metrics
 
@@ -75,6 +75,8 @@ Progress: [█████████░░░░░] 72% (v1.0 complete: 42/42
 - v1.0 maintained consistent velocity
 - v1.1 starting fresh (TBD plans)
 | Phase 13 P02 | 2 | 2 tasks | 1 files |
+| Phase 13 P03 | ~10 min | 2 | 2 files |
+| Phase 13 P04 | ~20 min | 2 | 1 file |
 
 ## Accumulated Context
 
@@ -135,6 +137,8 @@ Recent decisions affecting v1.1 work:
 - [Phase 13]: dragRef uses useRef for drag state — avoids React re-renders during mousemove, canvas redraws come from notes prop via projectStore
 - [Phase 13]: hitTest uses same 0.1 * zoomX formula as rendering — visual stalk position and interactive hit area never drift
 - [Phase 13]: velocitySnapshot captured once on mousedown, delta recomputed from snapshot each frame — avoids accumulated floating-point drift on fast drags
+- [13-04]: VelocityLane wrapped in div with marginLeft: PIANO_KEY_WIDTH (60px) — canvas positions start at x=0 but ticksToX() returns note-grid-relative positions; offset brings stalks into visual alignment with notes above
+- [13-04]: shrink-0 on outer PianoRollEditor div — prevents flex container (main: overflow-y-auto flex-col) from shrinking the editor and clipping the velocity lane
 
 ### Pending Todos
 
@@ -152,12 +156,12 @@ All pitfalls documented in research/v1.1/SUMMARY.md with prevention strategies.
 
 ## Session Continuity
 
-Last session: 2026-03-02
-Stopped at: Completed 13-02-PLAN.md — VelocityLane canvas component with stalk rendering and drag-edit interaction
+Last session: 2026-03-03
+Stopped at: Completed 13-04-PLAN.md — PianoRollEditor integration with VelocityLane, QuantizePopover, ChordStrip fully wired
 Resume file: None
 
-**Next step:** Phase 13 Wave 2 plans (QuantizePopover, ChordStrip components).
+**Next step:** Phase 14 (MIDI recording).
 
 ---
 
-*Last updated: 2026-03-02 after Plan 13-02 complete (VelocityLane canvas component: stalk rendering + drag-edit with snapshot-delta pattern + multi-select velocity delta support)*
+*Last updated: 2026-03-03 after Plan 13-04 complete (PianoRollEditor integration: VelocityLane stalk alignment fix + flex clipping fix + all three features wired end-to-end)*
