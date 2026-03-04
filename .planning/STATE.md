@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: Polish & Enhancement
 status: unknown
-last_updated: "2026-03-03T23:50:39.405Z"
+last_updated: "2026-03-04T18:21:00Z"
 progress:
   total_phases: 18
   completed_phases: 13
@@ -18,16 +18,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-02-12)
 
 **Core value:** Natural language edits must produce musically coherent results that follow music theory, respect genre conventions, and maintain context with the existing track.
-**Current focus:** Phase 13 complete — advanced piano roll editing (velocity lane, quantize, chord strip)
+**Current focus:** Phase 14 in progress — MIDI hardware integration (MidiInputEngine + midiInputStore foundation complete)
 
 ## Current Position
 
-Phase: 13 of 14 — COMPLETE
-Plan: 13-04 complete (4 of 4 plans done)
-Status: Phase 13 complete — VelocityLane, QuantizePopover, ChordStrip all wired into PianoRollEditor
-Last activity: 2026-03-03 — Plan 13-04 complete: integration with bug fixes for stalk alignment and flex clipping
+Phase: 14 of 14 — IN PROGRESS
+Plan: 14-01 complete (1 of 4 plans done)
+Status: Phase 14 Plan 01 complete — MidiInputEngine singleton, midiInputStore Zustand store, InstrumentInstance live-play extension
+Last activity: 2026-03-04 — Plan 14-01 complete: MIDI foundation (engine + store + interface extension)
 
-Progress: [██████████░░░░] 80% (v1.0 complete: 42/42 plans, v1.1: 17/TBD plans, Phase 13 all 4 plans complete)
+Progress: [██████████░░░░] 80% (v1.0 complete: 42/42 plans, v1.1: 18/TBD plans, Phase 14 plan 01 complete)
 
 ## Performance Metrics
 
@@ -77,6 +77,7 @@ Progress: [██████████░░░░] 80% (v1.0 complete: 42/42
 | Phase 13 P02 | 2 | 2 tasks | 1 files |
 | Phase 13 P03 | ~10 min | 2 | 2 files |
 | Phase 13 P04 | ~20 min | 2 | 1 file |
+| 14-01 | 2 min | 2 | 3 |
 
 ## Accumulated Context
 
@@ -139,6 +140,10 @@ Recent decisions affecting v1.1 work:
 - [Phase 13]: velocitySnapshot captured once on mousedown, delta recomputed from snapshot each frame — avoids accumulated floating-point drift on fast drags
 - [13-04]: VelocityLane wrapped in div with marginLeft: PIANO_KEY_WIDTH (60px) — canvas positions start at x=0 but ticksToX() returns note-grid-relative positions; offset brings stalks into visual alignment with notes above
 - [13-04]: shrink-0 on outer PianoRollEditor div — prevents flex container (main: overflow-y-auto flex-col) from shrinking the editor and clipping the velocity lane
+- [14-01]: Inline MIDI type declarations in MidiInputEngine.ts — avoids @types/webmidi conflict with tsconfig lib settings
+- [14-01]: Dynamic import for getMidiInputStore inside onstatechange callback — resolves circular dep without shared types file
+- [14-01]: refreshDevices() ignores MIDIAccess parameter, re-reads from getMidiInputEngine().getInputDevices() — keeps device-name logic in one place
+- [14-01]: InstrumentInstance triggerAttack?/triggerRelease? optional — existing instruments compile unmodified
 
 ### Pending Todos
 
@@ -156,12 +161,12 @@ All pitfalls documented in research/v1.1/SUMMARY.md with prevention strategies.
 
 ## Session Continuity
 
-Last session: 2026-03-03
-Stopped at: Completed 13-04-PLAN.md — PianoRollEditor integration with VelocityLane, QuantizePopover, ChordStrip fully wired
+Last session: 2026-03-04
+Stopped at: Completed 14-01-PLAN.md — MidiInputEngine singleton, midiInputStore Zustand store, InstrumentInstance live-play extension
 Resume file: None
 
-**Next step:** Phase 14 (MIDI recording).
+**Next step:** Phase 14 Plan 02 (MIDI recording pipeline).
 
 ---
 
-*Last updated: 2026-03-03 after Plan 13-04 complete (PianoRollEditor integration: VelocityLane stalk alignment fix + flex clipping fix + all three features wired end-to-end)*
+*Last updated: 2026-03-04 after Plan 14-01 complete (MIDI foundation: MidiInputEngine + midiInputStore + InstrumentInstance optional live-play methods)*

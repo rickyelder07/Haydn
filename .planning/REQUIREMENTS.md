@@ -82,10 +82,10 @@ Requirements for v1.1 Polish & Enhancement milestone. Each maps to roadmap phase
 
 ### MIDI Hardware Support
 
-- [ ] **MIDI-01**: System detects Web MIDI API availability (Chrome/Edge/Opera support)
-- [ ] **MIDI-02**: System displays clear error if Web MIDI not supported (Firefox/Safari)
-- [ ] **MIDI-03**: User can connect MIDI keyboard via "Connect MIDI" button
-- [ ] **MIDI-04**: System lists connected MIDI input devices
+- [x] **MIDI-01**: System detects Web MIDI API availability (Chrome/Edge/Opera support)
+- [x] **MIDI-02**: System displays clear error if Web MIDI not supported (Firefox/Safari)
+- [x] **MIDI-03**: User can connect MIDI keyboard via "Connect MIDI" button
+- [x] **MIDI-04**: System lists connected MIDI input devices
 - [ ] **MIDI-05**: User can play notes of currently selected track using MIDI keyboard (when paused)
 - [ ] **MIDI-06**: Keyboard input respects velocity sensitivity
 - [ ] **MIDI-07**: Sustain pedal (CC 64) works properly (notes sustain while pedal down, release when lifted)
@@ -201,10 +201,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CHORD-03 | Phase 13 | Complete |
 | CHORD-04 | Phase 13 | Complete |
 | CHORD-05 | Phase 13 | Complete |
-| MIDI-01 | Phase 14 | Pending |
-| MIDI-02 | Phase 14 | Pending |
-| MIDI-03 | Phase 14 | Pending |
-| MIDI-04 | Phase 14 | Pending |
+| MIDI-01 | Phase 14 | Complete |
+| MIDI-02 | Phase 14 | Complete |
+| MIDI-03 | Phase 14 | Complete |
+| MIDI-04 | Phase 14 | Complete |
 | MIDI-05 | Phase 14 | Pending |
 | MIDI-06 | Phase 14 | Pending |
 | MIDI-07 | Phase 14 | Pending |
