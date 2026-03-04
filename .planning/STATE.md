@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: Polish & Enhancement
 status: unknown
-last_updated: "2026-03-04T18:21:00Z"
+last_updated: "2026-03-04T18:26:00Z"
 progress:
   total_phases: 18
   completed_phases: 13
@@ -18,14 +18,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-02-12)
 
 **Core value:** Natural language edits must produce musically coherent results that follow music theory, respect genre conventions, and maintain context with the existing track.
-**Current focus:** Phase 14 in progress — MIDI hardware integration (Plans 14-01 and 14-03 complete — foundation + UI components)
+**Current focus:** Phase 14 in progress — MIDI hardware integration (Plans 14-01, 14-02, and 14-03 complete — foundation + event pipeline + UI components)
 
 ## Current Position
 
 Phase: 14 of 14 — IN PROGRESS
-Plan: 14-03 complete (2 of 4 plans done, 14-01 + 14-03)
-Status: Phase 14 Plan 03 complete — MidiConnectButton, MidiDeviceList, TransportStrip arm button + recording indicator
-Last activity: 2026-03-04 — Plan 14-03 complete: MIDI UI components (MidiConnectButton + MidiDeviceList + TransportStrip additions)
+Plan: 14-02 complete (3 of 4 plans done, 14-01 + 14-02 + 14-03)
+Status: Phase 14 Plan 02 complete — MIDI event pipeline: triggerAttack/Release, getInstrumentForTrack, handleMidiEvent, startRecordingWithCountIn, commitRecording
+Last activity: 2026-03-04 — Plan 14-02 complete: MIDI event processing pipeline (instruments + NoteScheduler accessor + midiInputStore routing)
 
 Progress: [██████████░░░░] 80% (v1.0 complete: 42/42 plans, v1.1: 18/TBD plans, Phase 14 plan 01 complete)
 
@@ -78,6 +78,7 @@ Progress: [██████████░░░░] 80% (v1.0 complete: 42/42
 | Phase 13 P03 | ~10 min | 2 | 2 files |
 | Phase 13 P04 | ~20 min | 2 | 1 file |
 | 14-01 | 2 min | 2 | 3 |
+| 14-02 | 2 min | 2 | 4 |
 | 14-03 | 2 min | 2 | 3 |
 
 ## Accumulated Context
@@ -145,6 +146,11 @@ Recent decisions affecting v1.1 work:
 - [14-01]: Dynamic import for getMidiInputStore inside onstatechange callback — resolves circular dep without shared types file
 - [14-01]: refreshDevices() ignores MIDIAccess parameter, re-reads from getMidiInputEngine().getInputDevices() — keeps device-name logic in one place
 - [14-01]: InstrumentInstance triggerAttack?/triggerRelease? optional — existing instruments compile unmodified
+- [14-02]: HaydnNote has no id field — plan code sample included id, removed it; type only has midi/ticks/durationTicks/velocity
+- [14-02]: Message handler registered in connect() action — not at module load, avoids handler leaks if MIDI never requested
+- [14-02]: Two-phase note recording: pendingNotes Map (open) + completedNotes array (closed), merged at commitRecording
+- [14-02]: commitRecording caps held pending notes at ppq*8 (2 bars) — prevents monster notes from keys held across stop
+- [14-02]: startRecordingWithCountIn silently catches count-in cancellation, disarms — graceful UX
 - [14-03]: Arm button gated on isConnected — no arm button until MIDI device connected
 - [14-03]: Click-outside popover uses useEffect + document mousedown with popoverRef — avoids onBlur focus issues on child elements
 - [14-03]: Popover button is toggle (not disconnect) — explicit Disconnect inside popover makes disconnection deliberate
@@ -167,11 +173,11 @@ All pitfalls documented in research/v1.1/SUMMARY.md with prevention strategies.
 ## Session Continuity
 
 Last session: 2026-03-04
-Stopped at: Completed 14-03-PLAN.md — MidiConnectButton, MidiDeviceList, TransportStrip arm button + recording indicator
+Stopped at: Completed 14-02-PLAN.md — MIDI event pipeline: triggerAttack/Release on instruments, NoteScheduler accessor, full midiInputStore routing
 Resume file: None
 
-**Next step:** Phase 14 Plan 02 (MIDI recording pipeline) or Plan 14-04 (live playback).
+**Next step:** Phase 14 Plan 04 (live playback verification — final plan).
 
 ---
 
-*Last updated: 2026-03-04 after Plan 14-03 complete (MIDI UI: MidiConnectButton + MidiDeviceList + TransportStrip arm/record additions)*
+*Last updated: 2026-03-04 after Plan 14-02 complete (MIDI event pipeline: instruments + NoteScheduler accessor + midiInputStore routing/recording)*

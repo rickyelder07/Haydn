@@ -86,14 +86,14 @@ Requirements for v1.1 Polish & Enhancement milestone. Each maps to roadmap phase
 - [x] **MIDI-02**: System displays clear error if Web MIDI not supported (Firefox/Safari)
 - [x] **MIDI-03**: User can connect MIDI keyboard via "Connect MIDI" button
 - [x] **MIDI-04**: System lists connected MIDI input devices
-- [ ] **MIDI-05**: User can play notes of currently selected track using MIDI keyboard (when paused)
-- [ ] **MIDI-06**: Keyboard input respects velocity sensitivity
-- [ ] **MIDI-07**: Sustain pedal (CC 64) works properly (notes sustain while pedal down, release when lifted)
+- [x] **MIDI-05**: User can play notes of currently selected track using MIDI keyboard (when paused)
+- [x] **MIDI-06**: Keyboard input respects velocity sensitivity
+- [x] **MIDI-07**: Sustain pedal (CC 64) works properly (notes sustain while pedal down, release when lifted)
 - [x] **MIDI-08**: User can arm track for recording via record button in transport controls
-- [ ] **MIDI-09**: User can start recording during playback (captures MIDI input as notes)
-- [ ] **MIDI-10**: Recording includes count-in (1 bar before playback starts)
-- [ ] **MIDI-11**: Recorded notes align with beat grid (latency compensation applied)
-- [ ] **MIDI-12**: User can undo last recording (remove recorded notes)
+- [x] **MIDI-09**: User can start recording during playback (captures MIDI input as notes)
+- [x] **MIDI-10**: Recording includes count-in (1 bar before playback starts)
+- [x] **MIDI-11**: Recorded notes align with beat grid (latency compensation applied)
+- [x] **MIDI-12**: User can undo last recording (remove recorded notes)
 - [x] **MIDI-13**: Recording indicator visible during active recording
 
 ---
@@ -205,14 +205,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 | MIDI-02 | Phase 14 | Complete |
 | MIDI-03 | Phase 14 | Complete |
 | MIDI-04 | Phase 14 | Complete |
-| MIDI-05 | Phase 14 | Pending |
-| MIDI-06 | Phase 14 | Pending |
-| MIDI-07 | Phase 14 | Pending |
+| MIDI-05 | Phase 14 | Complete |
+| MIDI-06 | Phase 14 | Complete |
+| MIDI-07 | Phase 14 | Complete |
 | MIDI-08 | Phase 14 | Complete |
-| MIDI-09 | Phase 14 | Pending |
-| MIDI-10 | Phase 14 | Pending |
-| MIDI-11 | Phase 14 | Pending |
-| MIDI-12 | Phase 14 | Pending |
+| MIDI-09 | Phase 14 | Complete |
+| MIDI-10 | Phase 14 | Complete |
+| MIDI-11 | Phase 14 | Complete |
+| MIDI-12 | Phase 14 | Complete |
 | MIDI-13 | Phase 14 | Complete |
 
 **Coverage:**
