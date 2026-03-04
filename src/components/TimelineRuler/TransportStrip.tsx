@@ -2,6 +2,7 @@
 
 import { usePlaybackStore } from '@/state/playbackStore';
 import { useMidiInputStore } from '@/state/midiInputStore';
+import { useEditStore } from '@/state/editStore';
 import { TempoDisplay } from '@/components/TransportControls/TempoDisplay';
 
 // Inline SVG icons sized for compact strip
@@ -56,9 +57,35 @@ export function TransportStrip({ width = 180 }: TransportStripProps) {
   const isArmed = useMidiInputStore(s => s.isArmed);
   const isRecording = useMidiInputStore(s => s.isRecording);
   const setArmed = useMidiInputStore(s => s.setArmed);
+  const startRecordingWithCountIn = useMidiInputStore(s => s.startRecordingWithCountIn);
+  const commitRecording = useMidiInputStore(s => s.commitRecording);
+  const selectedTrackIndex = useEditStore(s => s.selectedTrackIndex);
 
   const isPlaying = playbackState === 'playing';
   const canInteract = !isLoading;
+
+  const handlePlayClick = async () => {
+    if (isArmed && playbackState === 'stopped') {
+      // Armed + stopped: start count-in → record → play
+      await startRecordingWithCountIn();
+    } else if (isArmed && playbackState === 'playing') {
+      // Armed + playing: stop recording and commit notes, then stop playback
+      if (selectedTrackIndex !== null) {
+        commitRecording(selectedTrackIndex);
+      }
+      stop();
+    } else {
+      // Normal play/pause when not armed
+      await togglePlayPause();
+    }
+  };
+
+  const handleStopClick = () => {
+    if (isArmed && isRecording && selectedTrackIndex !== null) {
+      commitRecording(selectedTrackIndex);
+    }
+    stop();
+  };
 
   return (
     <div
@@ -67,7 +94,7 @@ export function TransportStrip({ width = 180 }: TransportStripProps) {
     >
       {/* Play/Pause button */}
       <button
-        onClick={togglePlayPause}
+        onClick={handlePlayClick}
         disabled={!canInteract}
         className="p-1 rounded hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed text-gray-300 hover:text-cyan-400 transition-colors"
         title={isPlaying ? 'Pause (Space)' : 'Play (Space)'}
@@ -84,7 +111,7 @@ export function TransportStrip({ width = 180 }: TransportStripProps) {
 
       {/* Stop button */}
       <button
-        onClick={stop}
+        onClick={handleStopClick}
         disabled={!canInteract}
         className="p-1 rounded hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed text-gray-300 hover:text-amber-400 transition-colors"
         title="Stop (Enter)"

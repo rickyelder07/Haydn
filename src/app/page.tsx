@@ -15,6 +15,7 @@ import { FloatingEditPanel } from '@/components/FloatingEditPanel';
 import { FloatingDebugPanel } from '@/components/FloatingDebugPanel';
 import { Sidebar } from '@/components/Sidebar';
 import { NewProjectButton } from '@/components/NewProjectButton';
+import { MidiConnectButton } from '@/components/Midi/MidiConnectButton';
 import { InlineEdit } from '@/components/InlineEdit';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { Toaster } from 'sonner';
@@ -121,6 +122,7 @@ export default function Home() {
           </div>
           {project ? (
             <div className="flex items-center gap-3">
+              <MidiConnectButton />
               <NewProjectButton />
               <ExportButton />
             </div>
