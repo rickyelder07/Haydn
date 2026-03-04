@@ -144,28 +144,30 @@ export function TransportStrip({ width = 180 }: TransportStripProps) {
         <button
           onClick={() => setArmed(!isArmed)}
           className={[
-            'flex items-center gap-1 px-1.5 py-0.5 rounded transition-colors text-[10px] font-semibold mono border',
+            'p-1 rounded transition-colors',
             isArmed
-              ? 'bg-red-500/20 border-red-500/30 text-red-400 hover:bg-red-500/30'
-              : 'border-transparent text-gray-500 hover:text-red-400 hover:bg-white/10',
+              ? 'text-red-500 bg-red-500/15 hover:bg-red-500/25'
+              : 'text-gray-500 hover:text-red-400 hover:bg-white/10',
           ].join(' ')}
-          title={isArmed ? 'Disarm recording — click to toggle off' : 'Arm for recording — then press Play'}
+          title={isArmed ? 'Armed — press Play to record (click to disarm)' : 'Arm for recording — then press Play'}
           aria-label={isArmed ? 'Disarm recording' : 'Arm for recording'}
         >
-          <span className={['block w-2.5 h-2.5 rounded-full border-2 border-current flex-shrink-0', isArmed ? 'bg-red-500/50' : ''].join(' ')} />
-          REC
+          {/* Filled circle = armed, hollow circle = not armed */}
+          {isArmed
+            ? <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /></svg>
+            : <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /></svg>
+          }
         </button>
       )}
 
-      {/* Recording status label */}
-      {isRecording ? (
-        <span className="flex items-center gap-1 text-[10px] mono text-red-400 font-semibold flex-shrink-0">
-          <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-          REC
-        </span>
-      ) : isArmed && !isRecording && !isLoading ? (
-        <span className="text-[10px] mono text-red-400/70 flex-shrink-0">ARMED</span>
-      ) : null}
+      {/* Pulsing dot during active recording */}
+      {isRecording && (
+        <span
+          className="w-2 h-2 rounded-full bg-red-500 animate-pulse flex-shrink-0"
+          title="Recording..."
+          aria-label="Recording active"
+        />
+      )}
 
       {/* Loading label — visible only during CDN sample fetch */}
       {isLoading && (
