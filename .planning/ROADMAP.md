@@ -166,12 +166,13 @@ Plans:
   4. User can arm track for recording, start during playback with count-in (1 bar)
   5. Recorded notes align with beat grid (latency compensation applied) and recording is undoable
   6. Recording indicator visible during active recording
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] 14-01: TBD
-- [ ] 14-02: TBD
-- [ ] 14-03: TBD
+- [ ] 14-01-PLAN.md — midiInputStore + MidiInputEngine singleton + InstrumentInstance interface extension (MIDI-01, MIDI-02, MIDI-03, MIDI-04)
+- [ ] 14-02-PLAN.md — Recording pipeline: triggerAttack/Release, NoteScheduler accessor, handleMidiEvent, sustain, timing, commitRecording (MIDI-05, MIDI-06, MIDI-07, MIDI-09, MIDI-10, MIDI-11, MIDI-12)
+- [ ] 14-03-PLAN.md — MidiConnectButton + MidiDeviceList UI + TransportStrip arm button + recording indicator (MIDI-01, MIDI-02, MIDI-03, MIDI-04, MIDI-08, MIDI-13)
+- [ ] 14-04-PLAN.md — Wire into page.tsx + arm/play flow + human verification (MIDI-05 through MIDI-13)
 
 ## Progress
 
@@ -193,8 +194,8 @@ Phases execute in numeric order: 1-8 (complete) → 9 → 10 → 11 → 12 → 1
 | 11. AI Composition Mode | 4/4 | Complete    | 2026-02-28 | - |
 | 12. Template Variations | v1.1 | Complete    | 2026-03-02 | 2026-03-02 |
 | 13. Advanced Piano Roll Editing | v1.1 | Complete    | 2026-03-03 | 2026-03-03 |
-| 14. MIDI Hardware Integration | v1.1 | 0/TBD | Not started | - |
+| 14. MIDI Hardware Integration | v1.1 | 0/4 | Not started | - |
 
 ---
 
-*Last updated: 2026-03-03 after Phase 13 complete (4 plans: utility layer + VelocityLane + QuantizePopover/ChordStrip + PianoRollEditor wiring with bug fixes)*
+*Last updated: 2026-03-03 after Phase 14 planning complete (4 plans: foundation store + recording pipeline + UI components + wiring/verification)*
