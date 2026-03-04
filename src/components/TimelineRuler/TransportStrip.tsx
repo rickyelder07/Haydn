@@ -24,6 +24,12 @@ const StopIcon = () => (
   </svg>
 );
 
+const RecordIcon = () => (
+  <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="8" />
+  </svg>
+);
+
 const LoopIcon = ({ active }: { active: boolean }) => (
   <svg
     className="w-3.5 h-3.5"
@@ -92,16 +98,29 @@ export function TransportStrip({ width = 180 }: TransportStripProps) {
       className="flex-shrink-0 flex items-center gap-1.5 px-2 bg-gray-800/60 border-r border-white/10"
       style={{ width: `${width}px` }}
     >
-      {/* Play/Pause button */}
+      {/* Play/Pause/Record button — changes to Record when MIDI is armed */}
       <button
         onClick={handlePlayClick}
         disabled={!canInteract}
-        className="p-1 rounded hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed text-gray-300 hover:text-cyan-400 transition-colors"
-        title={isPlaying ? 'Pause (Space)' : 'Play (Space)'}
-        aria-label={isPlaying ? 'Pause' : 'Play'}
+        className={[
+          'p-1 rounded transition-colors disabled:opacity-40 disabled:cursor-not-allowed',
+          isArmed && !isPlaying
+            ? 'text-red-400 hover:text-red-300 hover:bg-red-500/10'
+            : isArmed && isPlaying
+              ? 'text-red-400 hover:text-red-300 hover:bg-red-500/10'
+              : 'text-gray-300 hover:text-cyan-400 hover:bg-white/10',
+        ].join(' ')}
+        title={
+          isArmed && !isPlaying ? 'Record (Space)' :
+          isArmed && isPlaying ? 'Stop recording (Space)' :
+          isPlaying ? 'Pause (Space)' : 'Play (Space)'
+        }
+        aria-label={isArmed && !isPlaying ? 'Record' : isPlaying ? 'Pause' : 'Play'}
       >
         {isLoading ? (
           <div className="w-3.5 h-3.5 border border-white border-t-transparent rounded-full animate-spin" />
+        ) : isArmed && !isPlaying ? (
+          <RecordIcon />
         ) : isPlaying ? (
           <PauseIcon />
         ) : (
@@ -125,27 +144,28 @@ export function TransportStrip({ width = 180 }: TransportStripProps) {
         <button
           onClick={() => setArmed(!isArmed)}
           className={[
-            'p-1 rounded transition-colors text-xs font-bold leading-none',
+            'flex items-center gap-1 px-1.5 py-0.5 rounded transition-colors text-[10px] font-semibold mono border',
             isArmed
-              ? 'bg-red-500/20 border border-red-500/30 text-red-400 hover:bg-red-500/30'
-              : 'hover:bg-white/10 text-gray-500 hover:text-red-400 border border-transparent',
+              ? 'bg-red-500/20 border-red-500/30 text-red-400 hover:bg-red-500/30'
+              : 'border-transparent text-gray-500 hover:text-red-400 hover:bg-white/10',
           ].join(' ')}
-          title={isArmed ? 'Disarm recording' : 'Arm for recording'}
+          title={isArmed ? 'Disarm recording — click to toggle off' : 'Arm for recording — then press Play'}
           aria-label={isArmed ? 'Disarm recording' : 'Arm for recording'}
         >
-          {/* Record circle icon */}
-          <span className="block w-3 h-3 rounded-full border-2 border-current" />
+          <span className={['block w-2.5 h-2.5 rounded-full border-2 border-current flex-shrink-0', isArmed ? 'bg-red-500/50' : ''].join(' ')} />
+          REC
         </button>
       )}
 
-      {/* Recording indicator — pulsing red dot when recording active */}
-      {isRecording && (
-        <span
-          className="w-2 h-2 rounded-full bg-red-500 animate-pulse flex-shrink-0"
-          title="Recording..."
-          aria-label="Recording active"
-        />
-      )}
+      {/* Recording status label */}
+      {isRecording ? (
+        <span className="flex items-center gap-1 text-[10px] mono text-red-400 font-semibold flex-shrink-0">
+          <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+          REC
+        </span>
+      ) : isArmed && !isRecording && !isLoading ? (
+        <span className="text-[10px] mono text-red-400/70 flex-shrink-0">ARMED</span>
+      ) : null}
 
       {/* Loading label — visible only during CDN sample fetch */}
       {isLoading && (
