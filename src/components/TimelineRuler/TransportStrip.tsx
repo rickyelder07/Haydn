@@ -1,6 +1,7 @@
 'use client';
 
 import { usePlaybackStore } from '@/state/playbackStore';
+import { useMidiInputStore } from '@/state/midiInputStore';
 import { TempoDisplay } from '@/components/TransportControls/TempoDisplay';
 
 // Inline SVG icons sized for compact strip
@@ -51,6 +52,11 @@ export function TransportStrip({ width = 180 }: TransportStripProps) {
   const stop = usePlaybackStore((state) => state.stop);
   const setTempo = usePlaybackStore((state) => state.setTempo);
 
+  const isConnected = useMidiInputStore(s => s.isConnected);
+  const isArmed = useMidiInputStore(s => s.isArmed);
+  const isRecording = useMidiInputStore(s => s.isRecording);
+  const setArmed = useMidiInputStore(s => s.setArmed);
+
   const isPlaying = playbackState === 'playing';
   const canInteract = !isLoading;
 
@@ -86,6 +92,33 @@ export function TransportStrip({ width = 180 }: TransportStripProps) {
       >
         <StopIcon />
       </button>
+
+      {/* Record arm button — only visible when MIDI connected */}
+      {isConnected && (
+        <button
+          onClick={() => setArmed(!isArmed)}
+          className={[
+            'p-1 rounded transition-colors text-xs font-bold leading-none',
+            isArmed
+              ? 'bg-red-500/20 border border-red-500/30 text-red-400 hover:bg-red-500/30'
+              : 'hover:bg-white/10 text-gray-500 hover:text-red-400 border border-transparent',
+          ].join(' ')}
+          title={isArmed ? 'Disarm recording' : 'Arm for recording'}
+          aria-label={isArmed ? 'Disarm recording' : 'Arm for recording'}
+        >
+          {/* Record circle icon */}
+          <span className="block w-3 h-3 rounded-full border-2 border-current" />
+        </button>
+      )}
+
+      {/* Recording indicator — pulsing red dot when recording active */}
+      {isRecording && (
+        <span
+          className="w-2 h-2 rounded-full bg-red-500 animate-pulse flex-shrink-0"
+          title="Recording..."
+          aria-label="Recording active"
+        />
+      )}
 
       {/* Loading label — visible only during CDN sample fetch */}
       {isLoading && (
