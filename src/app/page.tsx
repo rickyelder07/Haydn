@@ -16,6 +16,7 @@ import { FloatingDebugPanel } from '@/components/FloatingDebugPanel';
 import { Sidebar } from '@/components/Sidebar';
 import { NewProjectButton } from '@/components/NewProjectButton';
 import { MidiConnectButton } from '@/components/Midi/MidiConnectButton';
+import { useMidiInputStore } from '@/state/midiInputStore';
 import { InlineEdit } from '@/components/InlineEdit';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { Toaster } from 'sonner';
@@ -25,6 +26,10 @@ export default function Home() {
   const { loadProject } = usePlaybackStore();
   const { selectedTrackIndex, selectTrack } = useEditStore();
   const [showAiEditor, setShowAiEditor] = useState(true);
+  const midiConnected = useMidiInputStore(s => s.isConnected);
+  const midiArmed = useMidiInputStore(s => s.isArmed);
+  const midiRecording = useMidiInputStore(s => s.isRecording);
+  const setMidiArmed = useMidiInputStore(s => s.setArmed);
 
   // Add keyboard shortcuts
   useKeyboardShortcuts();
@@ -123,6 +128,27 @@ export default function Home() {
           {project ? (
             <div className="flex items-center gap-3">
               <MidiConnectButton />
+              {/* Arm button — only when MIDI connected */}
+              {midiConnected && (
+                <button
+                  onClick={() => setMidiArmed(!midiArmed)}
+                  className={[
+                    'flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold border transition-colors',
+                    midiRecording
+                      ? 'bg-red-500/20 border-red-500/40 text-red-400 animate-pulse'
+                      : midiArmed
+                        ? 'bg-red-500/15 border-red-500/30 text-red-400 hover:bg-red-500/25'
+                        : 'bg-white/5 border-white/10 text-gray-400 hover:bg-red-500/10 hover:border-red-500/20 hover:text-red-400',
+                  ].join(' ')}
+                  title={midiRecording ? 'Recording…' : midiArmed ? 'Armed — press Play to record (click to disarm)' : 'Arm for MIDI recording'}
+                >
+                  {/* Circle icon: filled = armed/recording, hollow = unarmed */}
+                  <svg className="w-3 h-3 flex-shrink-0" viewBox="0 0 24 24" fill={midiArmed || midiRecording ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2.5">
+                    <circle cx="12" cy="12" r="9" />
+                  </svg>
+                  {midiRecording ? 'REC' : midiArmed ? 'ARMED' : 'REC'}
+                </button>
+              )}
               <NewProjectButton />
               <ExportButton />
             </div>

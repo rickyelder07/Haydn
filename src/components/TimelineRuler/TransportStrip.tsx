@@ -59,10 +59,8 @@ export function TransportStrip({ width = 180 }: TransportStripProps) {
   const stop = usePlaybackStore((state) => state.stop);
   const setTempo = usePlaybackStore((state) => state.setTempo);
 
-  const isConnected = useMidiInputStore(s => s.isConnected);
   const isArmed = useMidiInputStore(s => s.isArmed);
   const isRecording = useMidiInputStore(s => s.isRecording);
-  const setArmed = useMidiInputStore(s => s.setArmed);
   const startRecordingWithCountIn = useMidiInputStore(s => s.startRecordingWithCountIn);
   const commitRecording = useMidiInputStore(s => s.commitRecording);
   const selectedTrackIndex = useEditStore(s => s.selectedTrackIndex);
@@ -138,27 +136,6 @@ export function TransportStrip({ width = 180 }: TransportStripProps) {
       >
         <StopIcon />
       </button>
-
-      {/* Record arm button — only visible when MIDI connected */}
-      {isConnected && (
-        <button
-          onClick={() => setArmed(!isArmed)}
-          className={[
-            'p-1 rounded transition-colors',
-            isArmed
-              ? 'text-red-500 bg-red-500/15 hover:bg-red-500/25'
-              : 'text-gray-500 hover:text-red-400 hover:bg-white/10',
-          ].join(' ')}
-          title={isArmed ? 'Armed — press Play to record (click to disarm)' : 'Arm for recording — then press Play'}
-          aria-label={isArmed ? 'Disarm recording' : 'Arm for recording'}
-        >
-          {/* Filled circle = armed, hollow circle = not armed */}
-          {isArmed
-            ? <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /></svg>
-            : <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /></svg>
-          }
-        </button>
-      )}
 
       {/* Pulsing dot during active recording */}
       {isRecording && (
