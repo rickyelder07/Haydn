@@ -136,6 +136,22 @@ export function clearScheduledNotes(): void {
 }
 
 /**
+ * Returns the loaded InstrumentInstance for a given track index.
+ * Used by midiInputStore for live MIDI keyboard playback.
+ * Returns null if instruments are not yet loaded or track doesn't exist.
+ */
+export function getInstrumentForTrack(
+  trackIndex: number,
+  project: HaydnProject
+): InstrumentInstance | null {
+  const track = project.tracks[trackIndex];
+  if (!track) return null;
+  const isPercussion = isPercussionChannel(track.channel);
+  const key = isPercussion ? 'percussion' : track.instrumentNumber;
+  return loadedInstruments.get(key) ?? null;
+}
+
+/**
  * Fully dispose all instruments (call on project change).
  */
 export function disposeAllInstruments(): void {

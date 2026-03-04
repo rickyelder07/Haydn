@@ -31,6 +31,14 @@ export class SamplerInstrument implements InstrumentInstance {
     this.sampler?.triggerAttackRelease(note, safeDuration, time, velocity);
   }
 
+  triggerAttack(note: string, time: number, velocity: number): void {
+    this.sampler?.triggerAttack(note, time, velocity);
+  }
+
+  triggerRelease(note: string, time: number): void {
+    this.sampler?.triggerRelease(note, time);
+  }
+
   releaseAll(): void {
     this.sampler?.releaseAll();
   }

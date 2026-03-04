@@ -126,6 +126,14 @@ export class SynthInstrument implements InstrumentInstance {
     this.synth.triggerAttackRelease(note, safeDuration, time, velocity);
   }
 
+  triggerAttack(note: string, time: number, velocity: number): void {
+    this.synth.triggerAttack(note, time, velocity);
+  }
+
+  triggerRelease(note: string, time: number): void {
+    this.synth.triggerRelease(note, time);
+  }
+
   releaseAll(): void {
     this.synth.releaseAll();
   }
