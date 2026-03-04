@@ -89,12 +89,12 @@ Requirements for v1.1 Polish & Enhancement milestone. Each maps to roadmap phase
 - [ ] **MIDI-05**: User can play notes of currently selected track using MIDI keyboard (when paused)
 - [ ] **MIDI-06**: Keyboard input respects velocity sensitivity
 - [ ] **MIDI-07**: Sustain pedal (CC 64) works properly (notes sustain while pedal down, release when lifted)
-- [ ] **MIDI-08**: User can arm track for recording via record button in transport controls
+- [x] **MIDI-08**: User can arm track for recording via record button in transport controls
 - [ ] **MIDI-09**: User can start recording during playback (captures MIDI input as notes)
 - [ ] **MIDI-10**: Recording includes count-in (1 bar before playback starts)
 - [ ] **MIDI-11**: Recorded notes align with beat grid (latency compensation applied)
 - [ ] **MIDI-12**: User can undo last recording (remove recorded notes)
-- [ ] **MIDI-13**: Recording indicator visible during active recording
+- [x] **MIDI-13**: Recording indicator visible during active recording
 
 ---
 
@@ -208,12 +208,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | MIDI-05 | Phase 14 | Pending |
 | MIDI-06 | Phase 14 | Pending |
 | MIDI-07 | Phase 14 | Pending |
-| MIDI-08 | Phase 14 | Pending |
+| MIDI-08 | Phase 14 | Complete |
 | MIDI-09 | Phase 14 | Pending |
 | MIDI-10 | Phase 14 | Pending |
 | MIDI-11 | Phase 14 | Pending |
 | MIDI-12 | Phase 14 | Pending |
-| MIDI-13 | Phase 14 | Pending |
+| MIDI-13 | Phase 14 | Complete |
 
 **Coverage:**
 - v1.1 requirements: 58 total

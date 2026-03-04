@@ -18,14 +18,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-02-12)
 
 **Core value:** Natural language edits must produce musically coherent results that follow music theory, respect genre conventions, and maintain context with the existing track.
-**Current focus:** Phase 14 in progress — MIDI hardware integration (MidiInputEngine + midiInputStore foundation complete)
+**Current focus:** Phase 14 in progress — MIDI hardware integration (Plans 14-01 and 14-03 complete — foundation + UI components)
 
 ## Current Position
 
 Phase: 14 of 14 — IN PROGRESS
-Plan: 14-01 complete (1 of 4 plans done)
-Status: Phase 14 Plan 01 complete — MidiInputEngine singleton, midiInputStore Zustand store, InstrumentInstance live-play extension
-Last activity: 2026-03-04 — Plan 14-01 complete: MIDI foundation (engine + store + interface extension)
+Plan: 14-03 complete (2 of 4 plans done, 14-01 + 14-03)
+Status: Phase 14 Plan 03 complete — MidiConnectButton, MidiDeviceList, TransportStrip arm button + recording indicator
+Last activity: 2026-03-04 — Plan 14-03 complete: MIDI UI components (MidiConnectButton + MidiDeviceList + TransportStrip additions)
 
 Progress: [██████████░░░░] 80% (v1.0 complete: 42/42 plans, v1.1: 18/TBD plans, Phase 14 plan 01 complete)
 
@@ -78,6 +78,7 @@ Progress: [██████████░░░░] 80% (v1.0 complete: 42/42
 | Phase 13 P03 | ~10 min | 2 | 2 files |
 | Phase 13 P04 | ~20 min | 2 | 1 file |
 | 14-01 | 2 min | 2 | 3 |
+| 14-03 | 2 min | 2 | 3 |
 
 ## Accumulated Context
 
@@ -144,6 +145,10 @@ Recent decisions affecting v1.1 work:
 - [14-01]: Dynamic import for getMidiInputStore inside onstatechange callback — resolves circular dep without shared types file
 - [14-01]: refreshDevices() ignores MIDIAccess parameter, re-reads from getMidiInputEngine().getInputDevices() — keeps device-name logic in one place
 - [14-01]: InstrumentInstance triggerAttack?/triggerRelease? optional — existing instruments compile unmodified
+- [14-03]: Arm button gated on isConnected — no arm button until MIDI device connected
+- [14-03]: Click-outside popover uses useEffect + document mousedown with popoverRef — avoids onBlur focus issues on child elements
+- [14-03]: Popover button is toggle (not disconnect) — explicit Disconnect inside popover makes disconnection deliberate
+- [14-03]: Recording indicator placed before loading label — keeps transport in logical order: play/stop → arm → recording → loading → loop → tempo
 
 ### Pending Todos
 
@@ -162,11 +167,11 @@ All pitfalls documented in research/v1.1/SUMMARY.md with prevention strategies.
 ## Session Continuity
 
 Last session: 2026-03-04
-Stopped at: Completed 14-01-PLAN.md — MidiInputEngine singleton, midiInputStore Zustand store, InstrumentInstance live-play extension
+Stopped at: Completed 14-03-PLAN.md — MidiConnectButton, MidiDeviceList, TransportStrip arm button + recording indicator
 Resume file: None
 
-**Next step:** Phase 14 Plan 02 (MIDI recording pipeline).
+**Next step:** Phase 14 Plan 02 (MIDI recording pipeline) or Plan 14-04 (live playback).
 
 ---
 
-*Last updated: 2026-03-04 after Plan 14-01 complete (MIDI foundation: MidiInputEngine + midiInputStore + InstrumentInstance optional live-play methods)*
+*Last updated: 2026-03-04 after Plan 14-03 complete (MIDI UI: MidiConnectButton + MidiDeviceList + TransportStrip arm/record additions)*
