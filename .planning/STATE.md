@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: Polish & Enhancement
 status: unknown
-last_updated: "2026-03-04T18:26:00Z"
+last_updated: "2026-03-04T18:32:45.588Z"
 progress:
-  total_phases: 18
-  completed_phases: 13
-  total_plans: 60
-  completed_plans: 60
+  total_phases: 19
+  completed_phases: 14
+  total_plans: 64
+  completed_plans: 64
 ---
 
 # Project State
@@ -18,14 +18,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-02-12)
 
 **Core value:** Natural language edits must produce musically coherent results that follow music theory, respect genre conventions, and maintain context with the existing track.
-**Current focus:** Phase 14 in progress — MIDI hardware integration (Plans 14-01, 14-02, and 14-03 complete — foundation + event pipeline + UI components)
+**Current focus:** Phase 14 complete — MIDI hardware integration (all 4 plans done — foundation + event pipeline + UI components + wiring)
 
 ## Current Position
 
-Phase: 14 of 14 — IN PROGRESS
-Plan: 14-02 complete (3 of 4 plans done, 14-01 + 14-02 + 14-03)
-Status: Phase 14 Plan 02 complete — MIDI event pipeline: triggerAttack/Release, getInstrumentForTrack, handleMidiEvent, startRecordingWithCountIn, commitRecording
-Last activity: 2026-03-04 — Plan 14-02 complete: MIDI event processing pipeline (instruments + NoteScheduler accessor + midiInputStore routing)
+Phase: 14 of 14 — CHECKPOINT (awaiting human verification)
+Plan: 14-04 Task 1 complete (4 of 4 plans done) — awaiting Task 2 human-verify checkpoint
+Status: Phase 14 Plan 04 Task 1 complete — MidiConnectButton in header, arm-aware handlePlayClick/handleStopClick in TransportStrip
+Last activity: 2026-03-04 — Plan 14-04 complete: header wiring + arm-aware transport flow
 
 Progress: [██████████░░░░] 80% (v1.0 complete: 42/42 plans, v1.1: 18/TBD plans, Phase 14 plan 01 complete)
 
@@ -80,6 +80,7 @@ Progress: [██████████░░░░] 80% (v1.0 complete: 42/42
 | 14-01 | 2 min | 2 | 3 |
 | 14-02 | 2 min | 2 | 4 |
 | 14-03 | 2 min | 2 | 3 |
+| Phase 14 P04 | 3 | 1 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -155,6 +156,9 @@ Recent decisions affecting v1.1 work:
 - [14-03]: Click-outside popover uses useEffect + document mousedown with popoverRef — avoids onBlur focus issues on child elements
 - [14-03]: Popover button is toggle (not disconnect) — explicit Disconnect inside popover makes disconnection deliberate
 - [14-03]: Recording indicator placed before loading label — keeps transport in logical order: play/stop → arm → recording → loading → loop → tempo
+- [Phase 14]: handlePlayClick routes to startRecordingWithCountIn when armed+stopped, commitRecording+stop when armed+playing — play button doubles as record-trigger and stop-and-commit
+- [Phase 14]: handleStopClick always commits recording before stopping when armed+recording — ensures notes are never lost on stop
+- [Phase 14]: MidiConnectButton placed first in header right flex row before NewProjectButton — MIDI grouped with project-level toolbar actions
 
 ### Pending Todos
 
@@ -173,11 +177,11 @@ All pitfalls documented in research/v1.1/SUMMARY.md with prevention strategies.
 ## Session Continuity
 
 Last session: 2026-03-04
-Stopped at: Completed 14-02-PLAN.md — MIDI event pipeline: triggerAttack/Release on instruments, NoteScheduler accessor, full midiInputStore routing
+Stopped at: Checkpoint: 14-04-PLAN.md Task 2 — awaiting human verification of complete MIDI hardware integration at http://localhost:3001
 Resume file: None
 
-**Next step:** Phase 14 Plan 04 (live playback verification — final plan).
+**Next step:** Human verification of MIDI integration (Test A minimum: MIDI button appears in header when project loaded, arm button absent without MIDI, npm run build passes).
 
 ---
 
-*Last updated: 2026-03-04 after Plan 14-02 complete (MIDI event pipeline: instruments + NoteScheduler accessor + midiInputStore routing/recording)*
+*Last updated: 2026-03-04 after Plan 14-04 Task 1 complete (MidiConnectButton in header + arm-aware TransportStrip play/stop)*
