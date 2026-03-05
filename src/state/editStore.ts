@@ -6,6 +6,7 @@ import { useValidationStore } from './validationStore';
 import { createDefaultPipeline } from '@/lib/music-theory/validators/ValidationPipeline';
 import { GENRE_PRESETS } from '@/lib/music-theory/rules/genres';
 import type { ValidationContext } from '@/lib/music-theory/types';
+import { getPlaybackController } from '@/audio/playback/PlaybackController';
 
 interface EditState {
   // State
@@ -422,4 +423,10 @@ function syncToProjectStore(trackIndex: number, notes: HaydnNote[]): void {
   };
 
   projectState.setProject(newProject);
+
+  // Keep playback engine in sync with edited notes.
+  // updateProject() re-schedules when stopped, or defers to next stop() when playing.
+  if (typeof window !== 'undefined') {
+    getPlaybackController().updateProject(newProject);
+  }
 }

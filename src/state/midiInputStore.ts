@@ -4,6 +4,7 @@ import { getMidiInputEngine } from '@/audio/midi/MidiInputEngine';
 import { playCountIn } from '@/audio/playback/CountIn';
 import { midiToNoteName } from '@/audio/utils/timeConversion';
 import { getInstrumentForTrack } from '@/audio/playback/NoteScheduler';
+import { getPlaybackController } from '@/audio/playback/PlaybackController';
 import { useProjectStore } from '@/state/projectStore';
 import { useEditStore } from '@/state/editStore';
 import { usePlaybackStore } from '@/state/playbackStore';
@@ -73,6 +74,48 @@ function midiTimestampToTicks(midiTimestamp: number, ppq: number, bpm: number): 
   return Math.max(0, ticks);
 }
 
+// ---------- Recording helpers ----------
+
+/**
+ * Flush completed recording notes to the project store for live piano roll preview.
+ * Uses the pre-recording snapshot as the base so we never double-count notes.
+ * Does NOT go through editStore, so undo history is not polluted mid-recording.
+ */
+function flushLiveRecordingToProject(
+  completedNotes: HaydnNote[],
+  preRecordingNotes: HaydnNote[],
+): void {
+  const project = useProjectStore.getState().project;
+  const selectedTrackIndex = useEditStore.getState().selectedTrackIndex;
+  if (!project || selectedTrackIndex === null) return;
+
+  const liveNotes = [...preRecordingNotes, ...completedNotes]
+    .sort((a, b) => a.ticks - b.ticks);
+
+  const newTracks = [...project.tracks];
+  newTracks[selectedTrackIndex] = { ...newTracks[selectedTrackIndex], notes: liveNotes };
+  const newProject = { ...project, tracks: newTracks };
+
+  useProjectStore.getState().setProject(newProject);
+  getPlaybackController().updateProject(newProject);
+}
+
+/**
+ * Restore the track to its pre-recording state when recording is cancelled without commit.
+ */
+function cancelLiveRecordingPreview(preRecordingNotes: HaydnNote[]): void {
+  const project = useProjectStore.getState().project;
+  const selectedTrackIndex = useEditStore.getState().selectedTrackIndex;
+  if (!project || selectedTrackIndex === null) return;
+
+  const newTracks = [...project.tracks];
+  newTracks[selectedTrackIndex] = { ...newTracks[selectedTrackIndex], notes: [...preRecordingNotes] };
+  const newProject = { ...project, tracks: newTracks };
+
+  useProjectStore.getState().setProject(newProject);
+  getPlaybackController().updateProject(newProject);
+}
+
 // ---------- Store interface ----------
 
 interface MidiInputState {
@@ -86,6 +129,7 @@ interface MidiInputState {
   isArmed: boolean;
   isRecording: boolean;
   recordingStartTicks: number;
+  preRecordingNotes: HaydnNote[];  // Snapshot of track notes at recording start (for live preview + commit)
   pendingNotes: Map<number, { startTicks: number; velocity: number }>;
   completedNotes: HaydnNote[];   // Fully recorded notes (noteOn + noteOff pair complete)
   sustainActive: boolean;
@@ -116,6 +160,7 @@ export const useMidiInputStore = create<MidiInputState>((set, get) => ({
   isArmed: false,
   isRecording: false,
   recordingStartTicks: 0,
+  preRecordingNotes: [],
   pendingNotes: new Map(),
   completedNotes: [],
   sustainActive: false,
@@ -173,17 +218,29 @@ export const useMidiInputStore = create<MidiInputState>((set, get) => ({
 
   setArmed: (armed: boolean) => {
     const state = get();
+    if (!armed && state.isRecording) {
+      // Disarming mid-recording — restore the track to its pre-recording state.
+      cancelLiveRecordingPreview(state.preRecordingNotes);
+    }
     set({
       isArmed: armed,
-      // Disarm while recording → also stop recording
-      ...((!armed && state.isRecording) ? { isRecording: false } : {}),
+      ...((!armed && state.isRecording) ? { isRecording: false, preRecordingNotes: [] } : {}),
     });
   },
 
   startRecording: (startTicks: number) => {
+    // Snapshot the track's current notes so live preview and commit use the same baseline.
+    const project = useProjectStore.getState().project;
+    const selectedTrackIndex = useEditStore.getState().selectedTrackIndex;
+    const preRecordingNotes =
+      selectedTrackIndex !== null && project
+        ? [...(project.tracks[selectedTrackIndex]?.notes ?? [])]
+        : [];
+
     set({
       isRecording: true,
       recordingStartTicks: startTicks,
+      preRecordingNotes,
       pendingNotes: new Map(),
       completedNotes: [],
       sustainedNoteOffs: new Set(),
@@ -191,7 +248,11 @@ export const useMidiInputStore = create<MidiInputState>((set, get) => ({
   },
 
   stopRecording: () => {
-    set({ isRecording: false });
+    const state = get();
+    if (state.isRecording) {
+      cancelLiveRecordingPreview(state.preRecordingNotes);
+    }
+    set({ isRecording: false, preRecordingNotes: [] });
   },
 
   setIsRecording: (recording: boolean) => {
@@ -283,10 +344,15 @@ export const useMidiInputStore = create<MidiInputState>((set, get) => ({
 
           const updatedPending = new Map(state.pendingNotes);
           updatedPending.delete(decoded.midi);
+          const newCompletedNotes = [...state.completedNotes, completedNote];
           set({
             pendingNotes: updatedPending,
-            completedNotes: [...state.completedNotes, completedNote],
+            completedNotes: newCompletedNotes,
           });
+
+          // Live preview — push completed note into project store so piano roll
+          // updates immediately without waiting for Stop/commit.
+          flushLiveRecordingToProject(newCompletedNotes, state.preRecordingNotes);
         }
       }
     }
@@ -318,12 +384,13 @@ export const useMidiInputStore = create<MidiInputState>((set, get) => ({
     });
 
     if (allNotes.length > 0 && selectedTrackIndex !== null) {
-      const existingNotes = project.tracks[selectedTrackIndex]?.notes ?? [];
-      const mergedNotes = [...existingNotes, ...allNotes].sort((a, b) => a.ticks - b.ticks);
+      // Merge against preRecordingNotes (snapshot from before recording) so we don't
+      // double-count notes that were already live-flushed to the project store.
+      const mergedNotes = [...state.preRecordingNotes, ...allNotes].sort((a, b) => a.ticks - b.ticks);
       useEditStore.getState().applyBatchEdit(mergedNotes); // single undo step
     }
 
-    set({ isRecording: false, completedNotes: [], pendingNotes: new Map(), sustainedNoteOffs: new Set() });
+    set({ isRecording: false, completedNotes: [], pendingNotes: new Map(), sustainedNoteOffs: new Set(), preRecordingNotes: [] });
   },
 
   // ---------- Recording with count-in ----------
@@ -340,11 +407,15 @@ export const useMidiInputStore = create<MidiInputState>((set, get) => ({
       return;
     }
 
-    // From stopped state: 1-bar count-in, then start playback + recording
+    // Capture current transport position — non-zero when paused or seeked while stopped.
+    const targetTicks = Tone.getTransport().ticks;
+
+    // From stopped/paused state: 1-bar count-in, then start playback + recording from targetTicks.
+    // The count-in is pure audio (no Transport changes), so position is preserved.
     set({ isRecording: false }); // ensure clean state
     try {
-      await playCountIn({ bars: 1 }); // verified export from CountIn.ts
-      get().startRecording(0); // recording starts from tick 0
+      await playCountIn({ bars: 1 });
+      get().startRecording(targetTicks); // recording starts from current position
       await playbackStore.play();
     } catch {
       // Count-in cancelled

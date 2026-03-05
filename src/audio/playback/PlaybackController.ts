@@ -21,6 +21,7 @@ class PlaybackController {
   private currentProject: HaydnProject | null = null;
   private state: PlaybackState = 'stopped';
   private positionIntervalId: number | null = null;
+  private rescheduleTimer: ReturnType<typeof setTimeout> | null = null;
 
   private stateListeners: Set<StateChangeCallback> = new Set();
   private positionListeners: Set<PositionChangeCallback> = new Set();
@@ -44,6 +45,12 @@ class PlaybackController {
    * Load a project for playback.
    */
   async loadProject(project: HaydnProject): Promise<void> {
+    // Cancel any pending reschedule — full load supersedes it.
+    if (this.rescheduleTimer !== null) {
+      clearTimeout(this.rescheduleTimer);
+      this.rescheduleTimer = null;
+    }
+
     // Stop any current playback
     if (this.state !== 'stopped') {
       this.stop();
@@ -107,6 +114,12 @@ class PlaybackController {
    * Stop playback and return to beginning.
    */
   stop(): void {
+    // Cancel any pending debounced reschedule — stop() handles it below.
+    if (this.rescheduleTimer !== null) {
+      clearTimeout(this.rescheduleTimer);
+      this.rescheduleTimer = null;
+    }
+
     Transport.stop();
     Transport.position = 0;
     clearScheduledNotes();
@@ -160,6 +173,38 @@ class PlaybackController {
     const ticks = Math.round((seconds * bpm / 60) * ppq);
 
     return { seconds, ticks };
+  }
+
+  /**
+   * Update the current project notes without full re-initialization.
+   * Debounced 50ms so rapid successive calls (e.g. recording note-offs) are
+   * collapsed into a single reschedule. Instruments are already cached so the
+   * reschedule itself is fast — no CDN fetches.
+   */
+  updateProject(project: HaydnProject): void {
+    this.currentProject = project;
+
+    // Cancel any pending reschedule and restart the timer.
+    if (this.rescheduleTimer !== null) {
+      clearTimeout(this.rescheduleTimer);
+    }
+    this.rescheduleTimer = setTimeout(() => {
+      this.rescheduleTimer = null;
+      this.applyReschedule();
+    }, 50);
+  }
+
+  /** Immediately rebuild the Tone.js Part objects from the current project. */
+  private applyReschedule(): void {
+    const project = this.currentProject;
+    if (!project) return;
+
+    clearScheduledNotes();
+    NoteHighlighter.clear();
+    scheduleNotes(project).then(() => {
+      this.syncMuteStates();
+      NoteHighlighter.scheduleHighlights(project);
+    });
   }
 
   /**

@@ -69,8 +69,8 @@ export function TransportStrip({ width = 180 }: TransportStripProps) {
   const canInteract = !isLoading;
 
   const handlePlayClick = async () => {
-    if (isArmed && playbackState === 'stopped') {
-      // Armed + stopped: start count-in → record → play
+    if (isArmed && (playbackState === 'stopped' || playbackState === 'paused')) {
+      // Armed + stopped/paused: count-in then record from current position
       await startRecordingWithCountIn();
     } else if (isArmed && playbackState === 'playing') {
       // Armed + playing: stop recording and commit notes, then stop playback
