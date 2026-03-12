@@ -25,11 +25,13 @@ Haydn bridges the gap between musical intent and MIDI production. Instead of cli
 - **Natural language generation** — Full multi-track arrangements from a single text prompt, with genre templates (lofi, trap, boom-bap, jazz, classical, pop)
 - **Natural language editing** — Single-shot edits to individual tracks using conversational instructions
 - **Conversational editing mode** — Multi-turn refinement with persistent context across the session
+- **Floating AI editor panel** — Draggable, resizable panel for accessing all AI editing modes without leaving the piano roll
 - **Music theory validation** — Real-time scale and chord validation with visual feedback; edits are checked before applying
 - **Piano roll editor** — Canvas-based note editor with drag-to-create, drag-to-move, zoom controls, and undo/redo
 - **Multi-track support** — Up to 32 tracks with drag-to-reorder, mute, solo, and per-track instrument assignment
 - **MIDI import/export** — Import standard MIDI (.mid) and MusicXML (.xml/.mxl) files; export to standard MIDI
-- **Real-time playback** — Tone.js synthesis with transport controls, tempo adjustment, and metronome
+- **Real-time playback** — Tone.js synthesis with transport controls, tempo adjustment, loop, and metronome
+- **MIDI hardware support** — Connect a MIDI controller or keyboard for step recording and live input
 - **Token transparency** — Shows estimated GPT-4o token usage and cost before and after generation
 
 ---
@@ -41,16 +43,15 @@ Haydn bridges the gap between musical intent and MIDI production. Instead of cli
 | Framework | Next.js 15 (App Router) |
 | Language | TypeScript 5.7 |
 | UI | React 19 |
-| Styling | Tailwind CSS 3.4 |
+| Styling | Tailwind CSS |
 | State | Zustand 5 |
 | Audio | Tone.js 15 (Web Audio API) |
 | MIDI | @tonejs/midi |
 | MusicXML | musicxml-interfaces |
-| Music Theory | Tonal 6 |
+| Music Theory | Tonal |
 | AI | OpenAI SDK 6 (GPT-4o) |
-| Validation | Zod 4 |
+| Validation | Zod |
 | Drag & Drop | dnd-kit |
-| Testing | Vitest 4 |
 
 ---
 
@@ -63,15 +64,17 @@ src/
 │   └── api/
 │       ├── nl-generate/      # POST: text prompt → generation params via GPT-4o
 │       ├── nl-edit/          # POST: edit instruction → MIDI operations via GPT-4o
-│       └── nl-conversation/  # POST: multi-turn conversation handler
+│       ├── nl-conversation/  # POST: multi-turn conversation handler
+│       └── ai-compose/       # POST: AI composition endpoint
 │
 ├── components/
 │   ├── PianoRoll/            # Canvas-based note editor
+│   ├── FloatingEditPanel/    # Draggable/resizable AI editor panel
 │   ├── TrackList/            # Drag-and-drop track management
-│   ├── TransportControls/    # Playback controls
+│   ├── TimelineRuler/        # Transport controls, playhead, timeline
+│   ├── Sidebar/              # Resizable sidebar
 │   ├── ConversationPanel/    # Multi-turn editing UI
-│   ├── CommandInput.tsx      # Single-shot edit input
-│   ├── GenerationInput.tsx   # Track generation input
+│   ├── NewProjectButton/     # File import with confirm dialog
 │   └── ExportButton/         # MIDI export
 │
 ├── state/                    # Zustand stores
@@ -79,15 +82,13 @@ src/
 │   ├── playbackStore.ts      # Playback position and controls
 │   ├── editStore.ts          # Selected track/note state
 │   ├── conversationStore.ts  # Multi-turn conversation history
+│   ├── nlEditStore.ts        # Natural language edit state
+│   ├── nlGenerationStore.ts  # Generation state
+│   ├── validationStore.ts    # Music theory validation results
+│   ├── uiStore.ts            # UI state (sidebar width, panel visibility)
 │   └── historyManager.ts     # Undo/redo stack
 │
-└── lib/
-    ├── midi/                 # MIDI parsing, export, validation
-    ├── musicxml/             # MusicXML parsing and conversion
-    ├── music-theory/         # Scale detection, chord analysis, validation pipeline
-    ├── openai/               # GPT-4o client, schemas, token counting
-    ├── nl-generation/        # MIDI assembly: melody, chords, bass, rhythm
-    └── nl-edit/              # Edit execution and context building
+└── audio/                    # Custom audio engine (Tone.js integration)
 ```
 
 **AI pipeline (generation):**
@@ -108,7 +109,7 @@ src/
 
 ```bash
 # Clone the repository
-git clone https://github.com/rickyelder/haydn.git
+git clone https://github.com/rickyelder07/haydn.git
 cd haydn
 
 # Install dependencies
@@ -133,15 +134,15 @@ Open [http://localhost:3000](http://localhost:3000) in Chrome or Edge (Web Audio
 
 **To edit a track:**
 1. Select a track from the track list
-2. Type an edit instruction — e.g., *"make the bass line more walking, jazz style"*
+2. Open the floating AI editor panel and type an instruction — e.g., *"make the bass line more walking, jazz style"*
 3. The edit applies immediately with undo available
 
 **To import a file:**
-1. Drag a `.mid` or `.xml` file onto the upload area
+1. Click New Project or drag a `.mid` or `.xml` file onto the upload area
 2. Tracks parse automatically and load into the editor
 
 **To export:**
-1. Click Export in the toolbar
+1. Click Export in the header
 2. Downloads as a standard `.mid` file compatible with any DAW
 
 ---
@@ -161,7 +162,6 @@ Open [http://localhost:3000](http://localhost:3000) in Chrome or Edge (Web Audio
 ```bash
 npm run dev      # Start development server
 npm run build    # Production build
-npm run test     # Run unit tests
 npm run lint     # ESLint
 ```
 
