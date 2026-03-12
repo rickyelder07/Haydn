@@ -1,5 +1,5 @@
 ---
-status: complete
+status: diagnosed
 phase: 10-synthesis-enhancement
 source: 10-01-SUMMARY.md, 10-02-SUMMARY.md
 started: 2026-02-27T00:00:00Z
@@ -56,7 +56,12 @@ skipped: 1
   reason: "User reported: there is no indicator or loading bar for loading samples. but they do load extremely quickly, I don't even notice if there is an opportunity to show a loading bar."
   severity: minor
   test: 5
-  root_cause: ""
-  artifacts: []
-  missing: []
-  debug_session: ""
+  root_cause: "playbackStore.isLoading is correctly tracked during CDN fetch, but no visible UI was built. TransportStrip.tsx has a 14x14px spinner (line 71) and the play button goes disabled:opacity-40 — both too subtle to notice. No indicator exists in page.tsx during the loading window. Gap is real on cold load (fresh tab, no browser cache) where CDN fetches for each unique GM program can take 1-3s on slower connections."
+  artifacts:
+    - path: "src/components/TimelineRuler/TransportStrip.tsx"
+      issue: "Existing spinner is 14x14px and barely visible; no text label; disabled play button at 40% opacity is too subtle"
+    - path: "src/app/page.tsx"
+      issue: "No loading feedback during loadProject() — UI silently switches to piano roll while samples fetch in background"
+  missing:
+    - "Add 'Loading samples...' text label next to spinner in TransportStrip.tsx during isLoading"
+    - "Optionally surface isLoading state in header status badge (page.tsx)"
